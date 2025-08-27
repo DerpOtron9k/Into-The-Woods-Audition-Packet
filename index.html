@@ -59,7 +59,7 @@
 </head>
 \1
 
-<script>
+<!-- <script>
 (function(){
   const form = document.getElementById('audition-form');
   if (!form) return;
@@ -80,7 +80,7 @@
     }
   }, {capture:true});
 })();
-</script>
+</script> -->
 
 
     <div class="storybook-container">
@@ -587,6 +587,7 @@
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
+            /*
             // 5. Handle form submission
             auditionForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -623,6 +624,7 @@
                     auditionForm.reset();
                 });
             });
+            */
 
             // 6. Handle going back to the start from the confirmation page
             backToStartBtn.addEventListener('click', () => {
