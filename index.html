@@ -137,10 +137,42 @@
             <section id="character-selection-section" class="mb-8">
                 <h2 class="text-3xl font-semibold mb-2">Step 1: Select Your Character(s)</h2>
                 <p class="mb-6 text-base">Select up to two characters you would like to audition for. Your audition materials will be provided in the next step.</p>
-                <div id="character-grid" class="space-y-6">
-                    <!-- Character cards will be dynamically inserted here by JavaScript -->
+                
+                <h3 class="text-2xl font-semibold mb-4">Singing Roles</h3>
+                <div id="singing-character-grid" class="space-y-6">
+                    <!-- Singing roles will be dynamically inserted here -->
+                </div>
+
+                <div class="decorative-line my-8"></div>
+
+                <h3 class="text-2xl font-semibold mb-4">Non-Singing Roles</h3>
+                <div id="non-singing-character-grid" class="space-y-6">
+                    <!-- Non-singing roles will be dynamically inserted here -->
                 </div>
             </section>
+
+            <div class="decorative-line"></div>
+
+            <!-- Rehearsal & Casting Section -->
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-4">Rehearsals & Casting</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Rehearsal Information</h3>
+                        <ul class="list-disc list-inside space-y-2 text-base">
+                            <li><strong>Schedule:</strong> Rehearsals begin in January 2026. A typical schedule will be Monday, Tuesday, Thursday, and Friday evenings, with occasional Saturday rehearsals (morning or afternoon).</li>
+                            <li>Not every actor will be called for every rehearsal. A detailed schedule will be provided after casting.</li>
+                            <li><strong>Tech Week:</strong> A full tech week schedule will be provided later. Attendance during tech week is mandatory.</li>
+                            <li>Please list all known conflicts clearly on your audition form. Excessive conflicts may affect casting.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Casting Information</h3>
+                        <p class="text-base leading-relaxed">We encourage performers of all backgrounds, genders, and ethnicities to audition.</p>
+                    </div>
+                </div>
+            </section>
+
 
             <!-- Sign Up Section -->
             <section class="text-center mt-12">
@@ -182,7 +214,7 @@
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <form id="audition-form" action="https://submify.vercel.app/api/Staheli.Andrew.G@gmail.com" method="POST" enctype="multipart/form-data" class="space-y-6">
                     <!-- This hidden input will carry the selected roles to your email -->
                     <input type="hidden" name="selected_roles" id="selected_roles_input">
 
@@ -231,9 +263,9 @@
                     </div>
 
                     <div>
-                        <label for="headshot" class="block text-sm font-medium text-[#40312C]">Headshot Upload</label>
+                        <label for="headshot" class="block text-sm font-medium text-[#40312C]">Headshot Upload (Optional)</label>
                         <input type="file" name="headshot" id="headshot" accept="image/png, image/jpeg" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#F0F5F2] file:text-[#2E4035] hover:file:bg-[#dbece4]">
-                        <p class="mt-1 text-xs text-gray-500">PNG or JPG file. Max 10MB.</p>
+                        <p class="mt-1 text-xs text-gray-500">PNG or JPG file. Max 5MB.</p>
                     </div>
 
                     <div>
@@ -247,159 +279,207 @@
                     </div>
 
                     <div class="text-center pt-4">
-                        <button type="submit" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                        <button type="submit" id="submit-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
                             Submit Audition Form
                         </button>
                     </div>
                 </form>
             </section>
         </div>
+
+        <!-- Confirmation Page (Initially Hidden) -->
+        <div id="confirmation-section" class="hidden text-center">
+            <h1 class="text-4xl font-bold mb-4">Thank You!</h1>
+            <p class="text-lg text-gray-700 mb-8">Your audition form has been submitted successfully. We look forward to seeing you!</p>
+            <button id="back-to-start-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                &larr; Back to Audition Packet
+            </button>
+        </div>
+
     </div>
 
     <script>
         // --- DATA: CHARACTER INFORMATION & MATERIALS ---
         const characterData = {
             "Baker": {
-                description: "Baritone | Vocal Range: A♭2–G4",
-                auditionCut: "“No More” (opening section)",
-                note: "Listen for phrasing and lyric clarity.",
+                vocalInfo: "A₃–G₅, Baritone",
+                characterDescription: "A harried and insecure baker who is simple and loving. He is willing to do anything to ensure his wife's happiness but refuses to let others fight his battles.",
+                auditionCut: "No More, measures 116–146.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Baker’s Wife": {
-                description: "Mezzo-soprano | Vocal Range: F3–G5",
-                auditionCut: "Primary: Moments in the Woods, measures 27–64. Alternative: Finale ensemble moment.",
-                note: "Showcases emotional range and storytelling.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Witch": {
-                description: "Mezzo-soprano (belt) | Vocal Range: F3–G5",
-                auditionCut: "“Stay With Me” (to Rapunzel)",
-                note: "Show both command and tenderness.",
+                vocalInfo: "F₃–G₅, Mezzo-soprano",
+                characterDescription: "A determined and bright woman who wishes to be a mother. She leads a simple life but is proactive and takes charge in her endeavors.",
+                auditionCut: "Moments in the Woods, measures 27–64.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella": {
-                description: "Soprano | Vocal Range: G3–G5",
-                auditionCut: "Measures 23B–57 of On the Steps of the Palace.",
-                note: "Approx. 0:31–1:14: “You think, what do you… stick to the steps of the palace.”",
+                vocalInfo: "G₃–G₅, Soprano",
+                characterDescription: "A young, earnest maiden constantly mistreated by her stepfamily. Despite her hardships, she remains resilient and hopeful.",
+                auditionCut: "On the Steps of the Palace, measures 23–57.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Jack": {
-                description: "Tenor | Vocal Range: A3–E5",
-                auditionCut: "Giants in the Sky, measures 1–37.",
-                note: "Needs youthful wonder, crisp diction.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
+            "Cinderella’s Father": { 
+                vocalInfo: "Non-singing, Speaking role",
+                characterDescription: "An out-of-touch but harmless and well-meaning father.",
+                auditionCut: "None." 
             },
-            "Little Red Ridinghood": {
-                description: "Mezzo-soprano (belt) | Vocal Range: B♭3–F5",
-                auditionCut: "“I Know Things Now”",
-                note: "Watch rhythmic bounce and irony.",
+            "Cinderella’s Mother": {
+                vocalInfo: "D₄–D₅, Soprano",
+                characterDescription: "Deceased, her spirit guards and aids her daughter from a tree. A comforting and guiding presence.",
+                auditionCut: "Cinderella at the Grave, complete verse.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella’s Prince": {
-                description: "Baritone | Vocal Range: B♭2–F4",
-                auditionCut: "“Agony” (first verse)",
-                note: "Show over-the-top charm.",
+                vocalInfo: "B♭₃–D₅, Baritone",
+                characterDescription: "Vain, manly, and charmingly superficial. He is on a quest for the next exciting thing and is a disloyal lover.",
+                auditionCut: "Agony, measures 1–35.",
+                sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
+                audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
+            },
+            "Florinda & Lucinda": {
+                vocalInfo: "C₄–G₄, Mezzo-soprano",
+                characterDescription: "Cinderella's stepsisters who are black of heart. Vain, selfish, and abusive towards Cinderella.",
+                auditionCut: "Into the Woods Prologue, Festival section (their verses).",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Wolf": {
-                description: "Baritone | Vocal Range: B♭2–G♭4",
-                auditionCut: "“Hello, Little Girl”",
-                note: "Requires a sleek, sly delivery.",
+            "Giant": { 
+                vocalInfo: "Non-singing, Voice-over, Spoken voice",
+                characterDescription: "The wife of the giant Jack killed. Her booming voice from offstage brings terror to the kingdom.",
+                auditionCut: "Act II confrontation voice cue." 
+            },
+            "Granny": { 
+                vocalInfo: "Non-singing, Speaking role",
+                characterDescription: "Little Red's grandmother. She is feisty and capable of defending herself.",
+                auditionCut: "I Know Things Now – Granny’s spoken lines." 
+            },
+            "Jack": {
+                vocalInfo: "A₃–E₅, Tenor",
+                characterDescription: "A feckless 'almost a man.' He is adventurous, naive, energetic, and bright-eyed.",
+                auditionCut: "Giants in the Sky, measures 1–37.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Rapunzel’s Prince": {
-                description: "Baritone | Vocal Range: C♯3–E4",
-                auditionCut: "“Agony” (second verse)",
-                note: "Match the style of the first verse, but with a different flair.",
+            "Jack's Mother": {
+                vocalInfo: "B♭₃–D₅, Mezzo-soprano/Soprano",
+                characterDescription: "A browbeating and weary, but protective mother who is independent, bold, and strong-willed.",
+                auditionCut: "Act I Opening Part 5, measures 12–36 (“Jack, Jack, Jack” through “Into the woods to journey’s end”).",
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
+            },
+            "Little Red": {
+                vocalInfo: "B♭₃–E♭₅, Mezzo-soprano",
+                characterDescription: "A spoiled young girl who is strong-willed, quick-witted, fearless, yet youthful and naive.",
+                auditionCut: "I Know Things Now, measures 20–52.",
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
+            },
+            "Milky-White": { 
+                vocalInfo: "Non-singing, Puppetry/Noise role",
+                characterDescription: "Jack's beloved cow. A central figure in the quest for the magic items.",
+                auditionCut: "None." 
+            },
+            "Narrator / Mysterious Man": { 
+                vocalInfo: "G₂–E₄, Baritone",
+                characterDescription: "The Narrator is an intellectual storyteller. The Mysterious Man is a mischievous vagrant who meddles in the characters' lives.",
+                auditionCut: "No More, measures 69–109.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel": {
-                description: "Soprano | Vocal Range: G4–F♯5",
+                vocalInfo: "G₄–F♯₅, Soprano",
+                characterDescription: "A loopy but lovely maiden, sheltered by the Witch and terribly lonely. She yearns to experience the world.",
                 auditionCut: "Offstage vocalise: “Ah-ah-ah-ah-ah…” passage (as written in score around p. 87).",
-                note: "Ethereal vocalise associated with Witch’s line “Ahh, my Rapunzel…listen to her beautiful music.”",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Jack’s Mother": {
-                description: "Mezzo-soprano (character) | Vocal Range: B♭3–F♯5",
-                auditionCut: "“Beans” section",
-                note: "Focus on character voice and patter clarity.",
+            "Rapunzel’s Prince": {
+                vocalInfo: "B₃–D₅, Baritone",
+                characterDescription: "Just as vain and manly as his brother. He is dashing and eager to court Rapunzel but suffers misfortune.",
+                auditionCut: "Agony, measures 1–35.",
+                sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
+                audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
+            },
+            "Stepmother": {
+                vocalInfo: "A₃–G₄, Mezzo-soprano",
+                characterDescription: "The mean-spirited, demanding, and cruel stepmother of Cinderella.",
+                auditionCut: "Into the Woods Prologue, “Never wear mauve at a ball…”",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Narrator / Mysterious Man": { 
-                description: "Baritone (spoken/sung) | Vocal Range: G2–E4",
-                auditionCut: "Primary: Prologue narration. Secondary: No More excerpt.",
-                note: "Prologue: “Once upon a time…” through Cinderella’s “I wish...”. No More: “Running away—let’s do it” through “…lose your nerve.”",
+            "Steward": {
+                vocalInfo: "C♯₃–E₄, Baritone/Character",
+                characterDescription: "A manservant who does whatever he has to do to solve a problem, caring only to please his master.",
+                auditionCut: "Act I Finale, short patter excerpt.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Cinderella's Stepmother": { 
-                description: "Mezzo-soprano | Vocal Range: A3–F♯5",
-                auditionCut: "TBD",
-                note: "Materials will be provided at callbacks.",
+            "Witch": {
+                vocalInfo: "C₄–C₅, Mezzo-soprano/Alto",
+                characterDescription: "Sarcastic and ugly, later beautiful. She is a straightforward, conniving, and aggressive, yet obsessive protector of Rapunzel.",
+                auditionCut: "Witch’s Lament, measures 1–20.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
-            "Florinda & Lucinda": { 
-                description: "Mezzo-soprano | Vocal Range: C4–A♭5",
-                auditionCut: "TBD",
-                note: "Materials will be provided at callbacks.",
+            "Wolf": {
+                vocalInfo: "B♭₃–D₅, Baritone",
+                characterDescription: "A charming and suave predator who stalks his prey with a silver tongue and insatiable hunger. He represents the danger and temptation of the woods.",
+                auditionCut: "Hello, Little Girl, measures 20–54.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
-            },
-            "Cinderella's Mother": { 
-                description: "Soprano (cameo) | Vocal Range: E4–F4",
-                auditionCut: "TBD",
-                note: "Materials will be provided at callbacks.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Granny": { description: "Speaking Role | No solo singing" },
-            "The Giant": { description: "Speaking Role (offstage voice) | No solo singing" }
+            }
         };
 
         // --- APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
-            const characterGrid = document.getElementById('character-grid');
+            const singingCharacterGrid = document.getElementById('singing-character-grid');
+            const nonSingingCharacterGrid = document.getElementById('non-singing-character-grid');
+            const characterSelectionSection = document.getElementById('character-selection-section');
             const mainContent = document.getElementById('main-content');
             const registrationSection = document.getElementById('registration-section');
+            const confirmationSection = document.getElementById('confirmation-section');
             const proceedBtn = document.getElementById('proceed-to-form-btn');
             const backBtn = document.getElementById('back-to-packet-btn');
+            const backToStartBtn = document.getElementById('back-to-start-btn');
             const materialsContainer = document.getElementById('materials-container');
             const selectedRolesInput = document.getElementById('selected_roles_input');
             const selectionError = document.getElementById('selection-error');
             const selectedDisplay = document.getElementById('selected-characters-display');
+            const auditionForm = document.getElementById('audition-form');
+            const submitBtn = document.getElementById('submit-btn');
             
             let selectedCharacters = [];
 
-            // 1. Populate the character grid on page load
-            Object.keys(characterData).forEach(name => {
+            // 1. Populate the character grids on page load
+            const sortedCharacters = Object.keys(characterData).sort();
+
+            sortedCharacters.forEach(name => {
                 const char = characterData[name];
                 const card = document.createElement('div');
                 card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent';
                 card.dataset.characterName = name;
 
-                let innerHTML = `<h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3><p class="text-sm text-gray-600">${char.description}</p>`;
+                let innerHTML = `<h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3><p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p><p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>`;
                 
                 if (char.auditionCut) {
-                    innerHTML += `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p><p class="text-sm text-gray-700">Note: ${char.note}</p></div>`;
+                    innerHTML += `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>`;
                 }
                 card.innerHTML = innerHTML;
-                characterGrid.appendChild(card);
+
+                if (char.vocalInfo.toLowerCase().includes("non-singing") || char.vocalInfo.toLowerCase().includes("puppetry") || char.vocalInfo.toLowerCase().includes("spoken voice")) {
+                    nonSingingCharacterGrid.appendChild(card);
+                } else {
+                    singingCharacterGrid.appendChild(card);
+                }
             });
 
             // 2. Handle character selection
-            characterGrid.addEventListener('click', (e) => {
+            characterSelectionSection.addEventListener('click', (e) => {
                 const card = e.target.closest('.character-card');
                 if (!card) return;
 
@@ -438,7 +518,7 @@
 
                 selectedCharacters.forEach(name => {
                     const char = characterData[name];
-                    if (!char.description.includes("Speaking Role")) {
+                    if (!char.vocalInfo.toLowerCase().includes("non-singing") && !char.vocalInfo.toLowerCase().includes("puppetry") && !char.vocalInfo.toLowerCase().includes("spoken voice")) {
                         allAreSpeakingRoles = false;
                     }
                     if (char.sheetMusicUrl) { // If it's a singing role, it will have this property
@@ -447,7 +527,6 @@
                         materialBlock.innerHTML = `
                             <h3 class="text-xl font-semibold text-[#2E4035]">${name}</h3>
                             <p class="text-sm text-gray-600 mb-3">Audition Cut: ${char.auditionCut}</p>
-                            <p class="text-sm text-gray-700 mb-4">Note: ${char.note}</p>
                             <div class="flex flex-wrap gap-4">
                                 <a href="${char.sheetMusicUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
                                 <a href="${char.audioDownloadUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
@@ -475,6 +554,53 @@
                 registrationSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // 5. Handle form submission
+            auditionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        registrationSection.classList.add('hidden');
+                        confirmationSection.classList.remove('hidden');
+                        window.scrollTo(0, 0);
+                    } else {
+                        response.json().then(data => {
+                            if (Object.hasOwn(data, 'errors')) {
+                                alert(data["errors"].map(error => error["message"]).join(", "));
+                            } else {
+                                alert('Oops! There was a problem submitting your form');
+                            }
+                        });
+                    }
+                }).catch(error => {
+                    alert('Oops! There was a problem submitting your form');
+                }).finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Audition Form';
+                    auditionForm.reset();
+                });
+            });
+
+            // 6. Handle going back to the start from the confirmation page
+            backToStartBtn.addEventListener('click', () => {
+                confirmationSection.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                // Deselect all cards
+                document.querySelectorAll('.character-card.selected').forEach(card => card.classList.remove('selected'));
+                selectedCharacters = [];
+                window.scrollTo(0, 0);
             });
         });
     </script>
