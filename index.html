@@ -36,14 +36,17 @@
         /* Styles for interactive character cards */
         .character-card {
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
         .character-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-color: #D4C4B0; /* Subtle border on hover */
         }
         .character-card.selected {
-            border-color: #2E4035;
+            border-color: #2E4035; /* Strong border when selected */
             background-color: #F0F5F2;
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15);
@@ -179,22 +182,70 @@
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="space-y-6">
+                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data" class="space-y-6">
                     <!-- This hidden input will carry the selected roles to your email -->
                     <input type="hidden" name="selected_roles" id="selected_roles_input">
 
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-[#40312C]">Full Name</label>
-                        <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-[#40312C]">Full Name</label>
+                            <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-[#40312C]">Phone Number</label>
+                            <input type="tel" name="phone" id="phone" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                        </div>
                     </div>
+
                     <div>
                         <label for="email" class="block text-sm font-medium text-[#40312C]">Email Address</label>
-                        <input type="email" name="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                        <input type="email" name="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="vocal-part" class="block text-sm font-medium text-[#40312C]">Vocal Part</label>
+                            <select id="vocal-part" name="vocal_part" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                                <option>Soprano</option>
+                                <option>Mezzo-Soprano</option>
+                                <option>Alto</option>
+                                <option>Tenor</option>
+                                <option>Baritone</option>
+                                <option>Bass</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="vocal-range" class="block text-sm font-medium text-[#40312C]">Vocal Range (e.g., G3-F5)</label>
+                            <input type="text" name="vocal_range" id="vocal-range" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="experience" class="block text-sm font-medium text-[#40312C]">Previous Theatre Experience (5 most recent roles)</label>
+                        <textarea name="experience" id="experience" rows="4" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="skills" class="block text-sm font-medium text-[#40312C]">Special Skills (e.g., instruments, tumbling, etc.)</label>
+                        <textarea name="skills" id="skills" rows="2" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="headshot" class="block text-sm font-medium text-[#40312C]">Headshot Upload</label>
+                        <input type="file" name="headshot" id="headshot" accept="image/png, image/jpeg" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#F0F5F2] file:text-[#2E4035] hover:file:bg-[#dbece4]">
+                        <p class="mt-1 text-xs text-gray-500">PNG or JPG file. Max 10MB.</p>
+                    </div>
+
                     <div>
                         <label for="conflicts" class="block text-sm font-medium text-[#40312C]">Please list all known conflicts with the rehearsal period.</label>
-                        <textarea name="conflicts" id="conflicts" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
+                        <textarea name="conflicts" id="conflicts" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
                     </div>
+
+                    <div class="flex items-center">
+                        <input id="any-role" name="any_role" type="checkbox" value="yes" class="h-4 w-4 rounded border-gray-300 text-[#2E4035] focus:ring-[#2E4035]">
+                        <label for="any-role" class="ml-2 block text-sm text-gray-900">I am willing to accept any role offered, including ensemble.</label>
+                    </div>
+
                     <div class="text-center pt-4">
                         <button type="submit" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
                             Submit Audition Form
@@ -212,91 +263,106 @@
                 description: "Baritone | Vocal Range: A♭2–G4",
                 auditionCut: "“No More” (opening section)",
                 note: "Listen for phrasing and lyric clarity.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Baker’s Wife": {
                 description: "Mezzo-soprano | Vocal Range: F3–G5",
                 auditionCut: "Primary: Moments in the Woods, measures 27–64. Alternative: Finale ensemble moment.",
                 note: "Showcases emotional range and storytelling.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Witch": {
                 description: "Mezzo-soprano (belt) | Vocal Range: F3–G5",
                 auditionCut: "“Stay With Me” (to Rapunzel)",
                 note: "Show both command and tenderness.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella": {
                 description: "Soprano | Vocal Range: G3–G5",
                 auditionCut: "Measures 23B–57 of On the Steps of the Palace.",
                 note: "Approx. 0:31–1:14: “You think, what do you… stick to the steps of the palace.”",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Jack": {
                 description: "Tenor | Vocal Range: A3–E5",
                 auditionCut: "Giants in the Sky, measures 1–37.",
                 note: "Needs youthful wonder, crisp diction.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Little Red Ridinghood": {
                 description: "Mezzo-soprano (belt) | Vocal Range: B♭3–F5",
                 auditionCut: "“I Know Things Now”",
                 note: "Watch rhythmic bounce and irony.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella’s Prince": {
                 description: "Baritone | Vocal Range: B♭2–F4",
                 auditionCut: "“Agony” (first verse)",
                 note: "Show over-the-top charm.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Wolf": {
                 description: "Baritone | Vocal Range: B♭2–G♭4",
                 auditionCut: "“Hello, Little Girl”",
                 note: "Requires a sleek, sly delivery.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel’s Prince": {
                 description: "Baritone | Vocal Range: C♯3–E4",
                 auditionCut: "“Agony” (second verse)",
                 note: "Match the style of the first verse, but with a different flair.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel": {
                 description: "Soprano | Vocal Range: G4–F♯5",
                 auditionCut: "Offstage vocalise: “Ah-ah-ah-ah-ah…” passage (as written in score around p. 87).",
                 note: "Ethereal vocalise associated with Witch’s line “Ahh, my Rapunzel…listen to her beautiful music.”",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Jack’s Mother": {
                 description: "Mezzo-soprano (character) | Vocal Range: B♭3–F♯5",
                 auditionCut: "“Beans” section",
                 note: "Focus on character voice and patter clarity.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Narrator / Mysterious Man": { 
                 description: "Baritone (spoken/sung) | Vocal Range: G2–E4",
                 auditionCut: "Primary: Prologue narration. Secondary: No More excerpt.",
                 note: "Prologue: “Once upon a time…” through Cinderella’s “I wish...”. No More: “Running away—let’s do it” through “…lose your nerve.”",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella's Stepmother": { 
                 description: "Mezzo-soprano | Vocal Range: A3–F♯5",
                 auditionCut: "TBD",
                 note: "Materials will be provided at callbacks.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Florinda & Lucinda": { 
                 description: "Mezzo-soprano | Vocal Range: C4–A♭5",
                 auditionCut: "TBD",
                 note: "Materials will be provided at callbacks.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella's Mother": { 
                 description: "Soprano (cameo) | Vocal Range: E4–F4",
                 auditionCut: "TBD",
                 note: "Materials will be provided at callbacks.",
-                sheetMusicUrl: "javascript:void(0);"
+                sheetMusicUrl: "javascript:void(0);",
+                audioDownloadUrl: "javascript:void(0);"
             },
             "Granny": { description: "Speaking Role | No solo singing" },
             "The Giant": { description: "Speaking Role (offstage voice) | No solo singing" }
@@ -382,7 +448,10 @@
                             <h3 class="text-xl font-semibold text-[#2E4035]">${name}</h3>
                             <p class="text-sm text-gray-600 mb-3">Audition Cut: ${char.auditionCut}</p>
                             <p class="text-sm text-gray-700 mb-4">Note: ${char.note}</p>
-                            <a href="${char.sheetMusicUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music (PDF)</a>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="${char.sheetMusicUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
+                                <a href="${char.audioDownloadUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
+                            </div>
                         `;
                         materialsContainer.appendChild(materialBlock);
                     }
