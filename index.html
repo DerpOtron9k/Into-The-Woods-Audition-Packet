@@ -214,7 +214,7 @@
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
-                <form id="audition-form" action="https://submify.vercel.app/api/Staheli.Andrew.G@gmail.com" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <form id="audition-form" class="space-y-6" action="https://submify.vercel.app/Staheli.Andrew.G@gmail.com" method="POST" enctype="multipart/form-data">
                     <!-- This hidden input will carry the selected roles to your email -->
                     <input type="hidden" name="selected_roles" id="selected_roles_input">
 
@@ -283,7 +283,13 @@
                             Submit Audition Form
                         </button>
                     </div>
-                </form>
+                
+  <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
+  <input type="hidden" name="_cc" value="kbabs1@aol.com">
+  <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted">
+  <input type="hidden" name="_template" value="table">
+
+</form>
             </section>
         </div>
 
