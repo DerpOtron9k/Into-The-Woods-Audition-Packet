@@ -57,7 +57,31 @@
         }
     </style>
 </head>
-<body class="antialiased">
+\1
+
+<script>
+(function(){
+  const form = document.getElementById('audition-form');
+  if (!form) return;
+  const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+  function nativeSubmit(ev){
+    // prevent other handlers on 'submit' from running by using a microtask to call native submit
+    ev && ev.preventDefault();
+    HTMLFormElement.prototype.submit.call(form);
+  }
+  submitButtons.forEach(btn => {
+    btn.addEventListener('click', nativeSubmit, {capture: true});
+  });
+  // Also intercept Enter key on inputs
+  form.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      HTMLFormElement.prototype.submit.call(form);
+    }
+  }, {capture:true});
+})();
+</script>
+
 
     <div class="storybook-container">
         
@@ -214,7 +238,7 @@
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
-                <form id="audition-form" class="space-y-6" action="https://submify.vercel.app/Staheli.Andrew.G@gmail.com" method="POST" enctype="multipart/form-data">
+                <form id="audition-form" class="space-y-6" action="https://submify.vercel.app/Staheli.Andrew.G%40gmail.com" method="POST" enctype="multipart/form-data">
                     <!-- This hidden input will carry the selected roles to your email -->
                     <input type="hidden" name="selected_roles" id="selected_roles_input">
 
@@ -287,7 +311,8 @@
   <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
   <input type="hidden" name="_cc" value="kbabs1@aol.com">
   <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted">
-  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_template" value="table">  <input type="hidden" name="_captcha" value="false">
+
 
 </form>
             </section>
