@@ -648,6 +648,219 @@
 })();
 </script>
 
+<script>
+(function () {
+  // CONFIG
+  const MAX_BYTES = 3.5 * 1024 * 1024; // 3.5 MB safety threshold (adjust as needed)
+  const MAX_WIDTH = 1600;              // max width for resized images (px)
+  const START_QUALITY = 0.85;          // initial JPEG quality
+  const MIN_QUALITY = 0.4;             // do not go below this quality
+  const QUALITY_STEP = 0.1;            // decrease quality by this step if necessary
+  const MIN_WIDTH = 600;               // stop scaling down past this width
+
+  // Helpers
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function dataURLToImage(dataURL) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = dataURL;
+    });
+  }
+
+  function canvasToBlob(canvas, quality) {
+    return new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
+    });
+  }
+
+  // Compress/resize algorithm:
+  // tries quality ladder, and if still too large, reduces width and repeats.
+  async function compressImageFile(file, options = {}) {
+    const maxBytes = options.maxBytes ?? MAX_BYTES;
+    const maxWidth = options.maxWidth ?? MAX_WIDTH;
+    let quality = options.quality ?? START_QUALITY;
+
+    // If already JPEG & under limit, return original
+    if (file.size <= maxBytes && file.type === 'image/jpeg') return file;
+
+    // Load image
+    const dataURL = await readFileAsDataURL(file);
+    const img = await dataURLToImage(dataURL);
+
+    // helper to build blob at given width/quality
+    async function render(width, q) {
+      const scale = Math.min(1, width / img.width);
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+
+      // Fill white background for images with transparency (avoid black background in JPEG)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.drawImage(img, 0, 0, w, h);
+      const blob = await canvasToBlob(canvas, q);
+      return blob;
+    }
+
+    let targetWidth = Math.min(maxWidth, img.width);
+    let blob = await render(targetWidth, quality);
+
+    // If blob already small enough, return File
+    while (blob.size > maxBytes) {
+      // try lowering quality first (until MIN_QUALITY)
+      if (quality - QUALITY_STEP >= MIN_QUALITY) {
+        quality = Math.max(MIN_QUALITY, quality - QUALITY_STEP);
+        blob = await render(targetWidth, quality);
+        if (blob.size <= maxBytes) break;
+      } else {
+        // quality too low — reduce width next
+        if (targetWidth > MIN_WIDTH + 10) {
+          targetWidth = Math.max(MIN_WIDTH, Math.round(targetWidth * 0.85)); // shrink by 15%
+          // reset quality to START_QUALITY for this new width attempt (or keep current quality)
+          blob = await render(targetWidth, quality);
+          if (blob.size <= maxBytes) break;
+          // continue loop to try lowering quality again
+        } else {
+          // can't reduce further (width at minimum and quality at minimum)
+          break;
+        }
+      }
+    }
+
+    // final check
+    if (blob.size > maxBytes) {
+      // failed to compress to target
+      return null;
+    }
+
+    // create file with .jpg extension and similar name
+    const filenameBase = (file.name || 'headshot').replace(/\.[^.]+$/, '');
+    return new File([blob], filenameBase + '.jpg', { type: 'image/jpeg' });
+  }
+
+  // ---------- Integrate with your existing submit logic ----------
+  var form = document.getElementById('audition-form');
+  if (!form) return;
+
+  var isCompressing = false; // flag to avoid recursion
+
+  form.addEventListener('submit', async function (e) {
+    // If we're in the second submit after compression, allow it to proceed
+    if (isCompressing === true) {
+      // allow actual submit to continue — reset flag
+      isCompressing = false;
+      return;
+    }
+
+    // Populate selected_roles / autoresponse etc. (your existing logic)
+    try {
+      // Collect selected roles
+      var selected = document.querySelectorAll(
+        '.role-card.selected, .character-card.selected, [data-role].selected, [data-character-name].selected'
+      );
+      var roles = Array.from(selected).map(function (el) {
+        return el.dataset.role || el.dataset.characterName || (el.textContent || '').trim();
+      }).filter(Boolean);
+      var rolesList = roles.length ? roles.join(', ') : '';
+
+      var rolesInput = document.getElementById('selected_roles_input');
+      var replyTo    = document.getElementById('_replyto');
+      var autoResp   = document.getElementById('_autoresponse');
+      var emailEl    = document.getElementById('email');
+      var nameEl     = document.getElementById('name');
+
+      if (rolesInput) rolesInput.value = rolesList;
+      if (replyTo && emailEl) replyTo.value = (emailEl.value || '').trim();
+
+      if (autoResp) {
+        var name = (nameEl && nameEl.value) ? nameEl.value.trim() : '';
+        var roleText = rolesList
+          ? 'You asked to be seen for: ' + rolesList + '.'
+          : 'No specific roles were selected—our team will consider you broadly.';
+        autoResp.value = [
+          'Thanks for stepping Into the Woods' + (name ? ', ' + name : '') + '!',
+          'We are reviewing your submission.',
+          roleText,
+          'We look forward to seeing you on one of the audition dates.',
+          'Until then, stay on the path and keep that voice ready.'
+        ].join('\n');
+      }
+    } catch (err) {
+      // nonfatal — continue
+      console.error('roles populate error', err);
+    }
+
+    // Now handle the headshot compression/size-check
+    const fileInput = document.getElementById('headshot');
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      // no file — allow native submit to proceed
+      return;
+    }
+
+    const originalFile = fileInput.files[0];
+
+    // If already safely small, allow submit
+    if (originalFile.size <= MAX_BYTES) return;
+
+    // Prevent the default submit while we compress
+    e.preventDefault();
+
+    // Do the compression
+    isCompressing = true;
+    try {
+      // attempt compression
+      const compressedFile = await compressImageFile(originalFile, {
+        maxBytes: MAX_BYTES,
+        maxWidth: MAX_WIDTH,
+        quality: START_QUALITY
+      });
+
+      if (!compressedFile) {
+        // compression couldn't get under limit — tell user
+        isCompressing = false;
+        alert('Your headshot could not be reduced below the ' + (MAX_BYTES / 1024 / 1024).toFixed(1) + ' MB limit. ' +
+              'Please upload a smaller image (reduce resolution or quality) or remove the headshot and try again.');
+        return;
+      }
+
+      // Replace the file input with compressed file
+      const dt = new DataTransfer();
+      dt.items.add(compressedFile);
+      fileInput.files = dt.files;
+
+      // (Optional) set a hidden field to note original size/name if you want
+      // const origInput = document.getElementById('headshot_original_info');
+      // if (origInput) origInput.value = `${originalFile.name}|${originalFile.size}`;
+
+      // Now re-submit: trigger native submit but skip compression logic on second event
+      if (typeof form.requestSubmit === 'function') {
+        form.requestSubmit();
+      } else {
+        form.submit(); // fallback
+      }
+    } catch (err) {
+      console.error('Image compression failed', err);
+      isCompressing = false;
+      alert('There was a problem compressing your image. Please try a smaller file or try again.');
+    }
+  });
+})();
+</script>
+
 
 </body>
 </html>
