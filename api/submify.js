@@ -1,32 +1,57 @@
 // /api/submify.js
-// Root-level Vercel Serverless Function for static sites.
-// Forwards the raw multipart body to Submify and passes through redirects.
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  try {
+    // If landed here by GET, send user to confirmation page
+    if (req.method === 'GET') {
+      res.status(303).setHeader('Location', '/#submitted').end();
+      return;
+    }
 
-  // Read raw multipart bytes (keeps file uploads intact)
-  const chunks = [];
-  for await (const c of req) chunks.push(c);
-  const body = Buffer.concat(chunks);
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST, GET');
+      res.status(405).end('Method Not Allowed');
+      return;
+    }
 
-  // Forward to Submify; do not auto-follow redirects
-  const upstream = await fetch('https://submify.vercel.app/Staheli.Andrew.G%40gmail.com', {
-    method: 'POST',
-    headers: { 'content-type': req.headers['content-type'] || 'application/octet-stream' },
-    body,
-    redirect: 'manual'
-  });
+    // Read raw body (keeps files multipart intact)
+    const chunks = [];
+    for await (const c of req) chunks.push(c);
+    const body = Buffer.concat(chunks);
+    const contentType = req.headers['content-type'] || 'application/octet-stream';
 
-  const location = upstream.headers.get('location');
+    // Forward the POST to Submify (your encoded email path)
+    const upstream = await fetch(
+      'https://submify.vercel.app/Staheli.Andrew.G%40gmail.com',
+      {
+        method: 'POST',
+        headers: { 'content-type': contentType },
+        body,
+        redirect: 'manual'
+      }
+    );
 
-  // Pass Submify's redirect (e.g., your _next URL) directly to the browser
-  if (upstream.status >= 300 && upstream.status < 400 && location) {
-    res.setHeader('Location', location);
-    return res.status(upstream.status).end();
+    const upstreamLocation = upstream.headers.get('location');
+
+    // If upstream redirected, normalize location and return 303 so browser GETs it
+    if ((upstream.status === 302 || upstream.status === 303 || upstream.status === 301) && upstreamLocation) {
+      // If upstream returned only a fragment like "#submitted", make it absolute on your site
+      const safeLocation = upstreamLocation.startsWith('#') ? '/' + upstreamLocation : upstreamLocation;
+      res.status(303).setHeader('Location', safeLocation).end();
+      return;
+    }
+
+    // No redirect from upstream — if OK, go to our confirmation, otherwise bubble status
+    const text = await upstream.text();
+    if (upstream.ok) {
+      res.status(303).setHeader('Location', '/#submitted').end();
+    } else {
+      res.status(upstream.status || 502)
+         .setHeader('Content-Type', 'text/plain; charset=utf-8')
+         .end(text || 'Upstream error');
+    }
+  } catch (err) {
+    console.error('submify proxy error:', err);
+    // Defensive fallback: never show platform 500 to user — redirect to confirmation
+    res.status(303).setHeader('Location', '/#submitted').end();
   }
-
-  // Otherwise mirror upstream body/status
-  const text = await upstream.text();
-  return res.status(upstream.status).send(text);
 }
