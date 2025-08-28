@@ -216,7 +216,7 @@
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
-                <form id="audition-form" class="space-y-6" action="https://submify.vercel.app/Staheli.Andrew.G%40gmail.com" method="POST" enctype="multipart/form-data">
+                <form id="audition-form" class="space-y-6" action="/api/submify" method="POST" enctype="multipart/form-data">
                     <!-- This hidden input will carry the selected roles to your email -->
                     <input type="hidden" name="selected_roles" id="selected_roles_input">
 
@@ -289,9 +289,10 @@
   <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
   <input type="hidden" name="_cc" value="kbabs1@aol.com, staheli.andrew@gmail.com">
   <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted">
-  <input type="hidden" name="_template" value="table">  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_template" value="table">  
+  <input type="hidden" name="_captcha" value="true">
   <input type="hidden" name="_webhook" value="https://script.google.com/macros/s/AKfycbwsB8O8g4ClX4l6_fV5NnCKd0IW7x5AtAMidt6oVdEFAe1BPHJNPA2Qx3xzLBLB8Xkz5w/exec?token=a9dcf7nhj4un7mk309ds7b4k9o">
-
+  <input type="hidden" name="_autoresponse" value="We’ve got your audition registration. You’re on our list—keep your eyes peeled for more details.">
 
 </form>
             </section>
