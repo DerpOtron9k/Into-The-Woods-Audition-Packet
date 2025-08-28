@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Into the Woods Audition Packet</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎭</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -605,12 +606,12 @@
                             if (Object.hasOwn(data, 'errors')) {
                                 alert(data["errors"].map(error => error["message"]).join(", "));
                             } else {
-                                alert('Oops! You form got lost in the WOODS!');
+                                alert('Oops! There was a problem submitting your form');
                             }
                         });
                     }
                 }).catch(error => {
-                    alert('Oops! You form got lost in the WOODS!');
+                    alert('Oops! There was a problem submitting your form');
                 }).finally(() => {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Audition Form';
@@ -628,6 +629,12 @@
                 selectedCharacters = [];
                 window.scrollTo(0, 0);
             });
+
+            // 7. Check for submission confirmation on page load
+            if (window.location.hash === '#submitted') {
+                mainContent.classList.add('hidden');
+                confirmationSection.classList.remove('hidden');
+            }
         });
     </script>
 </body>
