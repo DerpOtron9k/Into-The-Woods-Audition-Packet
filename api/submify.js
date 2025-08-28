@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     // Setup a timeout so the function doesn't hang too long waiting for upstream.
     const controller = new AbortController();
     // Choose a conservative timeout (ms). Vercel allows up to 120s, but shorter protects UX.
-    const TIMEOUT_MS = 25_000;
+    const TIMEOUT_MS = 45_000;
     const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
     // Build headers to forward. Remove Host (let fetch set it).
