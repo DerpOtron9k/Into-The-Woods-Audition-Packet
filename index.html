@@ -589,45 +589,6 @@
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
-            
-<!--             // 5. Handle form submission
-            auditionForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
-
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        registrationSection.classList.add('hidden');
-                        confirmationSection.classList.remove('hidden');
-                        window.scrollTo(0, 0);
-                    } else {
-                        response.json().then(data => {
-                            if (Object.hasOwn(data, 'errors')) {
-                                alert(data["errors"].map(error => error["message"]).join(", "));
-                            } else {
-                                alert('Oops! There was a problem submitting your form');
-                            }
-                        });
-                    }
-                }).catch(error => {
-                    alert('Oops! There was a problem submitting your form');
-                }).finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Audition Form';
-                    auditionForm.reset();
-                });
-            });
-            
- -->
             // 6. Handle going back to the start from the confirmation page
             backToStartBtn.addEventListener('click', () => {
                 confirmationSection.classList.add('hidden');
@@ -686,6 +647,48 @@
     `Until then, stay on the path and keep that voice ready.`
   ].join('\n');
 }
+    // IMPORTANT: do not call preventDefault(); allow native submit + redirect.
+  });
+})();
+</script>
+<script>
+(function () {
+  var form = document.getElementById('audition-form');
+  if (!form) return;
+
+  form.addEventListener('submit', function () {
+    // Gather selected roles from your UI
+    var selectedEls = document.querySelectorAll(
+      '.character-card.selected, .role-card.selected, [data-character-name].selected, [data-role].selected'
+    );
+    var roles = Array.prototype.map.call(selectedEls, function (el) {
+      return el.dataset.characterName || el.dataset.role || (el.textContent || '').trim();
+    }).filter(Boolean);
+
+    // Populate hidden fields
+    var rolesInput = document.getElementById('selected_roles_input');
+    var replyTo    = document.getElementById('_replyto');
+    var autoResp   = document.getElementById('_autoresponse');
+    var emailEl    = document.getElementById('email');
+    var nameEl     = document.getElementById('name');
+
+    if (rolesInput) rolesInput.value = roles.join(', ');
+    if (replyTo && emailEl) replyTo.value = (emailEl.value || '').trim();
+
+    if (autoResp) {
+      var name = (nameEl && nameEl.value) ? nameEl.value.trim() : '';
+      var roleText = roles.length
+        ? 'You asked to be seen for: ' + roles.join(', ') + '.'
+        : 'No specific roles were selected—our team will consider you broadly.';
+      autoResp.value = [
+        'Thanks for stepping Into the Woods' + (name ? ', ' + name : '') + '!',
+        'We are reviewing your submission.',
+        roleText,
+        'We look forward to seeing you at one of the audition dates.',
+        'Until then, stay on the path and keep that voice ready.'
+      ].join('\n');
+    }
+
     // IMPORTANT: do not call preventDefault(); allow native submit + redirect.
   });
 })();
