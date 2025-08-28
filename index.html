@@ -57,29 +57,7 @@
         }
     </style>
 </head>
-<!-- <script>
-(function(){
-  const form = document.getElementById('audition-form');
-  if (!form) return;
-  const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
-  function nativeSubmit(ev){
-    // prevent other handlers on 'submit' from running by using a microtask to call native submit
-    ev && ev.preventDefault();
-    HTMLFormElement.prototype.submit.call(form);
-  }
-  submitButtons.forEach(btn => {
-    btn.addEventListener('click', nativeSubmit, {capture: true});
-  });
-  // Also intercept Enter key on inputs
-  form.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      HTMLFormElement.prototype.submit.call(form);
-    }
-  }, {capture:true});
-})();
-</script> -->
-
+<body class="antialiased">
 
     <div class="storybook-container">
         
@@ -128,14 +106,14 @@
                     <div>
                         <h3 class="text-xl font-semibold mb-2">Audition Dates</h3>
                         <ul class="list-disc list-inside space-y-1">
-                            <li>Sunday, December 13, 2026 — 4:00–6:00pm (Location TBD)</li>
-                            <li>Monday, December 14, 2026 — 2:00–4:00pm (Location TBD)</li>
+                            <li>Saturday, December 13, 2025 — 4:00–6:00pm (Location TBD)</li>
+                            <li>Sunday, December 14, 2025 — 2:00–4:00pm (Location TBD)</li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold mb-2">Callbacks</h3>
                         <ul class="list-disc list-inside space-y-1">
-                            <li>Tuesday, December 15, 2026 (Tentative, Location TBD – possibly Civic Center)</li>
+                            <li>Monday, December 15, 2025 (Tentative, Location TBD – possibly Civic Center)</li>
                         </ul>
                     </div>
                 </div>
@@ -145,7 +123,8 @@
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">What to Prepare</h2>
                 <ul class="list-disc list-inside space-y-3 text-base leading-relaxed">
-                    <li>You will sing a pre-selected excerpt from <em>Into the Woods</em> for the character(s) you wish to be considered for.</li>
+                    <li>All auditions will include singing the provided Prologue ensemble excerpt.</li>
+                    <li>You will also sing a pre-selected excerpt for the specific character(s) you wish to be considered for.</li>
                     <li>Each excerpt will be provided in advance. Please prepare with the provided track (no live accompanist will be used).</li>
                     <li>Memorization is not necessary; sheet music will be available to read from at the audition.</li>
                     <li>If you audition for multiple roles, you may be asked to sing more than one excerpt.</li>
@@ -167,8 +146,8 @@
 
                 <div class="decorative-line my-8"></div>
 
-                <h3 class="text-2xl font-semibold mb-4">Non-Singing Roles</h3>
-                <div id="non-singing-character-grid" class="space-y-6">
+                <h3 class="text-2xl font-semibold mb-4">Ensemble Roles</h3>
+                <div id="ensemble-character-grid" class="space-y-6">
                     <!-- Non-singing roles will be dynamically inserted here -->
                 </div>
             </section>
@@ -332,132 +311,142 @@
         // --- DATA: CHARACTER INFORMATION & MATERIALS ---
         const characterData = {
             "Baker": {
-                vocalInfo: "A♭₂–G₄, Baritone",
-                characterDescription: "Age 30's-40's - A humble, anxious man who longs for a child and feels inadequate before the task. At first, he fumbles through quests, relying on his wife’s cleverness, but beneath the hesitation lies genuine decency and heart. His journey is one of growth: learning to face loss, to stand on his own, and to embrace the responsibility of fatherhood. The Baker is not a bold hero, but a relatable everyman whose humor, vulnerability, and quiet courage form the show’s emotional core.",
+                vocalInfo: "Age 20-45, Baritone",
+                characterDescription: "A harried and insecure baker who is simple and loving. He is willing to do anything to ensure his wife's happiness but refuses to let others fight his battles.",
                 auditionCut: "No More, measures 116–146.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Baker’s Wife": {
-                vocalInfo: "F₃–G₅, Mezzo-soprano",
-                characterDescription: "Age 30's-40's - Practical, witty, and driven, she is the true engine of the story. She longs for a family but also hungers for something “more,” which leads her into moments of scheming, charm, and temptation. Warm and resourceful, with sharp humor and emotional depth, she embodies both the joy and the cost of desire. Mezzo-soprano with strong diction and range for both comedy and poignancy.",
+                vocalInfo: "Age 20-45, Mezzo-soprano",
+                characterDescription: "A determined and bright woman who wishes to be a mother. She leads a simple life but is proactive and takes charge in her endeavors.",
                 auditionCut: "Moments in the Woods, measures 27–64.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella": {
-                vocalInfo: "G₃–G₅, light mezzo with soprano extension",
-                characterDescription: "Age 20's-30's - A thoughtful young woman who longs for a better life yet questions what “happily ever after” really means. Intelligent, observant, and often torn between desire and hesitation, she becomes a moral compass in the woods, learning to choose her own path. Needs an actress who can balance sweetness with wit and quiet strength.",
+                vocalInfo: "Age 20-35, Soprano",
+                characterDescription: "A young, earnest maiden constantly mistreated by her stepfamily. Despite her hardships, she remains resilient and hopeful.",
                 auditionCut: "On the Steps of the Palace, measures 23–57.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella’s Father": { 
-                vocalInfo: "Non-singing, Speaking role",
-                characterDescription: "Age 40's-60's - Ineffectual, out of touch with family, but harmless and well-meaningAn out-of-touch but harmless and well-meaning father.",
+                vocalInfo: "Ensemble, Age 40-65, Speaking role",
+                characterDescription: "A drunk but well-meaning father.",
                 auditionCut: "None." 
             },
             "Cinderella’s Mother": {
-                vocalInfo: "D₄–D₅, Soprano",
-                characterDescription: "Age 40's-50's - Nurturing, loving. The spirit of the departed mother, dispenses useful advice. Deceased, her spirit guards and aids her daughter from a tree. A comforting and guiding presence.",
+                vocalInfo: "Age 40-65, Soprano",
+                characterDescription: "Deceased, her spirit guards and aids her daughter from a tree. A comforting and guiding presence.",
                 auditionCut: "Cinderella at the Grave, complete verse.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella’s Prince": {
-                vocalInfo: "B♭₃–D₅, Baritone",
-                characterDescription: "Age 20's-30's - Dashing, smug, and melodramatically romantic, Cinderella’s Prince is a charming but shallow storybook royal who pursues women as trophies. He takes himself very seriously—swooning one moment, petty the next—which makes him hilarious to watch. Requires strong comic timing, broad physicality, and a resonant baritone/tenor voice.",
+                vocalInfo: "Age 20-45, Baritone",
+                characterDescription: "Vain, manly, and charmingly superficial. He is on a quest for the next exciting thing and is a disloyal lover.",
                 auditionCut: "Agony, measures 1–35.",
                 sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
                 audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
             },
             "Florinda & Lucinda": {
-                vocalInfo: "C₄–G₄, Mezzo-soprano",
-                characterDescription: "Age 20's-30's - Cinderella’s vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry “up” leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power.",
+                vocalInfo: "Age 14-35, Mezzo-soprano",
+                characterDescription: "Cinderella's stepsisters who are black of heart. Vain, selfish, and abusive towards Cinderella.",
                 auditionCut: "Into the Woods Prologue, Festival section (their verses).",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Giant": { 
-                vocalInfo: "Non-singing, Voice-over, Spoken voice",
-                characterDescription: "Age 30s-60's - A powerful offstage presence, voiced by a woman with booming authority and clarity. She is grieving, vengeful, and relentless—seeking justice for her slain husband. Entirely spoken (no singing), her voice should feel larger than life, carrying both fury and sorrow. Symbolizes the consequences of the characters’ actions.",
+                vocalInfo: "Ensemble, Age 20-65, Voice-over",
+                characterDescription: "The wife of the giant Jack killed. Her booming voice from offstage brings terror to the kingdom.",
                 auditionCut: "Act II confrontation voice cue." 
             },
             "Granny": { 
-                vocalInfo: "Non-singing, Speaking role",
-                characterDescription: "Age 30s-60's - A tart, tough, and fiercely independent woman who refuses to play the helpless victim. Though brusque and blunt in manner, she’s protective of Little Red in her own “tough love” way. Offers comic bite and sharp wit, with minimal singing but memorable stage presence.",
+                vocalInfo: "Ensemble, Age 40-65, Speaking role",
+                characterDescription: "Little Red's grandmother. She is feisty and capable of defending herself.",
                 auditionCut: "I Know Things Now – Granny’s spoken lines." 
             },
             "Jack": {
-                vocalInfo: "A₂–E₄, Tenor",
-                characterDescription: "Age 15-20s - A poor farm boy on the cusp of growing up. Earnest, impulsive, and a bit naïve, but never cruel. Loves his cow Milky White more than anything—until he discovers there are giants in the sky. His journey takes him from childish innocence to painful maturity as he learns about bravery, loss, and responsibility.",
+                vocalInfo: "Age 14-25, Tenor",
+                characterDescription: "A feckless 'almost a man.' He is adventurous, naive, energetic, and bright-eyed.",
                 auditionCut: "Giants in the Sky, measures 1–37.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Jack's Mother": {
-                vocalInfo: "B♭₃–D₅, Mezzo-soprano/Soprano",
-                characterDescription: "Age 40s–60s - A browbeating and weary, but protective mother who is independent, bold, and strong-willed.",
+                vocalInfo: "Age 40-65, Mezzo-soprano/Soprano",
+                characterDescription: "A browbeating and weary, but protective mother who is independent, bold, and strong-willed.",
                 auditionCut: "Act I Opening Part 5, measures 12–36 (“Jack, Jack, Jack” through “Into the woods to journey’s end”).",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Little Red": {
-                vocalInfo: "B♭₃–E♭₅, Mezzo-soprano",
+                vocalInfo: "Age 14-25, Mezzo-soprano",
                 characterDescription: "A spoiled young girl who is strong-willed, quick-witted, fearless, yet youthful and naive.",
                 auditionCut: "I Know Things Now, measures 20–52.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Milky-White": { 
-                vocalInfo: "Non-singing, Puppetry/Noise role",
-                characterDescription: "Jack's beloved cow. A central figure in the quest for the magic items.",
+                vocalInfo: "Ensemble, Any age, Puppetry/Noise role",
+                characterDescription: "Jack's beloved sickly white cow. A central figure in the quest for the magic items.",
                 auditionCut: "None." 
             },
             "Narrator / Mysterious Man": { 
-                vocalInfo: "G₂–E₄, Baritone",
-                characterDescription: "Age 40s–60s - A dual role: the Narrator is witty, detached, and authoritative—our guide through the fairy-tale world, until the story turns on him. The Mysterious Man is the Baker’s estranged father, ragged and elusive, by turns comic and poignant. Requires strong diction, dry humor, and the ability to shift quickly between polished storyteller and haunted trickster.",
+                vocalInfo: "Age 40-65, Bass/Baritone",
+                characterDescription: "The Narrator is an intellectual storyteller. The Mysterious Man is a mischievous vagrant who meddles in the characters' lives.",
                 auditionCut: "No More, measures 69–109.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel": {
-                vocalInfo: "G₄–F♯₅, High Soprano",
-                characterDescription: "Age 20's-30's - A loopy but lovely maiden, sheltered by the Witch and terribly lonely. She yearns to experience the world.",
+                vocalInfo: "Age 20-40, High Soprano",
+                characterDescription: "A loopy but lovely maiden, sheltered by the Witch and terribly lonely. She yearns to experience the world.",
                 auditionCut: "Offstage vocalise: “Ah-ah-ah-ah-ah…” passage (as written in score around p. 87).",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel’s Prince": {
-                vocalInfo: "B₃–D₅, Baritone",
-                characterDescription: "Age 20's-30's - The younger brother of Cinderella’s Prince, Rapunzel’s Prince is equally dashing, equally melodramatic, and equally absurd—just a little less polished. Where his elder brother struts, he blusters. His pursuit of Rapunzel is overblown with sighs, swoons, and grand declarations. He is competitive with his brother to the point of silliness.",
+                vocalInfo: "Age 20-45, Baritone",
+                characterDescription: "Just as vain and manly as his brother. He is dashing and eager to court Rapunzel but suffers misfortune.",
                 auditionCut: "Agony, measures 1–35.",
                 sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
                 audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
             },
+            "Snow White & Sleeping Beauty": {
+                vocalInfo: "Ensemble, Age 20-40",
+                characterDescription: "Cameo appearances. These roles are great for actors with good stage presence who may have less vocal experience.",
+                auditionCut: "None."
+            },
+            "Rapunzel’s Double/Body": {
+                vocalInfo: "Ensemble, Any age",
+                characterDescription: "An optional, non-singing role for staging purposes during Rapunzel's scenes.",
+                auditionCut: "None."
+            },
             "Stepmother": {
-                vocalInfo: "A₃–G₄, Mezzo-soprano",
+                vocalInfo: "Age 40-65, Mezzo-soprano",
                 characterDescription: "The mean-spirited, demanding, and cruel stepmother of Cinderella.",
                 auditionCut: "Into the Woods Prologue, “Never wear mauve at a ball…”",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Steward": {
-                vocalInfo: "C♯₃–E₄, Baritone/Character",
-                characterDescription: "Age 30's-40's - A manservant who does whatever he has to do to solve a problem, caring only to please his master.",
+                vocalInfo: "Age 20-65, Non-singing",
+                characterDescription: "A surly, bureaucratic manservant who does whatever he has to do to solve a problem.",
                 auditionCut: "Act I Finale, short patter excerpt.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Witch": {
-                vocalInfo: "C₄–C₅, Mezzo-soprano/Alto",
-                characterDescription: "Age 20's-40's - Sarcastic and ugly, later beautiful. She is a straightforward, conniving, and aggressive, yet obsessive protector of Rapunzel.",
+                vocalInfo: "Age 20-65, Mezzo-soprano",
+                characterDescription: "Sarcastic and ugly, later beautiful. She is a straightforward, conniving, and aggressive, yet obsessive protector of Rapunzel.",
                 auditionCut: "Witch’s Lament, measures 1–20.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Wolf": {
-                vocalInfo: "B♭₃–D₅, Baritone",
+                vocalInfo: "Age 20-45, Baritone",
                 characterDescription: "A charming and suave predator who stalks his prey with a silver tongue and insatiable hunger. He represents the danger and temptation of the woods.",
                 auditionCut: "Hello, Little Girl, measures 20–54.",
                 sheetMusicUrl: "javascript:void(0);",
@@ -468,7 +457,7 @@
         // --- APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             const singingCharacterGrid = document.getElementById('singing-character-grid');
-            const nonSingingCharacterGrid = document.getElementById('non-singing-character-grid');
+            const ensembleCharacterGrid = document.getElementById('ensemble-character-grid');
             const characterSelectionSection = document.getElementById('character-selection-section');
             const mainContent = document.getElementById('main-content');
             const registrationSection = document.getElementById('registration-section');
@@ -501,8 +490,8 @@
                 }
                 card.innerHTML = innerHTML;
 
-                if (char.vocalInfo.toLowerCase().includes("non-singing") || char.vocalInfo.toLowerCase().includes("puppetry") || char.vocalInfo.toLowerCase().includes("spoken voice")) {
-                    nonSingingCharacterGrid.appendChild(card);
+                if (char.vocalInfo.toLowerCase().includes("non-singing") || char.vocalInfo.toLowerCase().includes("puppetry") || char.vocalInfo.toLowerCase().includes("spoken voice") || char.vocalInfo.toLowerCase().includes("extra") || char.vocalInfo.toLowerCase().includes("ensemble")) {
+                    ensembleCharacterGrid.appendChild(card);
                 } else {
                     singingCharacterGrid.appendChild(card);
                 }
@@ -544,13 +533,22 @@
 
                 // Populate materials
                 materialsContainer.innerHTML = ''; // Clear previous materials
-                let allAreSpeakingRoles = true;
+                
+                // Add the required ensemble piece for everyone
+                const ensembleBlock = document.createElement('div');
+                ensembleBlock.className = 'bg-white p-4 rounded-lg border border-blue-200';
+                ensembleBlock.innerHTML = `
+                    <h3 class="text-xl font-semibold text-[#2E4035]">Required Ensemble Audition</h3>
+                    <p class="text-sm text-gray-600 mb-3">All roles are required to sing this excerpt from the Prologue.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="javascript:void(0);" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
+                        <a href="https://drive.google.com/file/d/1ORa7KrfY34Gue0ABakOuepnFtTwtAqaU/view?usp=sharing" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
+                    </div>
+                `;
+                materialsContainer.appendChild(ensembleBlock);
 
                 selectedCharacters.forEach(name => {
                     const char = characterData[name];
-                    if (!char.vocalInfo.toLowerCase().includes("non-singing") && !char.vocalInfo.toLowerCase().includes("puppetry") && !char.vocalInfo.toLowerCase().includes("spoken voice")) {
-                        allAreSpeakingRoles = false;
-                    }
                     if (char.sheetMusicUrl) { // If it's a singing role, it will have this property
                         const materialBlock = document.createElement('div');
                         materialBlock.className = 'bg-white p-4 rounded-lg border';
@@ -565,10 +563,6 @@
                         materialsContainer.appendChild(materialBlock);
                     }
                 });
-                
-                if (allAreSpeakingRoles) {
-                    materialsContainer.innerHTML = `<p class="text-base">You have selected roles that do not require a singing audition. Please proceed with the form below.</p>`;
-                }
 
                 // Pre-populate the hidden form input
                 selectedRolesInput.value = selectedCharacters.join(', ');
@@ -586,7 +580,7 @@
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
-            /*
+            
             // 5. Handle form submission
             auditionForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -623,7 +617,7 @@
                     auditionForm.reset();
                 });
             });
-            */
+            
 
             // 6. Handle going back to the start from the confirmation page
             backToStartBtn.addEventListener('click', () => {
