@@ -297,7 +297,9 @@
   <input type="hidden" name="_template" value="table">  
   <input type="hidden" name="_captcha" value="true">
   <input type="hidden" name="_webhook" value="https://script.google.com/macros/s/AKfycbwsB8O8g4ClX4l6_fV5NnCKd0IW7x5AtAMidt6oVdEFAe1BPHJNPA2Qx3xzLBLB8Xkz5w/exec?token=a9dcf7nhj4un7mk309ds7b4k9o">
-  <input type="hidden" name="_autoresponse" value="We’ve got your audition registration. You’re on our list—keep your eyes peeled for more details.">
+  <input type="hidden" name="_autoresponse" id="_autoresponse" value="We’ve got your audition registration. You’re on our list—keep your eyes peeled for more details.">
+  <input type="hidden" name="selected_roles" id="selected_roles_input">
+  <input type="hidden" name="_replyto" id="_replyto">
 
 </form>
             </section>
@@ -588,7 +590,7 @@
             });
 
             
-            // 5. Handle form submission
+<!--             // 5. Handle form submission
             auditionForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -625,7 +627,7 @@
                 });
             });
             
-
+ -->
             // 6. Handle going back to the start from the confirmation page
             backToStartBtn.addEventListener('click', () => {
                 confirmationSection.classList.add('hidden');
@@ -643,5 +645,51 @@
             }
         });
     </script>
+	<script>
+(function () {
+  var form = document.getElementById('audition-form');
+  if (!form) return;
+
+  form.addEventListener('submit', function () {
+    // Collect selected roles (adjust selectors if your cards differ)
+    var selected = document.querySelectorAll(
+      '.role-card.selected, .character-card.selected, [data-role].selected, [data-character-name].selected'
+    );
+    var roles = Array.from(selected).map(function (el) {
+      return el.dataset.role || el.dataset.characterName || (el.textContent || '').trim();
+    }).filter(Boolean);
+
+    // Hidden fields that must already exist in the form
+    var rolesInput = document.getElementById('selected_roles_input');
+    var replyTo    = document.getElementById('_replyto');
+    var autoResp   = document.getElementById('_autoresponse');
+    var emailEl    = document.getElementById('email');
+    var nameEl     = document.getElementById('name');
+
+    if (rolesInput) rolesInput.value = roles.join(', ');
+    if (replyTo && emailEl) replyTo.value = (emailEl.value || '').trim();
+
+    if (autoResp) {
+  // safe name + roles extraction (works even if roles is undefined)
+  const name = (nameEl && nameEl.value) ? nameEl.value.trim() : '';
+  const rolesList = Array.isArray(roles) && roles.length ? roles.join(', ') : '';
+
+  const roleText = rolesList
+    ? `You asked to be seen for: ${rolesList}.`
+    : `No specific roles were selected—our team will consider you broadly.`;
+
+  autoResp.value = [
+    `Thanks for stepping Into the Woods${name ? ', ' + name : ''}!`,
+    `We are reviewing your submission.`,
+    roleText,
+    `We look forward to seeing you on one of the audition dates.`,
+    `Until then, stay on the path and keep that voice ready.`
+  ].join('\n');
+}
+    // IMPORTANT: do not call preventDefault(); allow native submit + redirect.
+  });
+})();
+</script>
+
 </body>
 </html>
