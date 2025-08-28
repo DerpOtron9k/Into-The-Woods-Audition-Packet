@@ -605,12 +605,12 @@
                             if (Object.hasOwn(data, 'errors')) {
                                 alert(data["errors"].map(error => error["message"]).join(", "));
                             } else {
-                                alert('Oops! There was a problem submitting your form');
+                                alert('Oops! You form got lost in the WOODS!');
                             }
                         });
                     }
                 }).catch(error => {
-                    alert('Oops! There was a problem submitting your form');
+                    alert('Oops! You form got lost in the WOODS!');
                 }).finally(() => {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Audition Form';
