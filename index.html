@@ -18,6 +18,7 @@
         .character-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #D4C4B0; }
         .character-card.selected { border-color: #2E4035; background-color: #F0F5F2; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15); }
         .hidden { display: none; }
+        .select-button { transition: background-color 0.2s ease, color 0.2s ease; }
     </style>
 </head>
 <body class="antialiased">
@@ -92,7 +93,7 @@
 
             <section id="character-selection-section" class="mb-8">
                 <h2 class="text-3xl font-semibold mb-2">Step 1: Select Your Character(s)</h2>
-                <p class="mb-6 text-base">Select up to two characters you would like to audition for by clicking the character descriptions below. Your audition materials will be provided in the next step.</p>
+                <p class="mb-6 text-base">Select the characters you would like to audition for below. Your audition materials will be provided in the next step.</p>
 
                 <h3 class="text-2xl font-semibold mb-4">Principal Roles</h3>
                 <p class="text-sm text-gray-600 mb-4 -mt-2">The characters who drive the story and sing substantial material.</p>
@@ -175,25 +176,35 @@
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
 
-                <!-- IMPORTANT: Route to your proxy; Submify will call _webhook -->
                 <form id="audition-form" action="/api/submify" method="POST" enctype="multipart/form-data">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-[#40312C]">Full Name</label>
                             <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
                         </div>
+                         <div>
+                            <label for="pronouns" class="block text-sm font-medium text-[#40312C]">Pronouns</label>
+                            <input type="text" name="pronouns" id="pronouns" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                         <div>
                             <label for="phone" class="block text-sm font-medium text-[#40312C]">Phone Number</label>
                             <input type="tel" name="phone" id="phone" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
                         </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-[#40312C]">Email Address</label>
+                            <input type="email" name="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-[#40312C]">Email Address</label>
-                        <input type="email" name="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
+                    <div class="mt-6">
+                        <label for="roles-of-interest" class="block text-sm font-medium text-[#40312C]">Specific Roles of Interest</label>
+                        <input type="text" name="roles_of_interest" id="roles-of-interest" placeholder="e.g., Witch, Baker's Wife" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                         <div>
                             <label for="vocal-part" class="block text-sm font-medium text-[#40312C]">Vocal Part</label>
                             <select id="vocal-part" name="vocal_part" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2">
@@ -211,30 +222,25 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="mt-6">
                         <label for="experience" class="block text-sm font-medium text-[#40312C]">Previous Theatre Experience (5 most recent roles)</label>
                         <textarea name="experience" id="experience" rows="4" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
                     </div>
 
-                    <div>
+                    <div class="mt-6">
                         <label for="skills" class="block text-sm font-medium text-[#40312C]">Special Skills (e.g., instruments, tumbling, etc.)</label>
                         <textarea name="skills" id="skills" rows="2" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
                     </div>
 
-                    <div>
+                    <div class="mt-6">
                         <label for="headshot" class="block text-sm font-medium text-[#40312C]">Headshot Upload (Optional)</label>
                         <input type="file" name="headshot" id="headshot" accept="image/png, image/jpeg" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#F0F5F2] file:text-[#2E4035] hover:file:bg-[#dbece4]">
                         <p class="mt-1 text-xs text-gray-500">PNG or JPG file. Max 5MB.</p>
                     </div>
 
-                    <div>
+                    <div class="mt-6">
                         <label for="conflicts" class="block text-sm font-medium text-[#40312C]">Please list all known conflicts with the rehearsal period.</label>
                         <textarea name="conflicts" id="conflicts" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
-                    </div>
-
-                    <div class="flex items-center">
-                        <input id="any-role" name="any_role" type="checkbox" value="yes" class="h-4 w-4 rounded border-gray-300 text-[#2E4035] focus:ring-[#2E4035]">
-                        <label for="any-role" class="ml-2 block text-sm text-gray-900">I am willing to accept any role offered, including ensemble.</label>
                     </div>
 
                     <div class="text-center pt-4">
@@ -267,7 +273,7 @@
     </div>
 
     <script>
-        
+
 // --- DATA: CHARACTER INFORMATION & MATERIALS ---
 const characterData = {
   "Baker": {
@@ -289,7 +295,7 @@ const characterData = {
   "Cinderella": {
     category: "principal",
     vocalInfo: "Age 20–35, G3–G5 — Soprano (lyric or light mezzo with soprano extension)",
-    characterDescription: "A thoughtful young woman who longs for a better life yet questions what “happily ever after” really means. Intelligent, observant, and often torn between desire and hesitation, she becomes a moral compass in the woods, learning to choose her own path. Vocally, she requires warmth and clarity—her voice is never just “pretty,” it must carry the story with wit, vulnerability, and strength.",
+        characterDescription: "A thoughtful young woman who longs for a better life yet questions what “happily ever after” really means. Intelligent, observant, and often torn between desire and hesitation, she becomes a moral compass in the woods, learning to choose her own path. Vocally, she requires warmth and clarity—her voice is never just “pretty,” it must carry the story with wit, vulnerability, and strength.",
     auditionCut: "On the Steps of the Palace, m.23–57",
     sheetMusicUrl: "javascript:void(0);",
     audioDownloadUrl: "javascript:void(0);"
@@ -468,12 +474,20 @@ const characterData = {
                 if (char.category === 'cameo') return;
 
                 const card = document.createElement('div');
-                card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent';
+                card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent flex flex-col justify-between';
                 card.dataset.characterName = name;
 
-                let innerHTML = `<h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3><p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p><p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>`;
-                if (char.auditionCut) innerHTML += `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>`;
-                card.innerHTML = innerHTML;
+                card.innerHTML = `
+                    <div>
+                        <h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3>
+                        <p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p>
+                        <p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>
+                        ${char.auditionCut ? `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>` : ''}
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <span class="select-button bg-gray-200 text-[#2E4035] font-bold py-2 px-4 rounded-lg text-sm">Select Role</span>
+                    </div>
+                `;
 
                 if (char.category === 'principal') principalCharacterGrid.appendChild(card);
                 else if (char.category === 'supporting') supportingCharacterGrid.appendChild(card);
@@ -482,28 +496,37 @@ const characterData = {
             characterSelectionSection.addEventListener('click', (e) => {
                 const card = e.target.closest('.character-card');
                 if (!card) return;
+
                 const characterName = card.dataset.characterName;
+                const button = card.querySelector('.select-button');
                 const index = selectedCharacters.indexOf(characterName);
+
                 if (index > -1) {
                     selectedCharacters.splice(index, 1);
                     card.classList.remove('selected');
+                    button.textContent = 'Select Role';
+                    button.classList.remove('bg-[#2E4035]', 'text-white');
+                    button.classList.add('bg-gray-200');
                 } else {
                     if (selectedCharacters.length < 2) {
                         selectedCharacters.push(characterName);
                         card.classList.add('selected');
+                        button.textContent = '✓ Selected';
+                        button.classList.add('bg-[#2E4035]', 'text-white');
+                        button.classList.remove('bg-gray-200');
                     } else {
                         alert("You may only select up to two characters.");
                     }
                 }
             });
-
+            
             proceedBtn.addEventListener('click', () => {
                 if (selectedCharacters.length === 0) {
                     selectionError.classList.remove('hidden');
                     return;
                 }
                 selectionError.classList.add('hidden');
-                selectedDisplay.innerHTML = `<p class="text-base">You are auditioning for: <strong class="text-[#2E4035]">${selectedCharacters.join(', ')}</strong></p>`;
+                selectedDisplay.innerHTML = `<p class="text-base">You have selected materials for: <strong class="text-[#2E4035]">${selectedCharacters.join(', ')}</strong></p>`;
                 materialsContainer.innerHTML = '';
 
                 const ensembleBlock = document.createElement('div');
@@ -561,10 +584,11 @@ const characterData = {
             });
 
             if (window.location.hash === '#submitted') {
-                mainContent.classList.add('hidden');
+                mainContent.classList.add('hidden'); 
                 confirmationSection.classList.remove('hidden');
             }
         });
     </script>
 </body>
 </html>
+
