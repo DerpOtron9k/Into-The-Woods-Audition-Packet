@@ -10,66 +10,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles to extend Tailwind */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FBF9F5;
-            color: #40312C;
-        }
-        h1, h2, h3 {
-            font-family: 'Playfair Display', serif;
-            color: #2E4035;
-        }
-        .storybook-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem 3rem;
-            background-color: #FFFFFF;
-            border: 1px solid #EAE0D5;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
-        .decorative-line {
-            height: 1px;
-            background: linear-gradient(to right, transparent, #BFAE9C, transparent);
-            margin: 2.5rem 0;
-        }
-        /* Styles for interactive character cards */
-        .character-card {
-            cursor: pointer;
-            border: 2px solid transparent;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-        .character-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            border-color: #D4C4B0; /* Subtle border on hover */
-        }
-        .character-card.selected {
-            border-color: #2E4035; /* Strong border when selected */
-            background-color: #F0F5F2;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15);
-        }
-        /* Hide element utility */
-        .hidden {
-            display: none;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
+        .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+        .decorative-line { height: 1px; background: linear-gradient(to right, transparent, #BFAE9C, transparent); margin: 2.5rem 0; }
+        .character-card { cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+        .character-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #D4C4B0; }
+        .character-card.selected { border-color: #2E4035; background-color: #F0F5F2; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15); }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="antialiased">
-
     <div class="storybook-container">
-        
         <div id="main-content">
-            <!-- Header Section -->
             <header class="text-center mb-10">
                 <h1 class="text-4xl md:text-5xl font-bold mb-2">🎭 Into the Woods</h1>
                 <p class="text-xl text-gray-600">Audition Packet</p>
             </header>
 
-            <!-- Welcome Section -->
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold border-b-2 border-[#D4C4B0] pb-2 mb-4">Greetings</h2>
                 <p class="text-base leading-relaxed">
@@ -79,7 +37,6 @@
 
             <div class="decorative-line"></div>
 
-            <!-- Show Information Section -->
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">Show Information</h2>
                 <ul class="space-y-3 text-base">
@@ -97,10 +54,9 @@
                     <li><strong>Rehearsal Period:</strong> January 2026 – May 2026</li>
                 </ul>
             </section>
-            
+
             <div class="decorative-line"></div>
 
-            <!-- Audition Details Section -->
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">Audition Details</h2>
                 <div class="grid md:grid-cols-2 gap-6">
@@ -120,7 +76,6 @@
                 </div>
             </section>
 
-            <!-- What to Prepare Section -->
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">What to Prepare</h2>
                 <ul class="list-disc list-inside space-y-3 text-base leading-relaxed">
@@ -132,27 +87,22 @@
                     <li>Sides will be provided for cold reads at the audition.</li>
                 </ul>
             </section>
-            
+
             <div class="decorative-line"></div>
 
-            <!-- Characters & Audition Music Section -->
             <section id="character-selection-section" class="mb-8">
                 <h2 class="text-3xl font-semibold mb-2">Step 1: Select Your Character(s)</h2>
                 <p class="mb-6 text-base">Select up to two characters you would like to audition for. Your audition materials will be provided in the next step.</p>
-                
+
                 <h3 class="text-2xl font-semibold mb-4">Principal Roles</h3>
                 <p class="text-sm text-gray-600 mb-4 -mt-2">The characters who drive the story and sing substantial material.</p>
-                <div id="principal-character-grid" class="space-y-6">
-                    <!-- Principal roles will be dynamically inserted here -->
-                </div>
+                <div id="principal-character-grid" class="space-y-6"></div>
 
                 <div class="decorative-line my-8"></div>
 
                 <h3 class="text-2xl font-semibold mb-4">Supporting Roles</h3>
                 <p class="text-sm text-gray-600 mb-4 -mt-2">Smaller but still characterful parts, often doubled or lightly sung.</p>
-                <div id="supporting-character-grid" class="space-y-6">
-                    <!-- Supporting roles will be dynamically inserted here -->
-                </div>
+                <div id="supporting-character-grid" class="space-y-6"></div>
 
                 <div class="decorative-line my-8"></div>
 
@@ -162,7 +112,6 @@
 
             <div class="decorative-line"></div>
 
-            <!-- Rehearsal & Casting Section -->
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">Rehearsals & Casting</h2>
                 <div class="space-y-6">
@@ -182,8 +131,6 @@
                 </div>
             </section>
 
-
-            <!-- Sign Up Section -->
             <section class="text-center mt-12">
                 <h2 class="text-3xl font-semibold mb-4">Step 2: Get Materials & Sign Up</h2>
                 <p id="signup-prompt" class="mb-6 text-gray-700 max-w-xl mx-auto">Once you've selected a character, click below to proceed.</p>
@@ -194,39 +141,32 @@
             </section>
         </div>
 
-        <!-- Registration Form Section (Initially Hidden) -->
+        <!-- Registration Form Section -->
         <div id="registration-section" class="hidden">
             <header class="text-center mb-10">
                 <h1 class="text-4xl md:text-5xl font-bold mb-2">Audition Registration</h1>
             </header>
 
-            <!-- Back Button -->
             <div class="mb-6">
                 <button id="back-to-packet-btn" class="text-sm text-[#2E4035] hover:underline">
                     &larr; Back to Audition Packet
                 </button>
             </div>
-            
-            <!-- Selected Characters Display -->
-            <div id="selected-characters-display" class="mb-8 p-4 bg-gray-100 rounded-lg border">
-                <!-- Selected characters will be dynamically inserted here -->
-            </div>
+
+            <div id="selected-characters-display" class="mb-8 p-4 bg-gray-100 rounded-lg border"></div>
 
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">Your Audition Materials</h2>
-                <div id="materials-container" class="space-y-6">
-                    <!-- Audition materials will be dynamically inserted here -->
-                </div>
+                <div id="materials-container" class="space-y-6"></div>
             </section>
-            
+
             <div class="decorative-line"></div>
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
-                <form id="audition-form" action="/api/submify"
-      method="POST" enctype="multipart/form-data">
-	  
 
+                <!-- IMPORTANT: Route to your proxy; Submify will call _webhook -->
+                <form id="audition-form" action="/api/submify" method="POST" enctype="multipart/form-data">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-[#40312C]">Full Name</label>
@@ -265,7 +205,7 @@
                         <label for="experience" class="block text-sm font-medium text-[#40312C]">Previous Theatre Experience (5 most recent roles)</label>
                         <textarea name="experience" id="experience" rows="4" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
                     </div>
-                    
+
                     <div>
                         <label for="skills" class="block text-sm font-medium text-[#40312C]">Special Skills (e.g., instruments, tumbling, etc.)</label>
                         <textarea name="skills" id="skills" rows="2" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[#2E4035] focus:ring-[#2E4035] sm:text-sm p-2"></textarea>
@@ -292,202 +232,57 @@
                             Submit Audition Form
                         </button>
                     </div>
-                
-  <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
-  <input type="hidden" name="_cc" value="staheli.andrew@gmail.com">
-  <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted">
-  <input type="hidden" name="_template" value="table">  
-  <input type="hidden" name="_captcha" value="true">
-  <input type="hidden" name="_webhook" value="https://script.google.com/macros/s/AKfycbw-C8_oexj28UsPl1UOO16ezH2Bbi8xpvax4J4-6o4qOfywvfNJqI44lF_06sCe85Xjaw/exec?token=a9dcf7nhj4un7mk309ds7b4k9o">
-  <input type="hidden" name="_autoresponse" id="_autoresponse" value="We’ve got your audition registration. You’re on our list—keep your eyes peeled for more details.">
-  <input type="hidden" name="selected_roles" id="selected_roles_input">
-  <input type="hidden" name="_replyto" id="_replyto">
 
-</form>
+                    <!-- Provider controls and webhook -->
+                    <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
+                    <input type="hidden" name="_cc" value="staheli.andrew@gmail.com">
+                    <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_captcha" value="true">
+                    <input type="hidden" name="_webhook" value="https://script.google.com/macros/s/AKfycbw-C8_oexj28UsPl1UOO16ezH2Bbi8xpvax4J4-6o4qOfywvfNJqI44lF_06sCe85Xjaw/exec?token=a9dcf7nhj4un7mk309ds7b4k9o">
+                    <input type="hidden" name="_autoresponse" id="_autoresponse" value="We’ve got your audition registration. You’re on our list—keep your eyes peeled for more details.">
+                    <input type="hidden" name="selected_roles" id="selected_roles_input">
+                    <input type="hidden" name="_replyto" id="_replyto">
+                </form>
             </section>
         </div>
 
-        <!-- Confirmation Page (Initially Hidden) -->
         <div id="confirmation-section" class="hidden text-center">
             <h1 class="text-4xl font-bold mb-4">Thank You!</h1>
-            <p class="text-lg text-gray-700 mb-8">Your audition form has been submitted successfully.<br> 
-				We look forward to seeing you!</p>
+            <p class="text-lg text-gray-700 mb-8">Your audition form has been submitted successfully.<br>We look forward to seeing you!</p>
             <button id="back-to-start-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
                 &larr; Back to Audition Packet
             </button>
         </div>
-
     </div>
 
     <script>
-        // --- DATA: CHARACTER INFORMATION & MATERIALS ---
+        // --- DATA ---
         const characterData = {
-            "Baker": {
-                category: "principal",
-                vocalInfo: "Age 20-45, A♭2–G4 — Baritone",
-                characterDescription: "A humble, anxious man who longs for a child and feels inadequate before the task. At first, he fumbles through quests, relying on his wife’s cleverness, but beneath the hesitation lies genuine decency and heart. His journey is one of growth: learning to face loss, to stand on his own, and to embrace the responsibility of fatherhood. The Baker is not a bold hero, but a relatable everyman whose humor, vulnerability, and quiet courage form the show’s emotional core.",
-                auditionCut: "No More, measures 116–146.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Baker’s Wife": {
-                category: "principal",
-                vocalInfo: "Age 20-45, A3–E5 — Mezzo-soprano (strong belt/character mezzo)",
-                characterDescription: "A determined and bright woman who wishes to be a mother. She leads a simple life but is proactive and takes charge in her endeavors.",
-                auditionCut: "Moments in the Woods, measures 27–64.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Cinderella": {
-                category: "principal",
-                vocalInfo: "Age 20-35, G3–G5 — Soprano",
-                characterDescription: "A young, earnest maiden constantly mistreated by her stepfamily. Despite her hardships, she remains resilient and hopeful.",
-                auditionCut: "On the Steps of the Palace, measures 23–57.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Cinderella’s Father": { 
-                category: "cameo",
-                vocalInfo: "Age 40-65, Non-singing, Speaking role",
-                characterDescription: "A drunk but well-meaning father.",
-                auditionCut: "None." 
-            },
-            "Cinderella’s Mother": {
-                category: "supporting",
-                vocalInfo: "Age 40-65, G3–A♭5 — Soprano (ethereal/legato part)",
-                characterDescription: "Deceased, her spirit guards and aids her daughter from a tree. A comforting and guiding presence.",
-                auditionCut: "Cinderella at the Grave, complete verse.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Cinderella’s Prince": {
-                category: "principal",
-                vocalInfo: "Age 20-45, B2–F4 — Baritone (comic/lyric baritone range)",
-                characterDescription: "Dashing, smug, and melodramatically romantic, Cinderella’s Prince is a charming but shallow storybook royal who pursues women as trophies. He takes himself very seriously—swooning one moment, petty the next—which makes him hilarious to watch. Requires strong comic timing, broad physicality, and a resonant baritone/tenor voice.",
-                auditionCut: "Agony, measures 1–35.",
-                sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
-                audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
-            },
-            "Florinda & Lucinda": {
-                category: "supporting",
-                vocalInfo: "Age 14-35, C4–A♭5 — Mezzo/High-mezzo (step-sisters often pushed into belt/high-head mix)",
-                characterDescription: "Cinderella’s vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry “up” leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power. Mezzo-soprano/character soprano; featured ensemble.",
-                auditionCut: "Into the Woods Prologue, Festival section (their verses).",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Giant": { 
-                category: "supporting",
-                vocalInfo: "Age 20-65, Voice-over",
-                characterDescription: "The wife of the giant Jack killed. Her booming voice from offstage brings terror to the kingdom.",
-                auditionCut: "Act II confrontation voice cue." 
-            },
-            "Granny": { 
-                category: "supporting",
-                vocalInfo: "Age 40-65, Speaking role",
-                characterDescription: "Little Red's grandmother. She is feisty and capable of defending herself.",
-                auditionCut: "I Know Things Now – Granny’s spoken lines." 
-            },
-            "Jack": {
-                category: "principal",
-                vocalInfo: "Age 14-25, B2–G4 — Tenor / youth tenor (boyish, chest mixed top notes).",
-                characterDescription: "A poor farm boy on the cusp of growing up. Earnest, impulsive, and a bit naïve, but never cruel. Loves his cow Milky White more than anything—until he discovers there are giants in the sky. His journey takes him from childish innocence to painful maturity as he learns about bravery, loss, and responsibility.",
-                auditionCut: "Giants in the Sky, measures 1–37.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Jack's Mother": {
-                category: "principal",
-                vocalInfo: "Age 40-65, B♭3–F5 — Mezzo-soprano / light soprano",
-                characterDescription: "The pragmatic center of Jack’s small, precarious world. She’s worn thin by worry (money, safety, the cow) but still radiates a particular, stubborn love: the kind that scolds because she cares. Comic in her exasperation, honest in her fear, she can turn from brisk, businesslike speech to a quietly vulnerable line in a heartbeat. She’s not a caricature of poverty — she’s someone who’s learned to make do and who expects the same of her son.",
-                auditionCut: "Act I Opening Part 5, measures 12–36 (“Jack, Jack, Jack” through “Into the woods to journey’s end”).",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Little Red": {
-                category: "principal",
-                vocalInfo: "Age 14-25, B♭3–F5 — Mezzo-soprano",
-                characterDescription: "A spoiled young girl who is strong-willed, sharp, curious, and unafraid: she’s the small motor of the story who learns, in one bright jump, that the world is bigger and more dangerous than she thought. Singly voiced and quick of foot, she’s curious not helpless — brave enough to ask questions and clear enough in diction to make every discovery land.",
-                auditionCut: "I Know Things Now, measures 20–52.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Milky-White": { 
-                category: "cameo",
-                vocalInfo: "Any age, Puppetry/Noise role",
-                characterDescription: "Jack's beloved sickly white cow. A central figure in the quest for the magic items.",
-                auditionCut: "None." 
-            },
-            "Narrator / Mysterious Man": { 
-                category: "supporting",
-                vocalInfo: "Age 40-65, G2–E4 — Bass/Baritone",
-                characterDescription: "A dual role: the Narrator is witty, detached, and authoritative—our guide through the fairy-tale world, until the story turns on him. The Mysterious Man is the Baker’s estranged father, ragged and elusive, by turns comic and poignant. He prods the Baker forward with riddles and half-truths, both frustrating and guiding him. Requires strong diction, dry humor, and the ability to shift quickly between polished storyteller and haunted outsider.",
-                auditionCut: "No More, measures 69–109.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Rapunzel": {
-                category: "principal",
-                vocalInfo: "Age 20-40, B3–A5 — High Soprano (light, innocent, often high head voice).",
-                characterDescription: "Sheltered and theatrical, Rapunzel is a bright, inquisitive late-teen whose sweetness masks a quick, now-scarred intelligence. She sings in a light lyric soprano; the part demands crystalline head voice, conversational phrasing, and the ability to flip from breathy wonder to clipped, defensive wit in a single line.",
-                auditionCut: "Offstage vocalise: “Ah-ah-ah-ah-ah…” passage (as written in score around p. 87).",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Rapunzel’s Prince": {
-                category: "principal",
-                vocalInfo: "Age 20-45, C♯3–E4 — Baritone (similar to his brother)",
-                characterDescription: "The younger brother of Cinderella’s Prince, Rapunzel’s Prince is equally dashing, equally melodramatic, and equally absurd—just a little less polished. Where his elder brother struts, he blusters. His pursuit of Rapunzel is overblown with sighs, swoons, and grand declarations. He is competitive with his brother to the point of silliness.",
-                auditionCut: "Agony, measures 1–35.",
-                sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
-                audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
-            },
-            "Snow White & Sleeping Beauty": {
-                category: "cameo",
-                vocalInfo: "Age 20-40, Extra, Non-singing",
-                characterDescription: "Cameo appearances. These roles are great for actors with good stage presence who may have less vocal experience.",
-                auditionCut: "None."
-            },
-            "Rapunzel’s Double/Body": {
-                category: "cameo",
-                vocalInfo: "Any age, Extra, Non-singing",
-                characterDescription: "An optional, non-singing role for staging purposes during Rapunzel's scenes.",
-                auditionCut: "None."
-            },
-            "Stepmother": {
-                vocalInfo: "Age 40-65, A3–F♯5 — Mezzo-soprano (character, with some higher speech-song lines)",
-                characterDescription: "The mean-spirited, demanding, and cruel.  Brisk, impeccably ordered and quietly terrified of disorder. She keeps the household — and its reputations — under strict management, speaking with clipped precision and a practiced disdain that reveals more fear than malice. Play her as economical and exact: every consonant a small command, every gesture a maintenance of control. The moment she slips, let it read as a human error, not confession.",
-                auditionCut: "Into the Woods Prologue, “Never wear mauve at a ball…”",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Steward": {
-                category: "supporting",
-                vocalInfo: "Age 20-65, Non-singing",
-                characterDescription: "A surly, bureaucratic manservant who does whatever he has to do to solve a problem.",
-                auditionCut: "Act I Finale, short patter excerpt.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Witch": {
-                category: "principal",
-                vocalInfo: "Age 20-65, F3–G5 — Mezzo-soprano / alto (huge character belt and dramatic low notes)",
-                characterDescription: "A woman who learned to rule by fear and wit, then discovered the one thing fear can’t keep: her child. Sharp-tongued, truth-telling, and heartbreakingly human—equal parts protector and provoker.",
-                auditionCut: "Witch’s Lament, measures 1–20.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            },
-            "Wolf": {
-                category: "supporting",
-                vocalInfo: "Age 20-45, B♭2–G♭4 — Baritone (seductive, low chest and some upper mix)",
-                characterDescription: "The Wolf is sly charm wrapped in menace—a cabaret emcee in fur who embodies appetite and temptation. More seducer than snarler, he sells Red the thrill of straying from the path with wit and allure, making the audience laugh uneasily even as they sense the danger. His purpose is to unsettle, not leer, so that Red’s later lesson—“I know things now”—lands with clarity.",
-                auditionCut: "Hello, Little Girl, measures 20–54.",
-                sheetMusicUrl: "javascript:void(0);",
-                audioDownloadUrl: "javascript:void(0);"
-            }
+            "Baker": {"category":"principal","vocalInfo":"Age 20-45, A♭2–G4 — Baritone","characterDescription":"A humble, anxious man who longs for a child and feels inadequate before the task. At first, he fumbles through quests, relying on his wife’s cleverness, but beneath the hesitation lies genuine decency and heart. His journey is one of growth: learning to face loss, to stand on his own, and to embrace the responsibility of fatherhood. The Baker is not a bold hero, but a relatable everyman whose humor, vulnerability, and quiet courage form the show’s emotional core.","auditionCut":"No More, measures 116–146.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Baker’s Wife": {"category":"principal","vocalInfo":"Age 20-45, A3–E5 — Mezzo-soprano (strong belt/character mezzo)","characterDescription":"A determined and bright woman who wishes to be a mother. She leads a simple life but is proactive and takes charge in her endeavors.","auditionCut":"Moments in the Woods, measures 27–64.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Cinderella": {"category":"principal","vocalInfo":"Age 20-35, G3–G5 — Soprano","characterDescription":"A young, earnest maiden constantly mistreated by her stepfamily. Despite her hardships, she remains resilient and hopeful.","auditionCut":"On the Steps of the Palace, measures 23–57.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Cinderella’s Father": {"category":"cameo","vocalInfo":"Age 40-65, Non-singing, Speaking role","characterDescription":"A drunk but well-meaning father.","auditionCut":"None."},
+            "Cinderella’s Mother": {"category":"supporting","vocalInfo":"Age 40-65, G3–A♭5 — Soprano (ethereal/legato part)","characterDescription":"Deceased, her spirit guards and aids her daughter from a tree. A comforting and guiding presence.","auditionCut":"Cinderella at the Grave, complete verse.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Cinderella’s Prince": {"category":"principal","vocalInfo":"Age 20-45, B2–F4 — Baritone (comic/lyric baritone range)","characterDescription":"Dashing, smug, and melodramatically romantic, Cinderella’s Prince is a charming but shallow storybook royal who pursues women as trophies. He takes himself very seriously—swooning one moment, petty the next—which makes him hilarious to watch. Requires strong comic timing, broad physicality, and a resonant baritone/tenor voice.","auditionCut":"Agony, measures 1–35.","sheetMusicUrl":"https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link","audioDownloadUrl":"https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"},
+            "Florinda & Lucinda": {"category":"supporting","vocalInfo":"Age 14-35, C4–A♭5 — Mezzo/High-mezzo (step-sisters often pushed into belt/high-head mix)","characterDescription":"Cinderella’s vain, self-absorbed stepsisters.","auditionCut":"Into the Woods Prologue, Festival section (their verses).","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Giant": {"category":"supporting","vocalInfo":"Age 20-65, Voice-over","characterDescription":"The wife of the giant Jack killed.","auditionCut":"Act II confrontation voice cue."},
+            "Granny": {"category":"supporting","vocalInfo":"Age 40-65, Speaking role","characterDescription":"Little Red's grandmother.","auditionCut":"I Know Things Now – Granny’s spoken lines."},
+            "Jack": {"category":"principal","vocalInfo":"Age 14-25, B2–G4 — Tenor / youth tenor","characterDescription":"A poor farm boy on the cusp of growing up.","auditionCut":"Giants in the Sky, measures 1–37.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Jack's Mother": {"category":"principal","vocalInfo":"Age 40-65, B♭3–F5 — Mezzo-soprano / light soprano","characterDescription":"The pragmatic center of Jack’s world.","auditionCut":"Act I Opening Part 5, measures 12–36.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Little Red": {"category":"principal","vocalInfo":"Age 14-25, B♭3–F5 — Mezzo-soprano","characterDescription":"A spoiled young girl who is strong-willed, sharp, curious, and unafraid.","auditionCut":"I Know Things Now, measures 20–52.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Milky-White": {"category":"cameo","vocalInfo":"Any age, Puppetry/Noise role","characterDescription":"Jack's beloved sickly white cow.","auditionCut":"None."},
+            "Narrator / Mysterious Man": {"category":"supporting","vocalInfo":"Age 40-65, G2–E4 — Bass/Baritone","characterDescription":"A dual role.","auditionCut":"No More, measures 69–109.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Rapunzel": {"category":"principal","vocalInfo":"Age 20-40, B3–A5 — High Soprano","characterDescription":"Sheltered and theatrical.","auditionCut":"Offstage vocalise: “Ah-ah-ah-ah-ah…”.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Rapunzel’s Prince": {"category":"principal","vocalInfo":"Age 20-45, C♯3–E4 — Baritone","characterDescription":"The younger brother of Cinderella’s Prince.","auditionCut":"Agony, measures 1–35.","sheetMusicUrl":"https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link","audioDownloadUrl":"https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"},
+            "Snow White & Sleeping Beauty": {"category":"cameo","vocalInfo":"Age 20-40, Extra, Non-singing","characterDescription":"Cameo appearances.","auditionCut":"None."},
+            "Rapunzel’s Double/Body": {"category":"cameo","vocalInfo":"Any age, Extra, Non-singing","characterDescription":"Optional staging role.","auditionCut":"None."},
+            "Stepmother": {"vocalInfo":"Age 40-65, A3–F♯5 — Mezzo-soprano","characterDescription":"The mean-spirited, demanding, and cruel.","auditionCut":"Into the Woods Prologue, “Never wear mauve at a ball…”","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Steward": {"category":"supporting","vocalInfo":"Age 20-65, Non-singing","characterDescription":"A surly, bureaucratic manservant.","auditionCut":"Act I Finale, short patter excerpt.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Witch": {"category":"principal","vocalInfo":"Age 20-65, F3–G5 — Mezzo-soprano / alto","characterDescription":"A woman who learned to rule by fear and wit.","auditionCut":"Witch’s Lament, measures 1–20.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"},
+            "Wolf": {"category":"supporting","vocalInfo":"Age 20-45, B♭2–G♭4 — Baritone","characterDescription":"The Wolf is sly charm wrapped in menace.","auditionCut":"Hello, Little Girl, measures 20–54.","sheetMusicUrl":"javascript:void(0);","audioDownloadUrl":"javascript:void(0);"}
         };
 
-        // --- APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             const principalCharacterGrid = document.getElementById('principal-character-grid');
             const supportingCharacterGrid = document.getElementById('supporting-character-grid');
@@ -503,48 +298,35 @@
             const selectionError = document.getElementById('selection-error');
             const selectedDisplay = document.getElementById('selected-characters-display');
             const auditionForm = document.getElementById('audition-form');
-            
+
             let selectedCharacters = [];
 
-            // 1. Populate the character grids on page load
             const sortedCharacters = Object.keys(characterData).sort();
-
             sortedCharacters.forEach(name => {
                 const char = characterData[name];
-                if (char.category === 'cameo') return; // Skip cameo roles
+                if (char.category === 'cameo') return;
 
                 const card = document.createElement('div');
                 card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent';
                 card.dataset.characterName = name;
 
                 let innerHTML = `<h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3><p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p><p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>`;
-                
-                if (char.auditionCut) {
-                    innerHTML += `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>`;
-                }
+                if (char.auditionCut) innerHTML += `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>`;
                 card.innerHTML = innerHTML;
 
-                if (char.category === 'principal') {
-                    principalCharacterGrid.appendChild(card);
-                } else if (char.category === 'supporting') {
-                    supportingCharacterGrid.appendChild(card);
-                }
+                if (char.category === 'principal') principalCharacterGrid.appendChild(card);
+                else if (char.category === 'supporting') supportingCharacterGrid.appendChild(card);
             });
 
-            // 2. Handle character selection
             characterSelectionSection.addEventListener('click', (e) => {
                 const card = e.target.closest('.character-card');
                 if (!card) return;
-
                 const characterName = card.dataset.characterName;
                 const index = selectedCharacters.indexOf(characterName);
-
                 if (index > -1) {
-                    // Deselect character
                     selectedCharacters.splice(index, 1);
                     card.classList.remove('selected');
                 } else {
-                    // Select character, enforcing max of 2
                     if (selectedCharacters.length < 2) {
                         selectedCharacters.push(characterName);
                         card.classList.add('selected');
@@ -554,21 +336,15 @@
                 }
             });
 
-            // 3. Handle proceeding to the registration form
             proceedBtn.addEventListener('click', () => {
                 if (selectedCharacters.length === 0) {
                     selectionError.classList.remove('hidden');
                     return;
                 }
                 selectionError.classList.add('hidden');
-
-                // Display selected characters
                 selectedDisplay.innerHTML = `<p class="text-base">You are auditioning for: <strong class="text-[#2E4035]">${selectedCharacters.join(', ')}</strong></p>`;
+                materialsContainer.innerHTML = '';
 
-                // Populate materials
-                materialsContainer.innerHTML = ''; // Clear previous materials
-                
-                // Add the required ensemble piece for everyone
                 const ensembleBlock = document.createElement('div');
                 ensembleBlock.className = 'bg-white p-4 rounded-lg border border-blue-200';
                 ensembleBlock.innerHTML = `
@@ -583,10 +359,10 @@
 
                 selectedCharacters.forEach(name => {
                     const char = characterData[name];
-                    if (char.sheetMusicUrl) { // If it's a singing role, it will have this property
-                        const materialBlock = document.createElement('div');
-                        materialBlock.className = 'bg-white p-4 rounded-lg border';
-                        materialBlock.innerHTML = `
+                    if (char.sheetMusicUrl) {
+                        const block = document.createElement('div');
+                        block.className = 'bg-white p-4 rounded-lg border';
+                        block.innerHTML = `
                             <h3 class="text-xl font-semibold text-[#2E4035]">${name}</h3>
                             <p class="text-sm text-gray-600 mb-3">Audition Cut: ${char.auditionCut}</p>
                             <div class="flex flex-wrap gap-4">
@@ -594,45 +370,35 @@
                                 <a href="${char.audioDownloadUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
                             </div>
                         `;
-                        materialsContainer.appendChild(materialBlock);
+                        materialsContainer.appendChild(block);
                     }
                 });
 
-                // Pre-populate the hidden form input
                 selectedRolesInput.value = selectedCharacters.join(', ');
-
-                // Switch views
                 mainContent.classList.add('hidden');
                 registrationSection.classList.remove('hidden');
-                window.scrollTo(0, 0); // Scroll to top of the new section
+                window.scrollTo(0, 0);
             });
 
-            // 4. Handle going back to the packet
             backBtn.addEventListener('click', () => {
                 registrationSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
-            
-            // 5. Handle form submission
             auditionForm.addEventListener('submit', function(e) {
-                // The form will now submit normally. The _next field will redirect.
+                // Normal submit; proxy returns a 303 to confirmation.
             });
-            
 
-            // 6. Handle going back to the start from the confirmation page
             backToStartBtn.addEventListener('click', () => {
-                window.location.hash = ''; // Clear the hash
+                window.location.hash = '';
                 confirmationSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
-                // Deselect all cards
                 document.querySelectorAll('.character-card.selected').forEach(card => card.classList.remove('selected'));
                 selectedCharacters = [];
                 window.scrollTo(0, 0);
             });
 
-            // 7. Check for submission confirmation on page load
             if (window.location.hash === '#submitted') {
                 mainContent.classList.add('hidden');
                 confirmationSection.classList.remove('hidden');
