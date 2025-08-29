@@ -140,17 +140,24 @@
                 <h2 class="text-3xl font-semibold mb-2">Step 1: Select Your Character(s)</h2>
                 <p class="mb-6 text-base">Select up to two characters you would like to audition for. Your audition materials will be provided in the next step.</p>
                 
-                <h3 class="text-2xl font-semibold mb-4">Singing Roles</h3>
-                <div id="singing-character-grid" class="space-y-6">
-                    <!-- Singing roles will be dynamically inserted here -->
+                <h3 class="text-2xl font-semibold mb-4">Principal Roles</h3>
+                <p class="text-sm text-gray-600 mb-4 -mt-2">The characters who drive the story and sing substantial material.</p>
+                <div id="principal-character-grid" class="space-y-6">
+                    <!-- Principal roles will be dynamically inserted here -->
                 </div>
 
                 <div class="decorative-line my-8"></div>
 
-                <h3 class="text-2xl font-semibold mb-4">Ensemble Roles</h3>
-                <div id="ensemble-character-grid" class="space-y-6">
-                    <!-- Non-singing roles will be dynamically inserted here -->
+                <h3 class="text-2xl font-semibold mb-4">Supporting Roles</h3>
+                <p class="text-sm text-gray-600 mb-4 -mt-2">Smaller but still characterful parts, often doubled or lightly sung.</p>
+                <div id="supporting-character-grid" class="space-y-6">
+                    <!-- Supporting roles will be dynamically inserted here -->
                 </div>
+
+                <div class="decorative-line my-8"></div>
+
+                <h3 class="text-2xl font-semibold mb-4">Cameo / Non-Singing Roles</h3>
+                <p class="text-base text-gray-800 bg-gray-50 p-4 rounded-lg border">Several cameo/featured ensemble roles (Snow White, Sleeping Beauty, Milky White, etc.) appear briefly and are often doubled with other parts. These will be assigned at the director’s discretion from those who audition for Principal and Supporting roles.</p>
             </section>
 
             <div class="decorative-line"></div>
@@ -316,6 +323,7 @@
         // --- DATA: CHARACTER INFORMATION & MATERIALS ---
         const characterData = {
             "Baker": {
+                category: "principal",
                 vocalInfo: "Age 20-45, A♭2–G4 — Baritone",
                 characterDescription: "A humble, anxious man who longs for a child and feels inadequate before the task. At first, he fumbles through quests, relying on his wife’s cleverness, but beneath the hesitation lies genuine decency and heart. His journey is one of growth: learning to face loss, to stand on his own, and to embrace the responsibility of fatherhood. The Baker is not a bold hero, but a relatable everyman whose humor, vulnerability, and quiet courage form the show’s emotional core.",
                 auditionCut: "No More, measures 116–146.",
@@ -323,6 +331,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Baker’s Wife": {
+                category: "principal",
                 vocalInfo: "Age 20-45, A3–E5 — Mezzo-soprano (strong belt/character mezzo)",
                 characterDescription: "A determined and bright woman who wishes to be a mother. She leads a simple life but is proactive and takes charge in her endeavors.",
                 auditionCut: "Moments in the Woods, measures 27–64.",
@@ -330,6 +339,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella": {
+                category: "principal",
                 vocalInfo: "Age 20-35, G3–G5 — Soprano",
                 characterDescription: "A young, earnest maiden constantly mistreated by her stepfamily. Despite her hardships, she remains resilient and hopeful.",
                 auditionCut: "On the Steps of the Palace, measures 23–57.",
@@ -337,11 +347,13 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella’s Father": { 
-                vocalInfo: "Age 40-65, Ensemble, Speaking role",
+                category: "cameo",
+                vocalInfo: "Age 40-65, Non-singing, Speaking role",
                 characterDescription: "A drunk but well-meaning father.",
                 auditionCut: "None." 
             },
             "Cinderella’s Mother": {
+                category: "supporting",
                 vocalInfo: "Age 40-65, G3–A♭5 — Soprano (ethereal/legato part)",
                 characterDescription: "Deceased, her spirit guards and aids her daughter from a tree. A comforting and guiding presence.",
                 auditionCut: "Cinderella at the Grave, complete verse.",
@@ -349,30 +361,35 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Cinderella’s Prince": {
+                category: "principal",
                 vocalInfo: "Age 20-45, B2–F4 — Baritone (comic/lyric baritone range)",
-                characterDescription: "Vain, manly, and charmingly superficial. Dashing, smug, and melodramatically romantic, Cinderella’s Prince is a charming but shallow storybook royal who pursues women as trophies. He takes himself very seriously—swooning one moment, petty the next—which makes him hilarious to watch. Requires strong comic timing, broad physicality, and a resonant baritone/tenor voice.",
+                characterDescription: "Dashing, smug, and melodramatically romantic, Cinderella’s Prince is a charming but shallow storybook royal who pursues women as trophies. He takes himself very seriously—swooning one moment, petty the next—which makes him hilarious to watch. Requires strong comic timing, broad physicality, and a resonant baritone/tenor voice.",
                 auditionCut: "Agony, measures 1–35.",
                 sheetMusicUrl: "https://drive.google.com/file/d/1QmE3T4TZTo6iMrqDWRY783IQ834IFXAV/view?usp=drive_link",
                 audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
             },
             "Florinda & Lucinda": {
+                category: "supporting",
                 vocalInfo: "Age 14-35, C4–A♭5 — Mezzo/High-mezzo (step-sisters often pushed into belt/high-head mix)",
-                characterDescription: "Florinda & Lucinda – Cinderella’s vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry “up” leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power. Mezzo-soprano/character soprano; featured ensemble.",
+                characterDescription: "Cinderella’s vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry “up” leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power. Mezzo-soprano/character soprano; featured ensemble.",
                 auditionCut: "Into the Woods Prologue, Festival section (their verses).",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Giant": { 
-                vocalInfo: "Age 20-65, Ensemble, Voice-over",
+                category: "supporting",
+                vocalInfo: "Age 20-65, Voice-over",
                 characterDescription: "The wife of the giant Jack killed. Her booming voice from offstage brings terror to the kingdom.",
                 auditionCut: "Act II confrontation voice cue." 
             },
             "Granny": { 
-                vocalInfo: "Age 40-65, Ensemble, Speaking role",
+                category: "supporting",
+                vocalInfo: "Age 40-65, Speaking role",
                 characterDescription: "Little Red's grandmother. She is feisty and capable of defending herself.",
                 auditionCut: "I Know Things Now – Granny’s spoken lines." 
             },
             "Jack": {
+                category: "principal",
                 vocalInfo: "Age 14-25, B2–G4 — Tenor / youth tenor (boyish, chest mixed top notes).",
                 characterDescription: "A poor farm boy on the cusp of growing up. Earnest, impulsive, and a bit naïve, but never cruel. Loves his cow Milky White more than anything—until he discovers there are giants in the sky. His journey takes him from childish innocence to painful maturity as he learns about bravery, loss, and responsibility.",
                 auditionCut: "Giants in the Sky, measures 1–37.",
@@ -380,6 +397,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Jack's Mother": {
+                category: "principal",
                 vocalInfo: "Age 40-65, B♭3–F5 — Mezzo-soprano / light soprano",
                 characterDescription: "The pragmatic center of Jack’s small, precarious world. She’s worn thin by worry (money, safety, the cow) but still radiates a particular, stubborn love: the kind that scolds because she cares. Comic in her exasperation, honest in her fear, she can turn from brisk, businesslike speech to a quietly vulnerable line in a heartbeat. She’s not a caricature of poverty — she’s someone who’s learned to make do and who expects the same of her son.",
                 auditionCut: "Act I Opening Part 5, measures 12–36 (“Jack, Jack, Jack” through “Into the woods to journey’s end”).",
@@ -387,6 +405,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Little Red": {
+                category: "principal",
                 vocalInfo: "Age 14-25, B♭3–F5 — Mezzo-soprano",
                 characterDescription: "A spoiled young girl who is strong-willed, sharp, curious, and unafraid: she’s the small motor of the story who learns, in one bright jump, that the world is bigger and more dangerous than she thought. Singly voiced and quick of foot, she’s curious not helpless — brave enough to ask questions and clear enough in diction to make every discovery land.",
                 auditionCut: "I Know Things Now, measures 20–52.",
@@ -394,11 +413,13 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Milky-White": { 
-                vocalInfo: "Any age, Ensemble, Puppetry/Noise role",
+                category: "cameo",
+                vocalInfo: "Any age, Puppetry/Noise role",
                 characterDescription: "Jack's beloved sickly white cow. A central figure in the quest for the magic items.",
-                auditionCut: "None."
+                auditionCut: "None." 
             },
             "Narrator / Mysterious Man": { 
+                category: "supporting",
                 vocalInfo: "Age 40-65, G2–E4 — Bass/Baritone",
                 characterDescription: "A dual role: the Narrator is witty, detached, and authoritative—our guide through the fairy-tale world, until the story turns on him. The Mysterious Man is the Baker’s estranged father, ragged and elusive, by turns comic and poignant. He prods the Baker forward with riddles and half-truths, both frustrating and guiding him. Requires strong diction, dry humor, and the ability to shift quickly between polished storyteller and haunted outsider.",
                 auditionCut: "No More, measures 69–109.",
@@ -406,6 +427,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel": {
+                category: "principal",
                 vocalInfo: "Age 20-40, B3–A5 — High Soprano (light, innocent, often high head voice).",
                 characterDescription: "Sheltered and theatrical, Rapunzel is a bright, inquisitive late-teen whose sweetness masks a quick, now-scarred intelligence. She sings in a light lyric soprano; the part demands crystalline head voice, conversational phrasing, and the ability to flip from breathy wonder to clipped, defensive wit in a single line.",
                 auditionCut: "Offstage vocalise: “Ah-ah-ah-ah-ah…” passage (as written in score around p. 87).",
@@ -413,6 +435,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Rapunzel’s Prince": {
+                category: "principal",
                 vocalInfo: "Age 20-45, C♯3–E4 — Baritone (similar to his brother)",
                 characterDescription: "The younger brother of Cinderella’s Prince, Rapunzel’s Prince is equally dashing, equally melodramatic, and equally absurd—just a little less polished. Where his elder brother struts, he blusters. His pursuit of Rapunzel is overblown with sighs, swoons, and grand declarations. He is competitive with his brother to the point of silliness.",
                 auditionCut: "Agony, measures 1–35.",
@@ -420,12 +443,14 @@
                 audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
             },
             "Snow White & Sleeping Beauty": {
-                vocalInfo: "Age 20-40, Ensemble",
-                characterDescription: "Silent cameo roles that appear briefly in Act II as “new conquests” for the Princes. They do not sing or speak, but provide a light comic moment. Often doubled with other ensemble or minor roles.",
+                category: "cameo",
+                vocalInfo: "Age 20-40, Extra, Non-singing",
+                characterDescription: "Cameo appearances. These roles are great for actors with good stage presence who may have less vocal experience.",
                 auditionCut: "None."
             },
             "Rapunzel’s Double/Body": {
-                vocalInfo: "Age 20-40, Ensemble",
+                category: "cameo",
+                vocalInfo: "Any age, Extra, Non-singing",
                 characterDescription: "An optional, non-singing role for staging purposes during Rapunzel's scenes.",
                 auditionCut: "None."
             },
@@ -437,13 +462,15 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Steward": {
-                vocalInfo: "Age 20-65, Ensemble",
-                characterDescription: "A neatly officious court servant who believes protocol is a moral duty. Small role, big manners: speaks crisply, moves with purpose, and delivers business (the slipper, the announcement) with deadpan authority — comedy comes from his earnestness, not the joke.",
+                category: "supporting",
+                vocalInfo: "Age 20-65, Non-singing",
+                characterDescription: "A surly, bureaucratic manservant who does whatever he has to do to solve a problem.",
                 auditionCut: "Act I Finale, short patter excerpt.",
                 sheetMusicUrl: "javascript:void(0);",
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Witch": {
+                category: "principal",
                 vocalInfo: "Age 20-65, F3–G5 — Mezzo-soprano / alto (huge character belt and dramatic low notes)",
                 characterDescription: "A woman who learned to rule by fear and wit, then discovered the one thing fear can’t keep: her child. Sharp-tongued, truth-telling, and heartbreakingly human—equal parts protector and provoker.",
                 auditionCut: "Witch’s Lament, measures 1–20.",
@@ -451,6 +478,7 @@
                 audioDownloadUrl: "javascript:void(0);"
             },
             "Wolf": {
+                category: "supporting",
                 vocalInfo: "Age 20-45, B♭2–G♭4 — Baritone (seductive, low chest and some upper mix)",
                 characterDescription: "The Wolf is sly charm wrapped in menace—a cabaret emcee in fur who embodies appetite and temptation. More seducer than snarler, he sells Red the thrill of straying from the path with wit and allure, making the audience laugh uneasily even as they sense the danger. His purpose is to unsettle, not leer, so that Red’s later lesson—“I know things now”—lands with clarity.",
                 auditionCut: "Hello, Little Girl, measures 20–54.",
@@ -461,8 +489,8 @@
 
         // --- APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
-            const singingCharacterGrid = document.getElementById('singing-character-grid');
-            const ensembleCharacterGrid = document.getElementById('ensemble-character-grid');
+            const principalCharacterGrid = document.getElementById('principal-character-grid');
+            const supportingCharacterGrid = document.getElementById('supporting-character-grid');
             const characterSelectionSection = document.getElementById('character-selection-section');
             const mainContent = document.getElementById('main-content');
             const registrationSection = document.getElementById('registration-section');
@@ -475,7 +503,6 @@
             const selectionError = document.getElementById('selection-error');
             const selectedDisplay = document.getElementById('selected-characters-display');
             const auditionForm = document.getElementById('audition-form');
-            const submitBtn = document.getElementById('submit-btn');
             
             let selectedCharacters = [];
 
@@ -484,6 +511,8 @@
 
             sortedCharacters.forEach(name => {
                 const char = characterData[name];
+                if (char.category === 'cameo') return; // Skip cameo roles
+
                 const card = document.createElement('div');
                 card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent';
                 card.dataset.characterName = name;
@@ -495,10 +524,10 @@
                 }
                 card.innerHTML = innerHTML;
 
-                if (char.vocalInfo.toLowerCase().includes("non-singing") || char.vocalInfo.toLowerCase().includes("puppetry") || char.vocalInfo.toLowerCase().includes("spoken voice") || char.vocalInfo.toLowerCase().includes("extra") || char.vocalInfo.toLowerCase().includes("ensemble")) {
-                    ensembleCharacterGrid.appendChild(card);
-                } else {
-                    singingCharacterGrid.appendChild(card);
+                if (char.category === 'principal') {
+                    principalCharacterGrid.appendChild(card);
+                } else if (char.category === 'supporting') {
+                    supportingCharacterGrid.appendChild(card);
                 }
             });
 
@@ -585,8 +614,16 @@
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
+            
+            // 5. Handle form submission
+            auditionForm.addEventListener('submit', function(e) {
+                // The form will now submit normally. The _next field will redirect.
+            });
+            
+
             // 6. Handle going back to the start from the confirmation page
             backToStartBtn.addEventListener('click', () => {
+                window.location.hash = ''; // Clear the hash
                 confirmationSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 // Deselect all cards
@@ -602,265 +639,5 @@
             }
         });
     </script>
-<script>
-(function () {
-  var form = document.getElementById('audition-form');
-  if (!form) return;
-
-  form.addEventListener('submit', function () {
-    // 1) Collect selected roles from your UI
-    var selected = document.querySelectorAll(
-      '.role-card.selected, .character-card.selected, [data-role].selected, [data-character-name].selected'
-    );
-    var roles = Array.from(selected).map(function (el) {
-      return el.dataset.role || el.dataset.characterName || (el.textContent || '').trim();
-    }).filter(Boolean);
-    var rolesList = roles.length ? roles.join(', ') : '';
-
-    // 2) Populate hidden fields (must already exist in the form)
-    var rolesInput = document.getElementById('selected_roles_input');
-    var replyTo    = document.getElementById('_replyto');
-    var autoResp   = document.getElementById('_autoresponse');
-    var emailEl    = document.getElementById('email');
-    var nameEl     = document.getElementById('name');
-
-    if (rolesInput) rolesInput.value = rolesList;
-    if (replyTo && emailEl) replyTo.value = (emailEl.value || '').trim();
-
-    // 3) Human-friendly autoresponse text
-    if (autoResp) {
-      var name = (nameEl && nameEl.value) ? nameEl.value.trim() : '';
-      var roleText = rolesList
-        ? 'You asked to be seen for: ' + rolesList + '.'
-        : 'No specific roles were selected—our team will consider you broadly.';
-
-      autoResp.value = [
-        'Thanks for stepping Into the Woods' + (name ? ', ' + name : '') + '!',
-        'We are reviewing your submission.',
-        roleText,
-        'We look forward to seeing you on one of the audition dates.',
-        'Until then, stay on the path and keep that voice ready.'
-      ].join('\n');
-    }
-
-    // IMPORTANT: do NOT call preventDefault(); allow native submit + redirect.
-  });
-})();
-</script>
-
-<script>
-(function () {
-  // CONFIG
-  const MAX_BYTES = 3.5 * 1024 * 1024; // 3.5 MB safety threshold (adjust as needed)
-  const MAX_WIDTH = 1600;              // max width for resized images (px)
-  const START_QUALITY = 0.85;          // initial JPEG quality
-  const MIN_QUALITY = 0.4;             // do not go below this quality
-  const QUALITY_STEP = 0.1;            // decrease quality by this step if necessary
-  const MIN_WIDTH = 600;               // stop scaling down past this width
-
-  // Helpers
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const fr = new FileReader();
-      fr.onload = () => resolve(fr.result);
-      fr.onerror = reject;
-      fr.readAsDataURL(file);
-    });
-  }
-
-  function dataURLToImage(dataURL) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = dataURL;
-    });
-  }
-
-  function canvasToBlob(canvas, quality) {
-    return new Promise(resolve => {
-      canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
-    });
-  }
-
-  // Compress/resize algorithm:
-  // tries quality ladder, and if still too large, reduces width and repeats.
-  async function compressImageFile(file, options = {}) {
-    const maxBytes = options.maxBytes ?? MAX_BYTES;
-    const maxWidth = options.maxWidth ?? MAX_WIDTH;
-    let quality = options.quality ?? START_QUALITY;
-
-    // If already JPEG & under limit, return original
-    if (file.size <= maxBytes && file.type === 'image/jpeg') return file;
-
-    // Load image
-    const dataURL = await readFileAsDataURL(file);
-    const img = await dataURLToImage(dataURL);
-
-    // helper to build blob at given width/quality
-    async function render(width, q) {
-      const scale = Math.min(1, width / img.width);
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d');
-
-      // Fill white background for images with transparency (avoid black background in JPEG)
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.drawImage(img, 0, 0, w, h);
-      const blob = await canvasToBlob(canvas, q);
-      return blob;
-    }
-
-    let targetWidth = Math.min(maxWidth, img.width);
-    let blob = await render(targetWidth, quality);
-
-    // If blob already small enough, return File
-    while (blob.size > maxBytes) {
-      // try lowering quality first (until MIN_QUALITY)
-      if (quality - QUALITY_STEP >= MIN_QUALITY) {
-        quality = Math.max(MIN_QUALITY, quality - QUALITY_STEP);
-        blob = await render(targetWidth, quality);
-        if (blob.size <= maxBytes) break;
-      } else {
-        // quality too low — reduce width next
-        if (targetWidth > MIN_WIDTH + 10) {
-          targetWidth = Math.max(MIN_WIDTH, Math.round(targetWidth * 0.85)); // shrink by 15%
-          // reset quality to START_QUALITY for this new width attempt (or keep current quality)
-          blob = await render(targetWidth, quality);
-          if (blob.size <= maxBytes) break;
-          // continue loop to try lowering quality again
-        } else {
-          // can't reduce further (width at minimum and quality at minimum)
-          break;
-        }
-      }
-    }
-
-    // final check
-    if (blob.size > maxBytes) {
-      // failed to compress to target
-      return null;
-    }
-
-    // create file with .jpg extension and similar name
-    const filenameBase = (file.name || 'headshot').replace(/\.[^.]+$/, '');
-    return new File([blob], filenameBase + '.jpg', { type: 'image/jpeg' });
-  }
-
-  // ---------- Integrate with your existing submit logic ----------
-  var form = document.getElementById('audition-form');
-  if (!form) return;
-
-  var isCompressing = false; // flag to avoid recursion
-
-  form.addEventListener('submit', async function (e) {
-    // If we're in the second submit after compression, allow it to proceed
-    if (isCompressing === true) {
-      // allow actual submit to continue — reset flag
-      isCompressing = false;
-      return;
-    }
-
-    // Populate selected_roles / autoresponse etc. (your existing logic)
-    try {
-      // Collect selected roles
-      var selected = document.querySelectorAll(
-        '.role-card.selected, .character-card.selected, [data-role].selected, [data-character-name].selected'
-      );
-      var roles = Array.from(selected).map(function (el) {
-        return el.dataset.role || el.dataset.characterName || (el.textContent || '').trim();
-      }).filter(Boolean);
-      var rolesList = roles.length ? roles.join(', ') : '';
-
-      var rolesInput = document.getElementById('selected_roles_input');
-      var replyTo    = document.getElementById('_replyto');
-      var autoResp   = document.getElementById('_autoresponse');
-      var emailEl    = document.getElementById('email');
-      var nameEl     = document.getElementById('name');
-
-      if (rolesInput) rolesInput.value = rolesList;
-      if (replyTo && emailEl) replyTo.value = (emailEl.value || '').trim();
-
-      if (autoResp) {
-        var name = (nameEl && nameEl.value) ? nameEl.value.trim() : '';
-        var roleText = rolesList
-          ? 'You asked to be seen for: ' + rolesList + '.'
-          : 'No specific roles were selected—our team will consider you broadly.';
-        autoResp.value = [
-          'Thanks for stepping Into the Woods' + (name ? ', ' + name : '') + '!',
-          'We are reviewing your submission.',
-          roleText,
-          'We look forward to seeing you on one of the audition dates.',
-          'Until then, stay on the path and keep that voice ready.'
-        ].join('\n');
-      }
-    } catch (err) {
-      // nonfatal — continue
-      console.error('roles populate error', err);
-    }
-
-    // Now handle the headshot compression/size-check
-    const fileInput = document.getElementById('headshot');
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-      // no file — allow native submit to proceed
-      return;
-    }
-
-    const originalFile = fileInput.files[0];
-
-    // If already safely small, allow submit
-    if (originalFile.size <= MAX_BYTES) return;
-
-    // Prevent the default submit while we compress
-    e.preventDefault();
-
-    // Do the compression
-    isCompressing = true;
-    try {
-      // attempt compression
-      const compressedFile = await compressImageFile(originalFile, {
-        maxBytes: MAX_BYTES,
-        maxWidth: MAX_WIDTH,
-        quality: START_QUALITY
-      });
-
-      if (!compressedFile) {
-        // compression couldn't get under limit — tell user
-        isCompressing = false;
-        alert('Your headshot could not be reduced below the ' + (MAX_BYTES / 1024 / 1024).toFixed(1) + ' MB limit. ' +
-              'Please upload a smaller image (reduce resolution or quality) or remove the headshot and try again.');
-        return;
-      }
-
-      // Replace the file input with compressed file
-      const dt = new DataTransfer();
-      dt.items.add(compressedFile);
-      fileInput.files = dt.files;
-
-      // (Optional) set a hidden field to note original size/name if you want
-      // const origInput = document.getElementById('headshot_original_info');
-      // if (origInput) origInput.value = `${originalFile.name}|${originalFile.size}`;
-
-      // Now re-submit: trigger native submit but skip compression logic on second event
-      if (typeof form.requestSubmit === 'function') {
-        form.requestSubmit();
-      } else {
-        form.submit(); // fallback
-      }
-    } catch (err) {
-      console.error('Image compression failed', err);
-      isCompressing = false;
-      alert('There was a problem compressing your image. Please try a smaller file or try again.');
-    }
-  });
-})();
-</script>
-
-
 </body>
 </html>
