@@ -178,15 +178,11 @@
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
 
-<!-- Invisible target for form submission -->
-<iframe name="submissionFrame" style="display:none;"></iframe>
-
         
 <form id="audition-form"
       action="https://script.google.com/macros/s/AKfycbxjQuAf-J1JeSCk26REDUK-u98Ox4xvRiCKXlzbMCjmfF4-Sz69vY_UkB8H7SUnHx86sw/exec?token=a9dcf7nhj4un7mk309ds7b4k9o"
       method="POST"
       enctype="multipart/form-data">
-      <!--target="submissionFrame" -->
                     
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
@@ -589,21 +585,17 @@ const characterData = {
             }
         });
     </script>
-    <script>
-  const form = document.getElementById('audition-form');
-  const submitBtn = document.getElementById('submit-btn');
-  const registrationSection = document.getElementById('registration-section');
-  const confirmationSection = document.getElementById('confirmation-section');
-
-  form.addEventListener('submit', function() {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = 'Submitting…';
-
-    // Immediately show thank-you section
-    registrationSection.classList.add('hidden');
-    confirmationSection.classList.remove('hidden');
-    window.scrollTo(0, 0);
-  });
+<script>
+  (function () {
+    const form = document.getElementById('audition-form');
+    const submitBtn = document.getElementById('submit-btn');
+    form.addEventListener('submit', function () {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Submitting…';
+      // Do not show success here; Apps Script will redirect to #submitted on success.
+      // If needed, you could also disable all inputs here to prevent double-submit.
+    });
+  })();
 </script>
 </body>
 </html>
