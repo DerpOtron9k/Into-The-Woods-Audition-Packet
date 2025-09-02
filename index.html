@@ -569,45 +569,6 @@ const characterData = {
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
-auditionForm.addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevents the form from navigating away
-
-    const submitBtn = document.getElementById('submit-btn');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = 'Submitting...';
-    
-    // This is your full webhook URL
-    const webhookUrl = "https://script.google.com/macros/s/AKfycbw-C8_oexj28UsPl1UOO16ezH2Bbi8xpvax4J4-6o4qOfywvfNJqI44lF_06sCe85Xjaw/exec?token=a9dcf7nhj4un7mk309ds7b4k9o";
-
-    fetch(webhookUrl, {
-        method: 'POST',
-        body: new FormData(auditionForm)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.ok) {
-            // On success, show the confirmation screen
-            registrationSection.classList.add('hidden');
-            confirmationSection.classList.remove('hidden');
-            window.scrollTo(0, 0);
-        } else {
-            // If the script returns an error, show it
-            console.error(data.error);
-            alert('An error occurred. Please try again. Error: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Submission Fetch Error:', error);
-        alert('A network error occurred. Please check your connection and try again.');
-    })
-    .finally(() => {
-        // Restore the button
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
-    });
-});
-
             backToStartBtn.addEventListener('click', () => {
                 window.location.hash = '';
                 confirmationSection.classList.add('hidden');
