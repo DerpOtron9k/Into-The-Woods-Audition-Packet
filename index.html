@@ -246,7 +246,7 @@
                     </div>
 
                     <!-- Provider controls and webhook -->
-                    <input type="hidden" name="_subject" id="_subject" value="">
+                    <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
                     <input type="hidden" name="_cc" value="staheli.andrew@gmail.com">
                     <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted">
                     <input type="hidden" name="_template" value="table">
@@ -567,18 +567,9 @@ const characterData = {
                 document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
             });
 
-            // Subject stamping
-            const subj = document.getElementById('_subject');
-            const nameInput = document.getElementById('full-name'); // adjust to actual ID of your name field
-
-            function stampSubject() {
-              const who = (nameInput?.value || 'Applicant').trim();
-              const iso = new Date().toISOString();
-              subj.value = `Into the Woods — Audition from ${who} — ${iso}`;
-            }
-
-            auditionForm.addEventListener('submit', stampSubject, { capture: true });
-
+            auditionForm.addEventListener('submit', function(e) {
+                // Normal submit; proxy returns a 303 to confirmation.
+            });
 
             backToStartBtn.addEventListener('click', () => {
                 window.location.hash = '';
@@ -597,5 +588,3 @@ const characterData = {
     </script>
 </body>
 </html>
-
-
