@@ -587,16 +587,79 @@ const characterData = {
     </script>
 <script>
   (function () {
-    const form = document.getElementById('audition-form');
+    const form      = document.getElementById('audition-form');
     const submitBtn = document.getElementById('submit-btn');
-    form.addEventListener('submit', function () {
+    const fileInput = document.getElementById('headshot');
+
+    form.addEventListener('submit', function (ev) {
+      // If no file (should not happen because required), let it submit normally
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Submitting…';
+        return;
+      }
+
+      ev.preventDefault(); // wait for Base64
       submitBtn.disabled = true;
-      submitBtn.innerHTML = 'Submitting…';
-      // Do not show success here; Apps Script will redirect to #submitted on success.
-      // If needed, you could also disable all inputs here to prevent double-submit.
+      submitBtn.innerHTML = 'Preparing image…';
+
+      const file = fileInput.files[0];
+
+      // Optional client-side cap (5 MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image is larger than 5 MB. Please choose a smaller file.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit Audition Form';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const dataUrl = reader.result; // "data:image/jpeg;base64,AAAA..."
+        const m = /^data:([^;]+);base64,(.*)$/i.exec(dataUrl);
+        if (!m) {
+          alert('Could not read image data.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Submit Audition Form';
+          return;
+        }
+
+        const mime = m[1];
+        const b64  = m[2];
+
+        // Hidden fields for server
+        const h1 = document.createElement('input');
+        h1.type = 'hidden'; h1.name = '_headshot_b64';  h1.value = b64;
+
+        const h2 = document.createElement('input');
+        h2.type = 'hidden'; h2.name = '_headshot_type'; h2.value = mime;
+
+        const h3 = document.createElement('input');
+        h3.type = 'hidden'; h3.name = '_headshot_name';
+        h3.value = (document.getElementById('name')?.value || 'upload') + '-headshot';
+
+        form.appendChild(h1);
+        form.appendChild(h2);
+        form.appendChild(h3);
+
+        // Prevent raw multipart file from posting (avoid flaky e.files)
+        fileInput.setAttribute('data-original-name', fileInput.name);
+        fileInput.removeAttribute('name');
+
+        submitBtn.innerHTML = 'Submitting…';
+        form.submit(); // normal POST; Apps Script redirects on success
+      };
+      reader.onerror = function () {
+        alert('Failed to read the image file.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit Audition Form';
+      };
+      reader.readAsDataURL(file);
     });
   })();
 </script>
+
+
 </body>
 </html>
 
