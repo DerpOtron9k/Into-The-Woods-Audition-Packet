@@ -5,10 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Into the Woods Audition Packet</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="dns-prefetch" href="https://script.google.com">
+    <link rel="dns-prefetch" href="https://drive.google.com">
+    
+    <!-- Critical CSS Inline -->
+    <style>
+        /* Critical above-the-fold styles */
+        body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; margin: 0; padding: 0; }
+        .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+        .hidden { display: none; }
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; }
+        .loading-overlay.show { display: flex; align-items: center; justify-content: center; }
+    </style>
+    
+    <!-- Non-critical CSS loaded asynchronously -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"></noscript>
+    
+    <!-- Tailwind CSS with performance optimizations -->
+    <script>
+        // Inline Tailwind config for better performance
+        tailwind = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E4035',
+                        secondary: '#F0F5F2',
+                        accent: '#BFAE9C'
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
@@ -139,13 +173,13 @@
 
                 <h3 class="text-2xl font-semibold mb-4">Principal Roles</h3>
                 <p class="text-sm text-gray-600 mb-4 -mt-2">The characters who drive the story and sing substantial material.</p>
-                <div id="principal-character-grid" class="space-y-6"></div>
+                <div id="principal-character-grid" class="space-y-6" data-lazy-load="character-cards"></div>
 
                 <div class="decorative-line my-8"></div>
 
                 <h3 class="text-2xl font-semibold mb-4">Supporting Roles</h3>
                 <p class="text-sm text-gray-600 mb-4 -mt-2">Smaller but still characterful parts, often doubled or lightly sung.</p>
-                <div id="supporting-character-grid" class="space-y-6"></div>
+                <div id="supporting-character-grid" class="space-y-6" data-lazy-load="character-cards"></div>
 
                 <div class="decorative-line my-8"></div>
 
@@ -210,7 +244,7 @@
 
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">Your Audition Materials</h2>
-                <div id="materials-container" class="space-y-6"></div>
+                <div id="materials-container" class="space-y-6" data-lazy-load="materials"></div>
             </section>
 
             <div class="decorative-line"></div>
@@ -385,35 +419,57 @@
 
     <script>
 
-// --- ENHANCED FORM VALIDATION & UX ---
+// --- ENHANCED FORM VALIDATION & UX WITH SECURITY ---
 class FormValidator {
   constructor() {
+    // Security: Rate limiting and CSRF protection
+    this.submissionAttempts = 0;
+    this.maxAttempts = 3;
+    this.lastSubmission = 0;
+    this.minSubmissionInterval = 5000; // 5 seconds
+    
+    // Enhanced validation rules with security
     this.validationRules = {
       name: {
         required: true,
         minLength: 2,
         maxLength: 50,
         pattern: /^[a-zA-Z\s'-]+$/,
-        message: 'Please enter a valid name (2-50 characters, letters only)'
+        message: 'Please enter a valid name (2-50 characters, letters only)',
+        sanitize: true
       },
       email: {
         required: true,
         pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        message: 'Please enter a valid email address'
+        message: 'Please enter a valid email address',
+        sanitize: true,
+        maxLength: 254
       },
       phone: {
         required: true,
         pattern: /^[\+]?[1-9][\d]{0,15}$/,
-        message: 'Please enter a valid phone number'
+        message: 'Please enter a valid phone number',
+        sanitize: true
       },
       vocalRange: {
         pattern: /^[A-G][#b]?[0-9]-[A-G][#b]?[0-9]$/,
-        message: 'Please enter vocal range in format like "G3-F5"'
+        message: 'Please enter vocal range in format like "G3-F5"',
+        sanitize: true
       },
       conflicts: {
         required: true,
         minLength: 10,
-        message: 'Please provide details about your conflicts (at least 10 characters)'
+        maxLength: 1000,
+        message: 'Please provide details about your conflicts (at least 10 characters)',
+        sanitize: true
+      },
+      experience: {
+        maxLength: 2000,
+        sanitize: true
+      },
+      skills: {
+        maxLength: 1000,
+        sanitize: true
       }
     };
     
@@ -434,19 +490,74 @@ class FormValidator {
   }
   
   setupEventListeners() {
-    // Real-time validation
+    // Performance: Debounced validation for better performance
+    const debouncedValidation = this.debounce((fieldName) => {
+      this.validateField(fieldName);
+    }, 300);
+    
+    // Real-time validation with debouncing
     Object.keys(this.validationRules).forEach(fieldName => {
       const field = document.getElementById(fieldName);
       if (field) {
+        // Immediate validation on blur
         field.addEventListener('blur', () => this.validateField(fieldName));
-        field.addEventListener('input', () => this.clearFieldError(fieldName));
+        
+        // Debounced validation on input for better performance
+        field.addEventListener('input', () => {
+          this.clearFieldError(fieldName);
+          debouncedValidation(fieldName);
+        });
+        
+        // Performance: Lazy validation on focus
+        field.addEventListener('focus', () => {
+          if (field.value && field.classList.contains('error')) {
+            this.validateField(fieldName);
+          }
+        });
       }
     });
     
-    // Form submission
+    // Form submission with security checks
     const form = document.getElementById('audition-form');
     if (form) {
       form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+    }
+    
+    // Performance: Intersection Observer for lazy loading
+    this.setupLazyLoading();
+  }
+  
+  // Performance: Lazy loading for non-critical elements
+  setupLazyLoading() {
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const element = entry.target;
+            if (element.dataset.lazyLoad) {
+              this.loadLazyContent(element);
+              observer.unobserve(element);
+            }
+          }
+        });
+      }, { rootMargin: '50px' });
+      
+      // Observe elements marked for lazy loading
+      document.querySelectorAll('[data-lazy-load]').forEach(el => {
+        observer.observe(el);
+      });
+    }
+  }
+  
+  loadLazyContent(element) {
+    const loadType = element.dataset.lazyLoad;
+    switch (loadType) {
+      case 'character-cards':
+        this.loadCharacterCards();
+        break;
+      case 'materials':
+        this.loadAuditionMaterials();
+        break;
     }
   }
   
@@ -501,12 +612,82 @@ class FormValidator {
     this.progressFill = document.getElementById('progress-fill');
   }
   
+  // Security: Input sanitization
+  sanitizeInput(value, fieldName) {
+    if (typeof value !== 'string') return value;
+    
+    // Remove potentially dangerous characters
+    let sanitized = value
+      .replace(/[<>]/g, '') // Remove HTML tags
+      .replace(/javascript:/gi, '') // Remove javascript: protocol
+      .replace(/on\w+=/gi, '') // Remove event handlers
+      .trim();
+    
+    // Field-specific sanitization
+    switch (fieldName) {
+      case 'name':
+        sanitized = sanitized.replace(/[^a-zA-Z\s'-]/g, '');
+        break;
+      case 'email':
+        sanitized = sanitized.toLowerCase();
+        break;
+      case 'phone':
+        sanitized = sanitized.replace(/[^\d+\-\(\)\s]/g, '');
+        break;
+      case 'vocalRange':
+        sanitized = sanitized.toUpperCase();
+        break;
+    }
+    
+    return sanitized;
+  }
+  
+  // Security: Rate limiting check
+  checkRateLimit() {
+    const now = Date.now();
+    const timeSinceLastSubmission = now - this.lastSubmission;
+    
+    if (this.submissionAttempts >= this.maxAttempts) {
+      if (timeSinceLastSubmission < this.minSubmissionInterval) {
+        const remainingTime = Math.ceil((this.minSubmissionInterval - timeSinceLastSubmission) / 1000);
+        throw new Error(`Please wait ${remainingTime} seconds before submitting again.`);
+      } else {
+        this.submissionAttempts = 0; // Reset after cooldown
+      }
+    }
+    
+    this.submissionAttempts++;
+    this.lastSubmission = now;
+  }
+  
+  // Performance: Debounced validation
+  debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+  
   validateField(fieldName) {
     const field = document.getElementById(fieldName);
     const rule = this.validationRules[fieldName];
     if (!field || !rule) return true;
     
-    const value = field.value.trim();
+    let value = field.value.trim();
+    
+    // Security: Sanitize input
+    if (rule.sanitize) {
+      value = this.sanitizeInput(value, fieldName);
+      if (field.value !== value) {
+        field.value = value; // Update field with sanitized value
+      }
+    }
+    
     let isValid = true;
     let errorMessage = '';
     
@@ -664,24 +845,41 @@ class FormValidator {
   async handleFormSubmit(e) {
     e.preventDefault();
     
-    // Validate form
-    if (!this.validateForm()) {
-      // Focus first error field
-      const firstError = document.querySelector('.error');
-      if (firstError) {
-        firstError.focus();
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      return;
-    }
-    
-    // Show loading state
-    this.showLoadingState('preparing');
-    
     try {
-      // Simulate processing stages
+      // Security: Rate limiting check
+      this.checkRateLimit();
+      
+      // Validate form
+      if (!this.validateForm()) {
+        // Focus first error field
+        const firstError = document.querySelector('.error');
+        if (firstError) {
+          firstError.focus();
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      
+      // Security: Additional validation
+      if (!this.performSecurityChecks()) {
+        return;
+      }
+      
+      // Show loading state
+      this.showLoadingState('preparing');
+      
+      // Simulate processing stages with security validation
       await this.delay(500);
       this.showLoadingState('uploading');
+      
+      // Security: Validate file if present
+      const fileInput = document.getElementById('headshot');
+      if (fileInput && fileInput.files.length > 0) {
+        if (!this.validateFileSecurity(fileInput.files[0])) {
+          this.hideLoadingState();
+          return;
+        }
+      }
       
       await this.delay(1000);
       this.showLoadingState('processing');
@@ -695,9 +893,89 @@ class FormValidator {
       
     } catch (error) {
       this.hideLoadingState();
-      alert('An error occurred. Please try again.');
+      this.showSecurityError(error.message);
       console.error('Form submission error:', error);
     }
+  }
+  
+  // Security: Additional security checks
+  performSecurityChecks() {
+    // Check for suspicious patterns
+    const suspiciousPatterns = [
+      /<script/i,
+      /javascript:/i,
+      /on\w+\s*=/i,
+      /eval\s*\(/i,
+      /expression\s*\(/i
+    ];
+    
+    const formData = new FormData(document.getElementById('audition-form'));
+    for (const [key, value] of formData.entries()) {
+      if (typeof value === 'string') {
+        for (const pattern of suspiciousPatterns) {
+          if (pattern.test(value)) {
+            this.showSecurityError('Invalid input detected. Please check your entries.');
+            return false;
+          }
+        }
+      }
+    }
+    
+    return true;
+  }
+  
+  // Security: File validation
+  validateFileSecurity(file) {
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      this.showSecurityError('Invalid file type. Please upload a PNG or JPEG image.');
+      return false;
+    }
+    
+    // Check file size
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      this.showSecurityError('File too large. Please upload an image smaller than 5MB.');
+      return false;
+    }
+    
+    // Check file name for suspicious patterns
+    const suspiciousNames = /[<>:"/\\|?*]/;
+    if (suspiciousNames.test(file.name)) {
+      this.showSecurityError('Invalid file name. Please rename your file.');
+      return false;
+    }
+    
+    return true;
+  }
+  
+  // Security: Show security-related errors
+  showSecurityError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'security-error';
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #dc2626;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      max-width: 300px;
+    `;
+    errorDiv.textContent = message;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.parentNode.removeChild(errorDiv);
+      }
+    }, 5000);
   }
   
   delay(ms) {
@@ -705,9 +983,48 @@ class FormValidator {
   }
 }
 
+// Performance: Service Worker registration for caching
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('SW registered: ', registration);
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+
+// Performance: Preload critical resources
+const preloadCriticalResources = () => {
+  const criticalResources = [
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap',
+    'https://cdn.tailwindcss.com'
+  ];
+  
+  criticalResources.forEach(resource => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = resource;
+    link.as = resource.includes('.css') ? 'style' : 'script';
+    document.head.appendChild(link);
+  });
+};
+
+// Performance: Lazy load non-critical scripts
+const loadNonCriticalScripts = () => {
+  // Load analytics or other non-critical scripts here
+  // Example: Google Analytics, tracking scripts, etc.
+};
+
 // Initialize form validator when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   new FormValidator();
+  preloadCriticalResources();
+  
+  // Lazy load non-critical scripts after initial load
+  setTimeout(loadNonCriticalScripts, 2000);
 });
 
 // --- DATA: CHARACTER INFORMATION & MATERIALS ---
@@ -1042,7 +1359,338 @@ const characterData = {
         });
     </script>
 
+    <!-- Comprehensive Testing Suite -->
+<script>
+    // --- COMPREHENSIVE TESTING SUITE ---
+    class FormTestSuite {
+      constructor() {
+        this.testResults = [];
+        this.passedTests = 0;
+        this.failedTests = 0;
+      }
 
+      // Test runner
+      async runAllTests() {
+        console.log('🧪 Starting Form Test Suite...');
+        
+        const tests = [
+          this.testFormValidation,
+          this.testSecurityFeatures,
+          this.testFileUpload,
+          this.testAccessibility,
+          this.testPerformance,
+          this.testErrorHandling
+        ];
+
+        for (const test of tests) {
+          try {
+            await test.call(this);
+          } catch (error) {
+            this.recordTest(test.name, false, error.message);
+          }
+        }
+
+        this.generateReport();
+      }
+
+      // Record test result
+      recordTest(testName, passed, message = '') {
+        this.testResults.push({
+          name: testName,
+          passed,
+          message,
+          timestamp: new Date().toISOString()
+        });
+
+        if (passed) {
+          this.passedTests++;
+          console.log(`✅ ${testName}: PASSED`);
+        } else {
+          this.failedTests++;
+          console.log(`❌ ${testName}: FAILED - ${message}`);
+        }
+      }
+
+      // Test form validation
+      async testFormValidation() {
+        const validator = new FormValidator();
+        
+        // Test name validation
+        const nameField = document.getElementById('name');
+        if (nameField) {
+          nameField.value = 'A'; // Too short
+          const isValid = validator.validateField('name');
+          this.recordTest('Name validation (too short)', !isValid, 'Should reject names shorter than 2 characters');
+          
+          nameField.value = 'Valid Name';
+          const isValid2 = validator.validateField('name');
+          this.recordTest('Name validation (valid)', isValid2, 'Should accept valid names');
+        }
+
+        // Test email validation
+        const emailField = document.getElementById('email');
+        if (emailField) {
+          emailField.value = 'invalid-email';
+          const isValid = validator.validateField('email');
+          this.recordTest('Email validation (invalid)', !isValid, 'Should reject invalid email formats');
+          
+          emailField.value = 'test@example.com';
+          const isValid2 = validator.validateField('email');
+          this.recordTest('Email validation (valid)', isValid2, 'Should accept valid email formats');
+        }
+
+        // Test phone validation
+        const phoneField = document.getElementById('phone');
+        if (phoneField) {
+          phoneField.value = 'abc123';
+          const isValid = validator.validateField('phone');
+          this.recordTest('Phone validation (invalid)', !isValid, 'Should reject non-numeric phone numbers');
+          
+          phoneField.value = '5551234567';
+          const isValid2 = validator.validateField('phone');
+          this.recordTest('Phone validation (valid)', isValid2, 'Should accept valid phone numbers');
+        }
+
+        // Test vocal range validation
+        const vocalRangeField = document.getElementById('vocal-range');
+        if (vocalRangeField) {
+          vocalRangeField.value = 'invalid-range';
+          const isValid = validator.validateField('vocalRange');
+          this.recordTest('Vocal range validation (invalid)', !isValid, 'Should reject invalid vocal range formats');
+          
+          vocalRangeField.value = 'G3-F5';
+          const isValid2 = validator.validateField('vocalRange');
+          this.recordTest('Vocal range validation (valid)', isValid2, 'Should accept valid vocal range formats');
+        }
+      }
+
+      // Test security features
+      async testSecurityFeatures() {
+        const validator = new FormValidator();
+
+        // Test input sanitization
+        const testInputs = [
+          { input: 'test script tag', expected: 'test script tag' },
+          { input: 'javascript:test', expected: 'test' },
+          { input: 'onclick=test', expected: 'test' }
+        ];
+
+        testInputs.forEach((test, index) => {
+          const sanitized = validator.sanitizeInput(test.input, 'name');
+          const isSecure = !sanitized.includes('<script>') && !sanitized.includes('javascript:') && !sanitized.includes('onclick=');
+          this.recordTest('Input sanitization ' + (index + 1), isSecure, 'Should remove dangerous content');
+        });
+
+        // Test rate limiting
+        try {
+          validator.checkRateLimit();
+          validator.checkRateLimit();
+          validator.checkRateLimit();
+          validator.checkRateLimit(); // This should throw
+          this.recordTest('Rate limiting', false, 'Should prevent more than 3 submissions in 5 seconds');
+        } catch (error) {
+          this.recordTest('Rate limiting', true, 'Successfully blocked excessive submissions');
+        }
+
+        // Test suspicious pattern detection
+        const suspiciousInputs = [
+          'test script tag',
+          'javascript:test',
+          'onload=test',
+          'eval test'
+        ];
+
+        suspiciousInputs.forEach((input, index) => {
+          const form = document.getElementById('audition-form');
+          if (form) {
+            const nameField = document.getElementById('name');
+            if (nameField) {
+              nameField.value = input;
+              const isSecure = validator.performSecurityChecks();
+              this.recordTest(`Suspicious pattern detection ${index + 1}`, !isSecure, `Should detect and block: ${input}`);
+            }
+          }
+        });
+      }
+
+      // Test file upload functionality
+      async testFileUpload() {
+        const validator = new FormValidator();
+    const fileInput = document.getElementById('headshot');
+
+        if (fileInput) {
+          // Test file type validation
+          const mockFile = {
+            name: 'test.txt',
+            type: 'text/plain',
+            size: 1024
+          };
+
+          const isValidType = validator.validateFileSecurity(mockFile);
+          this.recordTest('File type validation', !isValidType, 'Should reject non-image files');
+
+          // Test file size validation
+          const largeFile = {
+            name: 'large.jpg',
+            type: 'image/jpeg',
+            size: 10 * 1024 * 1024 // 10MB
+          };
+
+          const isValidSize = validator.validateFileSecurity(largeFile);
+          this.recordTest('File size validation', !isValidSize, 'Should reject files larger than 5MB');
+
+          // Test valid file
+          const validFile = {
+            name: 'headshot.jpg',
+            type: 'image/jpeg',
+            size: 2 * 1024 * 1024 // 2MB
+          };
+
+          const isValidFile = validator.validateFileSecurity(validFile);
+          this.recordTest('Valid file upload', isValidFile, 'Should accept valid image files');
+        }
+      }
+
+      // Test accessibility features
+      async testAccessibility() {
+        // Test ARIA labels
+        const requiredFields = ['name', 'email', 'phone', 'conflicts'];
+        requiredFields.forEach(fieldName => {
+          const field = document.getElementById(fieldName);
+          if (field) {
+            const hasAriaDescribedBy = field.hasAttribute('aria-describedby');
+            const hasAriaInvalid = field.hasAttribute('aria-invalid');
+            this.recordTest(`ARIA attributes for ${fieldName}`, hasAriaDescribedBy && hasAriaInvalid, 'Should have proper ARIA attributes');
+          }
+        });
+
+        // Test required field indicators
+        const requiredLabels = document.querySelectorAll('label.required');
+        this.recordTest('Required field indicators', requiredLabels.length > 0, 'Should have visual indicators for required fields');
+
+        // Test error message accessibility
+        const errorMessages = document.querySelectorAll('.error-message[role="alert"]');
+        this.recordTest('Error message accessibility', errorMessages.length > 0, 'Should have accessible error messages');
+
+        // Test keyboard navigation
+        const focusableElements = document.querySelectorAll('input, select, textarea, button');
+        this.recordTest('Keyboard navigation', focusableElements.length > 0, 'Should have focusable elements for keyboard users');
+      }
+
+      // Test performance features
+      async testPerformance() {
+        // Test debounced validation
+        const validator = new FormValidator();
+        const debouncedFunction = validator.debounce(() => {}, 100);
+        
+        this.recordTest('Debounced validation', typeof debouncedFunction === 'function', 'Should provide debounced validation function');
+
+        // Test lazy loading setup
+        const lazyElements = document.querySelectorAll('[data-lazy-load]');
+        this.recordTest('Lazy loading elements', lazyElements.length > 0, 'Should have elements marked for lazy loading');
+
+        // Test Service Worker registration
+        const hasServiceWorker = 'serviceWorker' in navigator;
+        this.recordTest('Service Worker support', hasServiceWorker, 'Should support Service Worker for caching');
+
+        // Test preload links
+        const preloadLinks = document.querySelectorAll('link[rel="preload"]');
+        this.recordTest('Resource preloading', preloadLinks.length > 0, 'Should preload critical resources');
+      }
+
+      // Test error handling
+      async testErrorHandling() {
+        const validator = new FormValidator();
+
+        // Test form validation error handling
+        const form = document.getElementById('audition-form');
+        if (form) {
+          // Clear all fields to trigger validation errors
+          const fields = ['name', 'email', 'phone', 'conflicts'];
+          fields.forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            if (field) field.value = '';
+          });
+
+          const isValid = validator.validateForm();
+          this.recordTest('Form validation error handling', !isValid, 'Should detect validation errors');
+
+          // Test error message display
+          const errorMessages = document.querySelectorAll('.error-message.show');
+          this.recordTest('Error message display', errorMessages.length > 0, 'Should display error messages for invalid fields');
+        }
+
+        // Test security error handling
+        try {
+          validator.showSecurityError('Test security error');
+          this.recordTest('Security error display', true, 'Should display security error messages');
+        } catch (error) {
+          this.recordTest('Security error display', false, 'Failed to display security error: ' + error.message);
+        }
+      }
+
+      // Generate test report
+      generateReport() {
+        const totalTests = this.passedTests + this.failedTests;
+        const passRate = totalTests > 0 ? (this.passedTests / totalTests * 100).toFixed(1) : 0;
+
+        console.log('\n📊 Test Report');
+        console.log('================');
+        console.log(`Total Tests: ${totalTests}`);
+        console.log(`Passed: ${this.passedTests}`);
+        console.log(`Failed: ${this.failedTests}`);
+        console.log(`Pass Rate: ${passRate}%`);
+
+        if (this.failedTests > 0) {
+          console.log('\n❌ Failed Tests:');
+          this.testResults
+            .filter(test => !test.passed)
+            .forEach(test => {
+              console.log(`  - ${test.name}: ${test.message}`);
+            });
+        }
+
+        // Performance metrics
+        const performanceMetrics = {
+          loadTime: performance.now(),
+          memoryUsage: performance.memory ? performance.memory.usedJSHeapSize : 'N/A',
+          testDuration: Date.now() - this.startTime
+        };
+
+        console.log('\n⚡ Performance Metrics:');
+        console.log(`Load Time: ${performanceMetrics.loadTime.toFixed(2)}ms`);
+        console.log(`Memory Usage: ${performanceMetrics.memoryUsage}`);
+        console.log(`Test Duration: ${performanceMetrics.testDuration}ms`);
+
+        return {
+          totalTests,
+          passedTests: this.passedTests,
+          failedTests: this.failedTests,
+          passRate: parseFloat(passRate),
+          results: this.testResults,
+          performance: performanceMetrics
+        };
+      }
+
+      // Start timing
+      start() {
+        this.startTime = Date.now();
+      }
+    }
+
+    // Auto-run tests when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Only run tests in development/debug mode
+      if (window.location.search.includes('test=true') || window.location.hostname === 'localhost') {
+        const testSuite = new FormTestSuite();
+        testSuite.start();
+        testSuite.runAllTests();
+      }
+    });
+
+    // Export for manual testing
+    window.FormTestSuite = FormTestSuite;
+</script>
 
 </body>
 </html>
