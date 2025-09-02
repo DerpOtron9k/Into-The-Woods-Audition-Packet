@@ -142,8 +142,17 @@ function doPost(e) {
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
-<script>window.location.href="${successUrl}";</script>
-<p>Redirecting...</p>`
+<meta http-equiv="refresh" content="0;url=${successUrl}">
+<script>
+  // Immediate redirect
+  window.location.replace("${successUrl}");
+  // Fallback redirect
+  setTimeout(function() {
+    window.location.href = "${successUrl}";
+  }, 100);
+</script>
+<p>Redirecting to main page...</p>
+<p><a href="${successUrl}">Click here if you're not redirected automatically</a></p>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
   } catch (err) {
@@ -154,8 +163,17 @@ function doPost(e) {
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
-<script>window.location.href="${errorUrl}";</script>
-<p>Redirecting...</p>`
+<meta http-equiv="refresh" content="0;url=${errorUrl}">
+<script>
+  // Immediate redirect
+  window.location.replace("${errorUrl}");
+  // Fallback redirect
+  setTimeout(function() {
+    window.location.href = "${errorUrl}";
+  }, 100);
+</script>
+<p>Redirecting to main page...</p>
+<p><a href="${errorUrl}">Click here if you're not redirected automatically</a></p>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 }
