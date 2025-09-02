@@ -428,7 +428,7 @@ function parseMultipartRobust_(contentTypeHeader, bodyText, wantedFieldName) {
   return { blob: null, filename: null, contentType: null };
 }
 
-/** Notification + autoresponse; embeds inline image and attaches file */
+/** Notification + autoresponse with Gmail quota fallback system */
 function sendEmailNotification_(data, headshotBlob) {
   const S = v => (v == null ? '' : String(v)).trim();
   const safe = (label, v) => `${label}: ${S(v) || 'N/A'}`;
@@ -493,40 +493,40 @@ function sendEmailNotification_(data, headshotBlob) {
     htmlBody += `<p><strong>Headshot Preview:</strong><br><img src="cid:${cid}" style="max-width:300px;height:auto;border:1px solid #ccc"></p>`;
   }
 
-  // Send admin notification
-  try {
-    const mailOpts = {
-      to: adminTo,
-      cc: adminCc || undefined,
-      subject,
-      replyTo: replyTo || undefined,
-      name: 'Into the Woods - Auditions Bot',
-      body: adminBody,
-      htmlBody: htmlBody
-    };
-    if (headshotBlob) {
-      mailOpts.attachments = [headshotBlob];
-      mailOpts.inlineImages = { headshotImage: headshotBlob };
-    }
-    MailApp.sendEmail(mailOpts);
-    debugLog_({ mail: 'admin_notification_ok', to: adminTo, cc: adminCc, subject });
-  } catch (err) {
-    debugLog_({ mail: 'admin_notification_fail', error: String(err) });
-  }
+  // Send admin notification with fallback system
+  const adminEmailSent = sendEmailWithFallback_({
+    to: adminTo,
+    cc: adminCc,
+    subject: subject,
+    replyTo: replyTo,
+    name: 'Into the Woods - Auditions Bot',
+    body: adminBody,
+    htmlBody: htmlBody,
+    attachments: headshotBlob ? [headshotBlob] : undefined,
+    inlineImages: headshotBlob ? { headshotImage: headshotBlob } : undefined,
+    emailType: 'admin_notification'
+  });
 
-  // Autoresponse to submitter (text only)
+  // Autoresponse to submitter with fallback
   const submitter = S(data.email);
   if (submitter && autoBody) {
-    try {
-      MailApp.sendEmail({
+    const autoEmailSent = sendEmailWithFallback_({
+      to: submitter,
+      subject: 'We received your audition form - Into the Woods',
+      name: 'Into the Woods — Casting Team',
+      body: autoBody,
+      emailType: 'autoresponse'
+    });
+    
+    if (!autoEmailSent) {
+      // Store for later retry if autoresponse fails
+      storeFailedEmail_({
         to: submitter,
         subject: 'We received your audition form - Into the Woods',
-        name: 'Into the Woods — Casting Team',
-        body: autoBody
+        body: autoBody,
+        emailType: 'autoresponse',
+        timestamp: new Date().toISOString()
       });
-      debugLog_({ mail: 'autoresponse_ok', to: submitter });
-    } catch (err) {
-      debugLog_({ mail: 'autoresponse_fail', error: String(err), to: submitter });
     }
   }
 }
@@ -540,6 +540,54 @@ function testEmail() {
     Logger.log('Failed to send test email. Error: ' + e.toString());
   }
 }
+
+/** Manual functions for email fallback management */
+
+/**
+ * Check email system status
+ * Run this to see how many emails are pending
+ */
+function checkEmailStatus() {
+  const status = getEmailStatusReport_();
+  Logger.log('Email Status Report:');
+  Logger.log(JSON.stringify(status, null, 2));
+  return status;
+}
+
+/**
+ * Retry all failed emails
+ * Run this when Gmail quota resets (usually daily)
+ */
+function retryAllFailedEmails() {
+  Logger.log('Starting retry of all failed emails...');
+  retryFailedEmails_();
+  Logger.log('Retry process completed. Check debug log for details.');
+}
+
+/**
+ * Test the fallback system
+ * This will intentionally trigger quota error simulation
+ */
+function testEmailFallback() {
+  try {
+    // Try to send a test email
+    const testResult = sendEmailWithFallback_({
+      to: 'staheli.andrew.g@gmail.com',
+      subject: 'Test Email Fallback System',
+      body: 'This is a test of the email fallback system.',
+      emailType: 'test'
+    });
+    
+    Logger.log('Test email result: ' + (testResult ? 'SUCCESS' : 'FAILED - Check fallback systems'));
+    return testResult;
+    
+  } catch (error) {
+    Logger.log('Test email error: ' + error.toString());
+    return false;
+  }
+}
+
+
 
 /** Test Drive folder access (DISABLED - using email attachments only) */
 // function testDriveAccess() {
@@ -599,4 +647,299 @@ function guessExtFromMime_(mime) {
     if (m.indexOf('gif') > -1) return '.gif';
   } catch (_) {}
   return '.jpg'; // Default to jpg for images
+}
+
+/* ========== EMAIL FALLBACK SYSTEM ========== */
+
+/**
+ * Send email with comprehensive fallback system for Gmail quota exceeded
+ * @param {Object} emailOptions - Email configuration object
+ * @returns {boolean} - True if email sent successfully, false otherwise
+ */
+function sendEmailWithFallback_(emailOptions) {
+  const { to, cc, subject, replyTo, name, body, htmlBody, attachments, inlineImages, emailType } = emailOptions;
+  
+  // Strategy 1: Try Gmail API first
+  try {
+    const mailOpts = {
+      to: to,
+      cc: cc || undefined,
+      subject: subject,
+      replyTo: replyTo || undefined,
+      name: name || 'Into the Woods - Auditions Bot',
+      body: body,
+      htmlBody: htmlBody || undefined
+    };
+    
+    if (attachments) mailOpts.attachments = attachments;
+    if (inlineImages) mailOpts.inlineImages = inlineImages;
+    
+    MailApp.sendEmail(mailOpts);
+    debugLog_({ 
+      mail: `${emailType}_success`, 
+      method: 'gmail_api',
+      to: to, 
+      subject: subject 
+    });
+    return true;
+    
+  } catch (gmailError) {
+    const errorStr = String(gmailError);
+    debugLog_({ 
+      mail: `${emailType}_gmail_failed`, 
+      error: errorStr,
+      to: to,
+      subject: subject
+    });
+    
+    // Check if it's a quota exceeded error
+    if (errorStr.includes('Service invoked too many times') || 
+        errorStr.includes('quota') || 
+        errorStr.includes('limit')) {
+      
+      // Strategy 2: Store in Google Sheets as fallback
+      const stored = storeEmailInSheets_(emailOptions);
+      if (stored) {
+        debugLog_({ 
+          mail: `${emailType}_fallback_sheets`, 
+          method: 'google_sheets',
+          to: to,
+          subject: subject
+        });
+        return true;
+      }
+      
+      // Strategy 3: Store in Properties for manual processing
+      storeFailedEmail_(emailOptions);
+      debugLog_({ 
+        mail: `${emailType}_fallback_properties`, 
+        method: 'script_properties',
+        to: to,
+        subject: subject
+      });
+      return false;
+    }
+    
+    // For other errors, just log and return false
+    return false;
+  }
+}
+
+
+
+/**
+ * Store email data in Google Sheets as fallback when Gmail quota exceeded
+ * @param {Object} emailOptions - Email configuration object
+ * @returns {boolean} - True if stored successfully
+ */
+function storeEmailInSheets_(emailOptions) {
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    let emailLogSheet = ss.getSheetByName('Email_Log');
+    
+    if (!emailLogSheet) {
+      emailLogSheet = ss.insertSheet('Email_Log');
+      emailLogSheet.getRange(1, 1, 1, 8).setValues([[
+        'Timestamp', 'Type', 'To', 'Subject', 'Body', 'Status', 'Retry_Count', 'Last_Attempt'
+      ]]);
+    }
+    
+    const timestamp = Utilities.formatDate(new Date(), 'America/Chicago', 'MM/dd/yyyy hh:mm:ss a');
+    const rowData = [
+      timestamp,
+      emailOptions.emailType || 'unknown',
+      emailOptions.to || '',
+      emailOptions.subject || '',
+      emailOptions.body || '',
+      'pending',
+      0,
+      timestamp
+    ];
+    
+    emailLogSheet.appendRow(rowData);
+    return true;
+    
+  } catch (error) {
+    debugLog_({ 
+      mail: 'sheets_fallback_failed', 
+      error: String(error),
+      emailType: emailOptions.emailType
+    });
+    return false;
+  }
+}
+
+/**
+ * Store failed email in Script Properties for manual processing
+ * @param {Object} emailOptions - Email configuration object
+ */
+function storeFailedEmail_(emailOptions) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const timestamp = new Date().toISOString();
+    const key = `FAILED_EMAIL_${timestamp}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const emailData = {
+      ...emailOptions,
+      timestamp: timestamp,
+      retryCount: 0,
+      lastAttempt: timestamp
+    };
+    
+    props.setProperty(key, JSON.stringify(emailData));
+    
+    // Clean up old failed emails (keep only last 50)
+    cleanupOldFailedEmails_();
+    
+  } catch (error) {
+    debugLog_({ 
+      mail: 'properties_fallback_failed', 
+      error: String(error),
+      emailType: emailOptions.emailType
+    });
+  }
+}
+
+/**
+ * Clean up old failed emails from Properties (keep only last 50)
+ */
+function cleanupOldFailedEmails_() {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const failedKeys = props.getKeys().filter(key => key.startsWith('FAILED_EMAIL_'));
+    
+    if (failedKeys.length > 50) {
+      // Sort by timestamp and remove oldest
+      const sortedKeys = failedKeys.sort();
+      const keysToDelete = sortedKeys.slice(0, failedKeys.length - 50);
+      
+      keysToDelete.forEach(key => props.deleteProperty(key));
+      
+      debugLog_({ 
+        mail: 'cleanup_old_emails', 
+        deleted: keysToDelete.length,
+        remaining: failedKeys.length - keysToDelete.length
+      });
+    }
+  } catch (error) {
+    debugLog_({ mail: 'cleanup_failed', error: String(error) });
+  }
+}
+
+/**
+ * Retry failed emails from Properties (manual trigger)
+ * Call this function manually when Gmail quota resets
+ */
+function retryFailedEmails_() {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const failedKeys = props.getKeys().filter(key => key.startsWith('FAILED_EMAIL_'));
+    
+    debugLog_({ 
+      mail: 'retry_failed_emails_start', 
+      count: failedKeys.length 
+    });
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    failedKeys.forEach(key => {
+      try {
+        const emailDataStr = props.getProperty(key);
+        if (!emailDataStr) return;
+        
+        const emailData = JSON.parse(emailDataStr);
+        
+        // Increment retry count
+        emailData.retryCount = (emailData.retryCount || 0) + 1;
+        emailData.lastAttempt = new Date().toISOString();
+        
+        // Try to send email
+        const success = sendEmailWithFallback_(emailData);
+        
+        if (success) {
+          props.deleteProperty(key);
+          successCount++;
+          debugLog_({ 
+            mail: 'retry_email_success', 
+            key: key,
+            to: emailData.to,
+            retryCount: emailData.retryCount
+          });
+        } else {
+          // Update retry count in properties
+          props.setProperty(key, JSON.stringify(emailData));
+          failCount++;
+          
+          // Delete if too many retries
+          if (emailData.retryCount >= 5) {
+            props.deleteProperty(key);
+            debugLog_({ 
+              mail: 'retry_email_abandoned', 
+              key: key,
+              to: emailData.to,
+              retryCount: emailData.retryCount
+            });
+          }
+        }
+        
+      } catch (error) {
+        failCount++;
+        debugLog_({ 
+          mail: 'retry_email_error', 
+          key: key,
+          error: String(error)
+        });
+      }
+    });
+    
+    debugLog_({ 
+      mail: 'retry_failed_emails_complete', 
+      success: successCount,
+      failed: failCount,
+      total: failedKeys.length
+    });
+    
+  } catch (error) {
+    debugLog_({ 
+      mail: 'retry_failed_emails_error', 
+      error: String(error)
+    });
+  }
+}
+
+/**
+ * Get email status report
+ * @returns {Object} - Status report of email system
+ */
+function getEmailStatusReport_() {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const failedKeys = props.getKeys().filter(key => key.startsWith('FAILED_EMAIL_'));
+    
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const emailLogSheet = ss.getSheetByName('Email_Log');
+    let pendingInSheets = 0;
+    
+    if (emailLogSheet) {
+      const lastRow = emailLogSheet.getLastRow();
+      if (lastRow > 1) {
+        const pendingData = emailLogSheet.getRange(2, 6, lastRow - 1, 1).getValues();
+        pendingInSheets = pendingData.filter(row => row[0] === 'pending').length;
+      }
+    }
+    
+    return {
+      failedInProperties: failedKeys.length,
+      pendingInSheets: pendingInSheets,
+      totalPending: failedKeys.length + pendingInSheets,
+      timestamp: new Date().toISOString()
+    };
+    
+  } catch (error) {
+    return {
+      error: String(error),
+      timestamp: new Date().toISOString()
+    };
+  }
 }
