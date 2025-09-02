@@ -1,0 +1,575 @@
+/************** CONFIG  **************/
+const SHEET_ID  = '169QZzF50FMixF3ShTLyVP1_t8HQdb7-8ZjaxdHA1-aE';
+const SHEET_TAB = 'Audition Sign Ups';
+const DEBUG_TAB = '_Webhook_Debug';
+
+// Drive folder for headshots (DISABLED - using email attachments only)
+// const HEADSHOT_FOLDER_ID = '1sP-H_05dI5jTuIuGGzXvVUYo4Z2oxJlP';
+
+// Exact column order (sheet must match)
+const HEADERS = [
+  '_receivedAt',
+  'name',
+  'selected_roles',
+  'any_role',
+  'phone',
+  'email',
+  'vocal_part',
+  'vocal_range',
+  'experience',
+  'skills',
+  'conflicts',
+  'headshotUrl' // Sheets HYPERLINK formula
+];
+
+// Optional shared secret (Project settings → Script properties → SHARED_SECRET)
+const SHARED_SECRET_PROP = 'SHARED_SECRET';
+
+// File size limit (5MB)
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+// Allowed image types
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+/*****************************************/
+
+/** Web-app entry: FORM POST → sheet append → email → HTML redirect */
+function doPost(e) {
+  try {
+    const input = parsePayload_(e);
+    authCheck_(input, e);
+
+    debugLog_({
+      marker: 'payload_received',
+      hasParam_b64: !!(input && input._headshot_b64),
+      b64_len: input && input._headshot_b64 ? String(input._headshot_b64).length : 0,
+      postType: e && e.postData ? e.postData.type : 'none',
+      postLen: e && e.postData && e.postData.contents ? e.postData.contents.length : 0,
+      inputKeys: input ? Object.keys(input) : []
+    });
+
+    // Timestamp (Central Time)
+    input._receivedAt = Utilities.formatDate(new Date(), 'America/Chicago', 'MM/dd/yyyy hh:mm:ss a');
+
+    // === Handle headshot upload (native first, robust fallback second) ===
+    let headshotBlob = null;
+
+    // Native Apps Script path
+    if (e && e.files && e.files.headshot) {
+      headshotBlob = e.files.headshot;
+      debugLog_({ marker: 'native_file_found', name: headshotBlob.getName(), type: headshotBlob.getContentType() });
+    }
+
+    // Robust fallback: parse multipart when native path absent
+    if (!headshotBlob &&
+        e && e.postData && e.postData.type &&
+        e.postData.type.indexOf('multipart/form-data') !== -1 &&
+        typeof e.postData.contents === 'string' && e.postData.contents.length > 0) {
+
+      debugLog_({ marker: 'attempting_multipart_parse' });
+      const parsed = parseMultipartRobust_(e.postData.type, e.postData.contents, 'headshot');
+      if (parsed && parsed.blob) {
+        headshotBlob = parsed.blob;
+        debugLog_({ marker: 'multipart_success', name: parsed.filename, type: parsed.contentType });
+      }
+    }
+
+    // Base64 fallback: when client sent _headshot_b64 fields
+    if (!headshotBlob && input._headshot_b64) {
+      try {
+        const mime = (input._headshot_type || 'image/jpeg').toString();
+        const rawName = (input._headshot_name || 'upload-headshot').toString();
+        const bytes = Utilities.base64Decode(input._headshot_b64);
+        headshotBlob = Utilities.newBlob(bytes, mime, rawName + guessExtFromMime_(mime));
+        debugLog_({ marker: 'base64_success', name: headshotBlob.getName(), type: headshotBlob.getContentType(), size: bytes.length });
+      } catch (e2) {
+        debugLog_({ marker: 'base64_decode_fail', error: String(e2) });
+      }
+      // Do not push these large fields into the sheet
+      delete input._headshot_b64;
+      delete input._headshot_type;
+      delete input._headshot_name;
+    }
+
+    // Validate headshot if present
+    if (headshotBlob) {
+      validateHeadshot_(headshotBlob);
+    }
+
+    debugLog_({
+      marker: 'headshot_final_state',
+      haveBlob: !!headshotBlob,
+      mime: headshotBlob ? headshotBlob.getContentType() : '',
+      name: headshotBlob ? headshotBlob.getName() : '',
+      size: headshotBlob ? headshotBlob.getBytes().length : 0
+    });
+
+    // Headshots are only used for email attachments (no Drive storage)
+    if (headshotBlob) {
+      input._headshotUrlRaw = 'Image attached to email';
+      input.headshotUrl = 'Image attached to email';
+    } else {
+      input._headshotUrlRaw = '';
+      input.headshotUrl = '';
+    }
+
+    // Enforce headers and append row
+    const { sheet } = openSheet_();
+    const row = HEADERS.map(h => toScalar_(input[h]));
+    
+    // Debug the row mapping
+    debugLog_({ 
+      marker: 'row_mapping_debug',
+      headers: HEADERS,
+      rowData: row,
+      inputSample: {
+        name: input.name,
+        email: input.email,
+        phone: input.phone,
+        selected_roles: input.selected_roles,
+        headshotUrl: input.headshotUrl
+      }
+    });
+    
+    sheet.appendRow(row);
+    debugLog_({ marker: 'sheet_append_success', lastRow: sheet.getLastRow() });
+
+    // Notify
+    sendEmailNotification_(input, headshotBlob);
+    debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
+
+    // POST-Redirect-GET: Redirect to same page with success parameter
+    const successUrl = 'https://intothewoods.vercel.app/?success=1';
+    return HtmlService.createHtmlOutput(
+      `<!doctype html>
+<meta charset="utf-8">
+<script>window.location.href="${successUrl}";</script>
+<p>Redirecting...</p>`
+    ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+
+  } catch (err) {
+    debugLog_({ marker: 'doPost_error', error: String(err), stack: err.stack });
+    
+    // POST-Redirect-GET: Redirect to same page with error parameter
+    const errorUrl = 'https://intothewoods.vercel.app/?error=' + encodeURIComponent(String(err));
+    return HtmlService.createHtmlOutput(
+      `<!doctype html>
+<meta charset="utf-8">
+<script>window.location.href="${errorUrl}";</script>
+<p>Redirecting...</p>`
+    ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
+}
+
+/** Optional probe: https://.../exec?ping=1 */
+function doGet(e) {
+  if (e && e.parameter && e.parameter.ping) {
+    const stamp = Utilities.formatDate(new Date(), 'America/Chicago', 'MM/dd/yyyy hh:mm:ss a');
+    return ContentService.createTextOutput('OK :: audition-webhook v2.1 :: ' + stamp)
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+  return htmlInfo_();
+}
+
+/* ========== Internals ========== */
+
+function parsePayload_(e) {
+  let data = {};
+  // JSON body
+  if (e && e.postData && e.postData.type &&
+      String(e.postData.type).indexOf('application/json') !== -1) {
+    try { data = JSON.parse(e.postData.contents) || {}; } catch (_) {}
+  }
+  // URL-encoded / multipart fields
+  if (!Object.keys(data).length && e && e.parameter) {
+    data = Object.assign({}, e.parameter);
+    if (e.parameters) {
+      Object.keys(e.parameters).forEach(k => {
+        const v = e.parameters[k];
+        if (Array.isArray(v)) data[k] = v.join(', ');
+      });
+    }
+  }
+  // Nested provider object { form_data: {...} }
+  if (data && typeof data === 'object' && data.form_data && typeof data.form_data === 'object') {
+    data = data.form_data;
+  }
+  return data || {};
+}
+
+function authCheck_(data, e) {
+  const secret = (PropertiesService.getScriptProperties().getProperty(SHARED_SECRET_PROP) || '').trim();
+  if (!secret) return;
+  const token = (
+    (data && data.token) ||
+    (e && e.parameter && e.parameter.token) ||
+    ''
+  ).trim();
+  if (token !== secret) throw new Error('Unauthorized: shared secret mismatch');
+  delete data.token;
+}
+
+function validateHeadshot_(blob) {
+  if (!blob) return;
+  
+  // Check file size
+  const size = blob.getBytes().length;
+  if (size > MAX_FILE_SIZE) {
+    throw new Error(`Image file too large (${Math.round(size/1024/1024)}MB). Maximum size is 5MB.`);
+  }
+  
+  // Check file type
+  const contentType = blob.getContentType();
+  if (!ALLOWED_IMAGE_TYPES.includes(contentType)) {
+    throw new Error(`Invalid file type: ${contentType}. Please use JPG or PNG format.`);
+  }
+  
+  debugLog_({ 
+    marker: 'headshot_validation_passed', 
+    size: size, 
+    type: contentType,
+    sizeMB: Math.round(size/1024/1024 * 100) / 100
+  });
+}
+
+function sanitizeName_(name) {
+  return String(name || 'user').replace(/[^a-z0-9_-]/gi, '_').substring(0, 50);
+}
+
+function openSheet_() {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let sheet = ss.getSheetByName(SHEET_TAB);
+  if (!sheet) sheet = ss.insertSheet(SHEET_TAB);
+
+  // Ensure exact headers in row 1
+  const current = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length))
+    .getValues()[0].slice(0, HEADERS.length).map(x => (x || '').toString().trim());
+  const same = current.length === HEADERS.length && current.every((h, i) => h === HEADERS[i]);
+  
+  if (!same) {
+    debugLog_({ 
+      marker: 'headers_mismatch', 
+      expected: HEADERS, 
+      current: current,
+      fixing: true
+    });
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  }
+  
+  return { ss, sheet };
+}
+
+function debugLog_(obj) {
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    let dbg = ss.getSheetByName(DEBUG_TAB);
+    if (!dbg) {
+      dbg = ss.insertSheet(DEBUG_TAB);
+      // Add headers to debug sheet
+      dbg.getRange(1, 1, 1, 2).setValues([['Timestamp', 'Debug Info']]);
+    }
+    const ts = Utilities.formatDate(new Date(), 'America/Chicago', 'MM/dd/yyyy hh:mm:ss a');
+    dbg.appendRow([ts, JSON.stringify(obj, null, 2)]);
+  } catch (debugError) {
+    // Fail silently - don't let debug errors break the main function
+    console.log('Debug log failed:', debugError);
+  }
+}
+
+function createErrorHtml_(errorMessage) {
+  return `<!doctype html>
+<meta charset="utf-8">
+<title>Submission Error</title>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #FBF9F5; color: #40312C; text-align: center; padding: 2rem; }
+  .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  h1 { color: #c53030; font-size: 2rem; margin-bottom: 1rem; }
+  .error { background: #fed7d7; border: 1px solid #fc8181; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+  .back-btn { display: inline-block; background: #2E4035; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px; margin-top: 1rem; }
+</style>
+<div class="container">
+  <h1>Submission Error</h1>
+  <div class="error">
+    <strong>Error:</strong> ${errorMessage}
+  </div>
+  <p>Please try again. If the problem persists, contact the administrators.</p>
+  <a href="javascript:history.back()" class="back-btn">← Go Back</a>
+</div>`;
+}
+
+function htmlInfo_() {
+  const html = HtmlService.createHtmlOutput(`
+<!doctype html>
+<meta charset="utf-8">
+<title>Into the Woods - Audition Webhook</title>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #FBF9F5; color: #40312C; text-align: center; padding: 2rem; }
+  .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; }
+</style>
+<div class="container">
+  <h1>🌳 Into the Woods</h1>
+  <h2>Audition Form Endpoint</h2>
+  <p>This endpoint accepts <strong>POST</strong> requests from the audition form.</p>
+  <p>Ping check: append <code>?ping=1</code> to the URL.</p>
+</div>
+  `);
+  html.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return html;
+}
+
+function toScalar_(v) {
+  if (v == null) return '';
+  if (Array.isArray(v)) return v.join(', ');
+  return String(v);
+}
+
+/**
+ * Robust multipart/form-data parser for Apps Script when e.files is missing.
+ * Handles CRLF/LF, and optional Content-Transfer-Encoding (base64|binary).
+ * Returns { blob: Blob|null, filename: string|null, contentType: string|null }
+ */
+function parseMultipartRobust_(contentTypeHeader, bodyText, wantedFieldName) {
+  const bMatch = /boundary=([^;]+)/i.exec(contentTypeHeader || '');
+  if (!bMatch) return { blob: null, filename: null, contentType: null };
+  const boundary = bMatch[1];
+
+  const boundaryMarker = '--' + boundary;
+  const endMarker = boundaryMarker + '--';
+
+  // Keep original raw; also make a normalized copy for header parsing only
+  const raw = bodyText;
+  const safe = bodyText.replace(/\r\n/g, '\n');
+
+  const sections = safe.split(boundaryMarker);
+  for (let i = 0; i < sections.length; i++) {
+    let sec = sections[i];
+    if (!sec) continue;
+
+    sec = sec.replace(/^\s+|\s+$/g, '');
+    if (!sec || sec === '--' || sec === endMarker) continue;
+
+    const headerEndIdx = sec.indexOf('\n\n');
+    if (headerEndIdx === -1) continue;
+    const headersText = sec.substring(0, headerEndIdx);
+
+    // Try to locate the same header block in the original raw string (CRLF)
+    const headersTextCRLF = headersText.replace(/\n/g, '\r\n');
+    const pos = raw.indexOf(headersTextCRLF);
+
+    let contentStartPos;
+    if (pos >= 0) {
+      contentStartPos = pos + headersTextCRLF.length + 4; // \r\n\r\n
+    } else {
+      // Fallback using normalized offsets (+2 for \n\n)
+      const safePos = safe.indexOf(headersText);
+      contentStartPos = safePos >= 0 ? safePos + headersText.length + 2 : -1;
+    }
+    if (contentStartPos < 0) continue;
+
+    const nextBoundaryIdx = raw.indexOf(boundaryMarker, contentStartPos);
+    const contentSlice = nextBoundaryIdx >= 0 ? raw.substring(contentStartPos, nextBoundaryIdx)
+                                              : raw.substring(contentStartPos);
+
+    // Parse headers
+    const headers = {};
+    headersText.split(/\n/).forEach(line => {
+      const m = /^([^:]+):(.*)$/.exec(line);
+      if (m) headers[m[1].trim().toLowerCase()] = m[2].trim();
+    });
+
+    const disp = headers['content-disposition'] || '';
+    const nameMatch = /name="([^"]+)"/i.exec(disp);
+    if (!nameMatch) continue;
+    const fieldName = nameMatch[1];
+    const fileNameMatch = /filename="([^"]*)"/i.exec(disp);
+    const ctype = headers['content-type'] || 'application/octet-stream';
+    const transferEnc = (headers['content-transfer-encoding'] || 'binary').toLowerCase();
+
+    if (fileNameMatch && fileNameMatch[1] && fieldName === wantedFieldName) {
+      const filename = fileNameMatch[1] || 'upload.bin';
+      let blob;
+
+      if (transferEnc === 'base64') {
+        const base64Data = contentSlice.replace(/\s+/g, '');
+        blob = Utilities.newBlob(Utilities.base64Decode(base64Data), ctype, filename);
+      } else {
+        blob = Utilities.newBlob(contentSlice, ctype, filename);
+      }
+      return { blob: blob, filename: filename, contentType: ctype };
+    }
+  }
+
+  return { blob: null, filename: null, contentType: null };
+}
+
+/** Notification + autoresponse; embeds inline image and attaches file */
+function sendEmailNotification_(data, headshotBlob) {
+  const S = v => (v == null ? '' : String(v)).trim();
+  const safe = (label, v) => `${label}: ${S(v) || 'N/A'}`;
+
+  const adminTo = S(data._to) || 'staheli.andrew.g@gmail.com';
+  const adminCc = S(data._cc);
+  const subject = S(data._subject) || 'Into the Woods — New Audition Submission';
+  const replyTo = S(data._replyto) || S(data.email);
+  const autoBody = S(data._autoresponse);
+
+  // Plain text body
+  const lines = [
+    'New audition form received',
+    safe('Received At', data._receivedAt),
+    safe('Name', data.name),
+    safe('Email', data.email),
+    safe('Phone', data.phone),
+    safe('Selected Roles', data.selected_roles),
+    safe('Any Role', data.any_role === 'yes' ? 'Yes' : 'No'),
+    safe('Vocal Part', data.vocal_part),
+    safe('Vocal Range', data.vocal_range),
+    '',
+    'Experience:',
+    S(data.experience) || 'Not provided',
+    '',
+    'Skills:',
+    S(data.skills) || 'Not provided',
+    '',
+    'Conflicts:',
+    S(data.conflicts) || 'Not provided',
+    '',
+    'Headshot URL:',
+    S(data._headshotUrlRaw || data.headshotUrl) || 'No headshot uploaded'
+  ];
+  const adminBody = lines.join('\n');
+
+  // HTML body with inline preview
+  let htmlBody = '<h2>New audition form received</h2><ul>';
+  htmlBody += `<li><strong>Received At:</strong> ${S(data._receivedAt)}</li>`;
+  htmlBody += `<li><strong>Name:</strong> ${S(data.name)}</li>`;
+  htmlBody += `<li><strong>Email:</strong> ${S(data.email)}</li>`;
+  htmlBody += `<li><strong>Phone:</strong> ${S(data.phone)}</li>`;
+  htmlBody += `<li><strong>Selected Roles:</strong> ${S(data.selected_roles)}</li>`;
+  htmlBody += `<li><strong>Any Role:</strong> ${data.any_role === 'yes' ? 'Yes' : 'No'}</li>`;
+  htmlBody += `<li><strong>Vocal Part:</strong> ${S(data.vocal_part)}</li>`;
+  htmlBody += `<li><strong>Vocal Range:</strong> ${S(data.vocal_range)}</li>`;
+  htmlBody += '</ul>';
+  htmlBody += `<p><strong>Experience:</strong><br>${(S(data.experience) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
+  htmlBody += `<p><strong>Skills:</strong><br>${(S(data.skills) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
+  htmlBody += `<p><strong>Conflicts:</strong><br>${(S(data.conflicts) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
+
+  if (S(data._headshotUrlRaw)) {
+    htmlBody += `<p><strong>Headshot:</strong> <a href="${S(data._headshotUrlRaw)}">View in Drive</a></p>`;
+  } else if (headshotBlob) {
+    htmlBody += `<p><strong>Headshot:</strong> Headshot uploaded but Drive save failed (see attachment)</p>`;
+  } else {
+    htmlBody += `<p><strong>Headshot:</strong> No headshot uploaded</p>`;
+  }
+  
+  if (headshotBlob) {
+    const cid = 'headshotImage';
+    htmlBody += `<p><strong>Headshot Preview:</strong><br><img src="cid:${cid}" style="max-width:300px;height:auto;border:1px solid #ccc"></p>`;
+  }
+
+  // Send admin notification
+  try {
+    const mailOpts = {
+      to: adminTo,
+      cc: adminCc || undefined,
+      subject,
+      replyTo: replyTo || undefined,
+      name: 'Into the Woods - Auditions Bot',
+      body: adminBody,
+      htmlBody: htmlBody
+    };
+    if (headshotBlob) {
+      mailOpts.attachments = [headshotBlob];
+      mailOpts.inlineImages = { headshotImage: headshotBlob };
+    }
+    MailApp.sendEmail(mailOpts);
+    debugLog_({ mail: 'admin_notification_ok', to: adminTo, cc: adminCc, subject });
+  } catch (err) {
+    debugLog_({ mail: 'admin_notification_fail', error: String(err) });
+  }
+
+  // Autoresponse to submitter (text only)
+  const submitter = S(data.email);
+  if (submitter && autoBody) {
+    try {
+      MailApp.sendEmail({
+        to: submitter,
+        subject: 'We received your audition form - Into the Woods',
+        name: 'Into the Woods — Casting Team',
+        body: autoBody
+      });
+      debugLog_({ mail: 'autoresponse_ok', to: submitter });
+    } catch (err) {
+      debugLog_({ mail: 'autoresponse_fail', error: String(err), to: submitter });
+    }
+  }
+}
+
+/** Manual test to confirm MailApp scope */
+function testEmail() {
+  try {
+    MailApp.sendEmail('staheli.andrew.g@gmail.com', 'Test Email from Audition Script', 'If you received this, the MailApp service is working correctly.');
+    Logger.log('Test email sent successfully.');
+  } catch (e) {
+    Logger.log('Failed to send test email. Error: ' + e.toString());
+  }
+}
+
+/** Test Drive folder access (DISABLED - using email attachments only) */
+// function testDriveAccess() {
+//   try {
+//     const folder = DriveApp.getFolderById(HEADSHOT_FOLDER_ID);
+//     Logger.log('Folder name: ' + folder.getName());
+//     Logger.log('Folder access: SUCCESS');
+//     
+//     // Test creating a simple file
+//     const testBlob = Utilities.newBlob('test content', 'text/plain', 'test.txt');
+//     const file = folder.createFile(testBlob);
+//     Logger.log('Test file created: ' + file.getUrl());
+//     
+//     // Clean up
+//     file.setTrashed(true);
+//     Logger.log('Test completed successfully');
+//     
+//   } catch (error) {
+//     Logger.log('Drive access error: ' + error.toString());
+//   }
+// }
+
+/** Helper to retry failed uploads stored in script properties (DISABLED - using email attachments only) */
+// function retryFailedUploads() {
+//   const props = PropertiesService.getScriptProperties();
+//   const failed = props.getKeys().filter(key => key.startsWith('FAILED_UPLOAD_'));
+//   
+//   Logger.log(`Found ${failed.length} failed uploads to retry`);
+//   
+//   failed.forEach(key => {
+//     try {
+//       const data = JSON.parse(props.getProperty(key));
+//       const blob = Utilities.newBlob(
+//         Utilities.base64Decode(data.base64), 
+//         data.mimeType, 
+//         data.filename
+//       );
+//       
+//       const folder = DriveApp.getFolderById(HEADSHOT_FOLDER_ID);
+//       const file = folder.createFile(blob);
+//       
+//       Logger.log(`Successfully uploaded: ${data.filename} -> ${file.getUrl()}`);
+//       props.deleteProperty(key);
+//       
+//     } catch (error) {
+//       Logger.log(`Still failing: ${key} - ${error}`);
+//     }
+//   });
+// }
+
+function guessExtFromMime_(mime) {
+  try {
+    const m = String(mime).toLowerCase();
+    if (m.indexOf('png') > -1) return '.png';
+    if (m.indexOf('jpeg') > -1) return '.jpg';
+    if (m.indexOf('jpg') > -1) return '.jpg';
+    if (m.indexOf('gif') > -1) return '.gif';
+  } catch (_) {}
+  return '.jpg'; // Default to jpg for images
+}

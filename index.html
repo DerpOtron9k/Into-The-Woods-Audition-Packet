@@ -230,7 +230,7 @@
 
   <div class="mt-6">
     <label for="headshot" class="block text-sm font-medium text-[#40312C]">Headshot Upload (Optional)</label>
-    <input type="file" name="headshot" id="headshot" accept="image/png, image/jpeg" required class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#F0F5F2] file:text-[#2E4035] hover:file:bg-[#dbece4]">
+    <input type="file" name="headshot" id="headshot" accept="image/png, image/jpeg" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#F0F5F2] file:text-[#2E4035] hover:file:bg-[#dbece4]">
     <p class="mt-1 text-xs text-gray-500">PNG or JPG file. Max 5MB.</p>
   </div>
 
@@ -579,7 +579,27 @@ const characterData = {
                 window.scrollTo(0, 0);
             });
 
-            if (window.location.hash === '#submitted') {
+            // Check for success/error parameters from POST-Redirect-GET
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            
+            if (success === '1') {
+                // Show success confirmation
+                mainContent.classList.add('hidden');
+                registrationSection.classList.add('hidden');
+                confirmationSection.classList.remove('hidden');
+                
+                // Clean up URL parameters
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (error) {
+                // Show error message
+                alert('Submission failed: ' + decodeURIComponent(error));
+                
+                // Clean up URL parameters
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (window.location.hash === '#submitted') {
+                // Legacy hash-based success (for backwards compatibility)
                 mainContent.classList.add('hidden'); 
                 confirmationSection.classList.remove('hidden');
             }
@@ -587,12 +607,12 @@ const characterData = {
     </script>
 <script>
   (function () {
-    const form      = document.getElementById('audition-form');
+    const form = document.getElementById('audition-form');
     const submitBtn = document.getElementById('submit-btn');
     const fileInput = document.getElementById('headshot');
 
     form.addEventListener('submit', function (ev) {
-      // If no file (should not happen because required), let it submit normally
+      // If no file selected, submit normally
       if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Submitting…';
@@ -625,7 +645,7 @@ const characterData = {
         }
 
         const mime = m[1];
-        const b64  = m[2];
+        const b64 = m[2];
 
         // Hidden fields for server
         const h1 = document.createElement('input');
@@ -647,7 +667,7 @@ const characterData = {
         fileInput.removeAttribute('name');
 
         submitBtn.innerHTML = 'Submitting…';
-        form.submit(); // normal POST; Apps Script redirects on success
+        form.submit(); // POST request; Apps Script will redirect to GET
       };
       reader.onerror = function () {
         alert('Failed to read the image file.');
