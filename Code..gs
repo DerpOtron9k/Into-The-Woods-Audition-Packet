@@ -137,20 +137,12 @@ function doPost(e) {
     sendEmailNotification_(input, headshotBlob);
     debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
-    // POST-Redirect-GET: Redirect to same page with success parameter
+    // POST-Redirect-GET: Simple redirect to main page with success parameter
     const successUrl = 'https://intothewoods.vercel.app/?success=1';
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
 <meta http-equiv="refresh" content="0;url=${successUrl}">
-<script>
-  // Immediate redirect
-  window.location.replace("${successUrl}");
-  // Fallback redirect
-  setTimeout(function() {
-    window.location.href = "${successUrl}";
-  }, 100);
-</script>
 <p>Redirecting to main page...</p>
 <p><a href="${successUrl}">Click here if you're not redirected automatically</a></p>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -158,20 +150,12 @@ function doPost(e) {
   } catch (err) {
     debugLog_({ marker: 'doPost_error', error: String(err), stack: err.stack });
     
-    // POST-Redirect-GET: Redirect to same page with error parameter
+    // POST-Redirect-GET: Simple redirect to main page with error parameter
     const errorUrl = 'https://intothewoods.vercel.app/?error=' + encodeURIComponent(String(err));
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
 <meta http-equiv="refresh" content="0;url=${errorUrl}">
-<script>
-  // Immediate redirect
-  window.location.replace("${errorUrl}");
-  // Fallback redirect
-  setTimeout(function() {
-    window.location.href = "${errorUrl}";
-  }, 100);
-</script>
 <p>Redirecting to main page...</p>
 <p><a href="${errorUrl}">Click here if you're not redirected automatically</a></p>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
