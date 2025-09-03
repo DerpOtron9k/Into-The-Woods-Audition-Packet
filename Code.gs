@@ -25,7 +25,7 @@ const HEADERS = [
 // Optional shared secret (Project settings → Script properties → SHARED_SECRET)
 const SHARED_SECRET_PROP = 'SHARED_SECRET';
 
-// File size limit (5MB)
+// File size limit (5MB) 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 // Allowed image types
