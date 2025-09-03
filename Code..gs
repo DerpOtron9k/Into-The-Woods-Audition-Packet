@@ -225,7 +225,10 @@ function parsePayload_(e) {
 
 function authCheck_(data, e) {
   const secret = (PropertiesService.getScriptProperties().getProperty(SHARED_SECRET_PROP) || '').trim();
-  if (!secret) return;
+  if (!secret) {
+    // No authentication required - allow all submissions
+    return;
+  }
   const token = (
     (data && data.token) ||
     (e && e.parameter && e.parameter.token) ||
