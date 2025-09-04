@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Custom styles */
 body { font-family: 'Inter', sans-serif; }
 h1, h2, h3 { font-family: 'Playfair Display', serif; }
 
@@ -17,16 +21,16 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; }
 .form-group label { @apply block mb-2 font-medium; }
 .form-group label.required::after { @apply content-['*'] text-red-600 ml-1; }
 .form-group input, .form-group select, .form-group textarea {
-    @apply w-full p-3 border-2 border-gray-300 rounded-lg transition-colors duration-200 ease-in-out;
+  @apply w-full rounded-lg border-2 border-gray-300 py-3 px-4 transition-colors duration-200;
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    @apply outline-none border-primary ring-4 ring-primary/10;
+  @apply border-primary outline-none ring-4 ring-primary/10;
 }
 .form-group input.error, .form-group select.error, .form-group textarea.error {
-    @apply border-red-600 ring-4 ring-red-600/10;
+  @apply border-red-600 ring-4 ring-red-600/10;
 }
 .form-group input.success, .form-group select.success, .form-group textarea.success {
-    @apply border-green-600 ring-4 ring-green-600/10;
+  @apply border-green-600 ring-4 ring-green-600/10;
 }
 
 .error-message { @apply text-red-600 text-sm mt-1 hidden; }
