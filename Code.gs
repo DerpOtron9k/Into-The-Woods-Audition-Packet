@@ -132,7 +132,7 @@ function doPost(e) {
     // debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
     // POST-Redirect-GET: Direct link approach (iframes block redirects)
-    const successUrl = 'https://intothewoods.vercel.app/?success=1';
+    const successUrl = 'https://intothewoods.vercel.app/';
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
@@ -148,7 +148,7 @@ function doPost(e) {
   <h1>✅ Thank You!</h1>
   <p>Your audition form has been submitted successfully.</p>
   <p>We look forward to seeing you at auditions!</p>
-  <a href="${successUrl}" class="success-btn">← Return to Main Page</a>
+  <a href="${successUrl}" class="success-btn">← Back to Audition Packet</a>
 </div>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
@@ -175,7 +175,7 @@ function doPost(e) {
     <strong>Error:</strong> ${String(err)}
   </div>
   <p>Please try again. If the problem persists, contact the administrators.</p>
-  <a href="${errorUrl}" class="back-btn">← Return to Main Page</a>
+  <a href="${errorUrl}" class="back-btn">← Back to Audition Packet</a>
 </div>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
