@@ -896,14 +896,28 @@ class FormValidator {
   async handleFormSubmit(e) {
     e.preventDefault();
     
-    if (!this.validateForm()) {
-      return;
-    }
-
-    this.showLoadingState('submitting');
-    
     try {
-      const formData = new FormData(document.getElementById('audition-form'));
+      // Security: Rate limiting check
+      this.checkRateLimit();
+      
+      // Validate form
+      if (!this.validateForm()) {
+        // Focus first error field
+        const firstError = document.querySelector('.error');
+        if (firstError) {
+          firstError.focus();
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      
+      // Security: Additional validation
+      if (!this.performSecurityChecks()) {
+        return;
+      }
+      
+      // Show loading state
+      this.showLoadingState('preparing');
       
       // Handle file upload with base64 fallback
       const fileInput = document.getElementById('headshot');
@@ -913,36 +927,55 @@ class FormValidator {
           this.hideLoadingState();
           return;
         }
+        
+        // Convert file to base64 for reliable transmission
         await this.convertFileToBase64(file);
       }
       
-      const response = await fetch(document.getElementById('audition-form').action, {
-        method: 'POST',
-        body: formData
-      });
+      // Simulate processing stages
+      await this.delay(1000);
+      this.showLoadingState('processing');
       
-      const result = await response.json();
+      await this.delay(500);
+      this.showLoadingState('submitting');
       
-      if (result.success) {
-        // Show success page with clean URL
-        this.showSuccessPage();
-      } else {
-        throw new Error(result.message);
-      }
+      // Submit form (this will redirect to Google Apps Script)
+      const form = document.getElementById('audition-form');
+      form.submit();
+      
     } catch (error) {
       this.hideLoadingState();
-      this.showSecurityError(error.message);
+      this.showError(error.message);
       console.error('Form submission error:', error);
     }
   }
 
-  showSuccessPage() {
-    // Hide form and show success message
-    document.getElementById('audition-form').style.display = 'none';
-    document.getElementById('success-message').style.display = 'block';
+  // Fix: Add missing showError method
+  showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message show';
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #dc2626;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      max-width: 300px;
+    `;
+    errorDiv.textContent = message;
     
-    // Clean up URL
-    window.history.replaceState({}, document.title, window.location.pathname);
+    document.body.appendChild(errorDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.parentNode.removeChild(errorDiv);
+      }
+    }, 5000);
   }
 
   // ... existing code ...

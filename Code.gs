@@ -131,11 +131,26 @@ function doPost(e) {
     sendEmailNotification_(input, headshotBlob);
     // debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
-    // POST-Redirect-GET: Simple success response (no redirect)
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: 'Audition form submitted successfully!'
-    })).setMimeType(ContentService.MimeType.JSON);
+    // POST-Redirect-GET: Simple success page (no redirect)
+    return HtmlService.createHtmlOutput(
+      `<!doctype html>
+<meta charset="utf-8">
+<title>Submission Successful</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
+  .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  h1 { color: #2E4035; margin-bottom: 20px; }
+  p { color: #666; margin-bottom: 15px; line-height: 1.6; }
+  .success-btn { display: inline-block; background: #2E4035; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px; }
+  .success-btn:hover { background: #4A6B5A; }
+</style>
+<div class="container">
+  <h1>✅ Thank You!</h1>
+  <p>Your audition form has been submitted successfully.</p>
+  <p>We look forward to seeing you at auditions!</p>
+  <a href="https://intothewoods.vercel.app/" class="success-btn">← Back to Audition Packet</a>
+</div>`
+    ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
   } catch (err) {
     debugLog_({ marker: 'doPost_error', error: String(err), stack: err.stack });
