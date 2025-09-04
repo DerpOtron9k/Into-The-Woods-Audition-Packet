@@ -23,9 +23,7 @@
         .loading-overlay.show { display: flex; align-items: center; justify-content: center; }
     </style>
     
-    <!-- Fonts loaded with preload for better performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Non-critical CSS loaded asynchronously -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"></noscript>
     
@@ -44,7 +42,7 @@
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.0/dist/tailwind.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
@@ -1108,9 +1106,18 @@ if ('serviceWorker' in navigator) {
 
 // Performance: Preload critical resources
 const preloadCriticalResources = () => {
-  // Only preload resources that aren't already in the head
-  // Fonts are already preloaded in the head section
-  return;
+  const criticalResources = [
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap',
+    'https://cdn.tailwindcss.com'
+  ];
+  
+  criticalResources.forEach(resource => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = resource;
+    link.as = resource.includes('.css') ? 'style' : 'script';
+    document.head.appendChild(link);
+  });
 };
 
 // Performance: Lazy load non-critical scripts
