@@ -552,10 +552,12 @@ class FormValidator {
     const loadType = element.dataset.lazyLoad;
     switch (loadType) {
       case 'character-cards':
-        this.loadCharacterCards();
+        // Character cards are already loaded in the HTML
+        console.log('Character cards loaded');
         break;
       case 'materials':
-        this.loadAuditionMaterials();
+        // Materials are already loaded in the HTML
+        console.log('Audition materials loaded');
         break;
     }
   }
@@ -567,13 +569,16 @@ class FormValidator {
     const previewImage = document.getElementById('preview-image');
     const removeBtn = document.getElementById('remove-file');
     
+    console.log('Setting up file upload...', { fileInput, uploadArea });
+    
     if (!fileInput || !uploadArea) {
-      console.error('File upload elements not found');
+      console.error('File upload elements not found', { fileInput, uploadArea });
       return;
     }
     
     // Click to upload - make sure it works
     uploadArea.addEventListener('click', (e) => {
+      console.log('Upload area clicked');
       e.preventDefault();
       e.stopPropagation();
       fileInput.click();
@@ -581,8 +586,10 @@ class FormValidator {
     
     // Also make the label clickable
     const label = uploadArea.querySelector('label[for="headshot"]');
+    console.log('Label found:', label);
     if (label) {
       label.addEventListener('click', (e) => {
+        console.log('Label clicked');
         e.preventDefault();
         e.stopPropagation();
         fileInput.click();
