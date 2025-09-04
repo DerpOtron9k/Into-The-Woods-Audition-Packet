@@ -896,200 +896,56 @@ class FormValidator {
   async handleFormSubmit(e) {
     e.preventDefault();
     
-    try {
-      // Security: Rate limiting check
-      this.checkRateLimit();
-      
-      // Validate form
-      if (!this.validateForm()) {
-        // Focus first error field
-        const firstError = document.querySelector('.error');
-        if (firstError) {
-          firstError.focus();
-          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        return;
-      }
-      
-      // Security: Additional validation
-      if (!this.performSecurityChecks()) {
-        return;
-      }
-      
+    if (!this.validateForm()) {
+      return;
+    }
 
+    this.showLoadingState('submitting');
+    
+    try {
+      const formData = new FormData(document.getElementById('audition-form'));
       
-      // Show loading state
-      this.showLoadingState('preparing');
-      
-      // Simulate processing stages with security validation
-      await this.delay(500);
-      this.showLoadingState('uploading');
-      
-      // Security: Validate file if present and convert to base64
+      // Handle file upload with base64 fallback
       const fileInput = document.getElementById('headshot');
-      console.log('File input check:', { fileInput, files: fileInput?.files, fileCount: fileInput?.files?.length });
       if (fileInput && fileInput.files.length > 0) {
-        console.log('File selected:', { name: fileInput.files[0].name, size: fileInput.files[0].size, type: fileInput.files[0].type });
-        if (!this.validateFileSecurity(fileInput.files[0])) {
+        const file = fileInput.files[0];
+        if (!this.validateFileSecurity(file)) {
           this.hideLoadingState();
           return;
         }
-        
-        // Convert file to base64 for reliable transmission
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const base64 = e.target.result.split(',')[1]; // Remove data:image/...;base64, prefix
-          console.log('File converted to base64, length:', base64.length);
-          
-          // Add base64 data as hidden fields
-          this.addHiddenField('_headshot_b64', base64);
-          this.addHiddenField('_headshot_name', file.name);
-          this.addHiddenField('_headshot_type', file.type);
-          
-          // Continue with form submission
-          this.submitFormWithFile();
-        };
-        reader.readAsDataURL(file);
-        return; // Exit early, form will be submitted in the callback
+        await this.convertFileToBase64(file);
+      }
+      
+      const response = await fetch(document.getElementById('audition-form').action, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Show success page with clean URL
+        this.showSuccessPage();
       } else {
-        console.log('No file selected');
-        this.submitFormWithFile();
+        throw new Error(result.message);
       }
-      
-      // This code will only run if no file is selected
-      await this.delay(1000);
-      this.showLoadingState('processing');
-      
-      await this.delay(500);
-      this.showLoadingState('submitting');
-      
-      // Submit form
-      const form = document.getElementById('audition-form');
-      form.submit();
-      
     } catch (error) {
       this.hideLoadingState();
       this.showSecurityError(error.message);
       console.error('Form submission error:', error);
     }
   }
-  
-  // Helper method to add hidden fields
-  addHiddenField(name, value) {
-    const form = document.getElementById('audition-form');
-    let field = form.querySelector(`input[name="${name}"]`);
-    if (!field) {
-      field = document.createElement('input');
-      field.type = 'hidden';
-      field.name = name;
-      form.appendChild(field);
-    }
-    field.value = value;
+
+  showSuccessPage() {
+    // Hide form and show success message
+    document.getElementById('audition-form').style.display = 'none';
+    document.getElementById('success-message').style.display = 'block';
+    
+    // Clean up URL
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
-  
-  // Submit form with file handling
-  async submitFormWithFile() {
-    try {
-      await this.delay(1000);
-      this.showLoadingState('processing');
-      
-      await this.delay(500);
-      this.showLoadingState('submitting');
-      
-      // Submit form
-      const form = document.getElementById('audition-form');
-      form.submit();
-    } catch (error) {
-      this.hideLoadingState();
-      this.showSecurityError(error.message);
-      console.error('Form submission error:', error);
-    }
-  }
-  
-  // Security: Additional security checks
-  performSecurityChecks() {
-    // Check for suspicious patterns
-    const suspiciousPatterns = [
-      /<script/i,
-      /javascript:/i,
-      /on\w+\s*=/i,
-      /eval\s*\(/i,
-      /expression\s*\(/i
-    ];
-    
-    const formData = new FormData(document.getElementById('audition-form'));
-    for (const [key, value] of formData.entries()) {
-      if (typeof value === 'string') {
-        for (const pattern of suspiciousPatterns) {
-          if (pattern.test(value)) {
-            this.showSecurityError('Invalid input detected. Please check your entries.');
-            return false;
-          }
-        }
-      }
-    }
-    
-    return true;
-  }
-  
-  // Security: File validation
-  validateFileSecurity(file) {
-    // Check file type
-    const allowedTypes = ['image/jpeg', 'image/png'];
-    if (!allowedTypes.includes(file.type)) {
-      this.showSecurityError('Invalid file type. Please upload a PNG or JPEG image.');
-      return false;
-    }
-    
-    // Check file size
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      this.showSecurityError('File too large. Please upload an image smaller than 5MB.');
-      return false;
-    }
-    
-    // Check file name for suspicious patterns
-    const suspiciousNames = /[<>:"/\\|?*]/;
-    if (suspiciousNames.test(file.name)) {
-      this.showSecurityError('Invalid file name. Please rename your file.');
-      return false;
-    }
-    
-    return true;
-  }
-  
-  // Security: Show security-related errors
-  showSecurityError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'security-error';
-    errorDiv.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #dc2626;
-      color: white;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 10000;
-      max-width: 300px;
-    `;
-    errorDiv.textContent = message;
-    
-    document.body.appendChild(errorDiv);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (errorDiv.parentNode) {
-        errorDiv.parentNode.removeChild(errorDiv);
-      }
-    }, 5000);
-  }
-  
-  delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+
+  // ... existing code ...
 }
 
 // Performance: Service Worker registration for caching
