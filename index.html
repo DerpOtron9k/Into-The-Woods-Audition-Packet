@@ -551,14 +551,56 @@ class FormValidator {
     const loadType = element.dataset.lazyLoad;
     switch (loadType) {
       case 'character-cards':
-        // Character cards are already loaded in the HTML
-        console.log('Character cards loaded');
+        this.loadCharacterCards(element);
         break;
       case 'materials':
-        // Materials are already loaded in the HTML
-        console.log('Audition materials loaded');
+        this.loadAuditionMaterials(element);
         break;
     }
+  }
+  
+  loadCharacterCards(element) {
+    // Generate character cards for the specific grid
+    const isPrincipal = element.id === 'principal-character-grid';
+    const isSupporting = element.id === 'supporting-character-grid';
+    
+    if (!isPrincipal && !isSupporting) return;
+    
+    const sortedCharacters = Object.keys(window.characterData).sort();
+    sortedCharacters.forEach(name => {
+      const char = window.characterData[name];
+      if (char.category === 'cameo') return;
+      
+      // Only add to the correct grid
+      if ((isPrincipal && char.category === 'principal') || 
+          (isSupporting && char.category === 'supporting')) {
+        
+        const card = document.createElement('div');
+        card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent flex flex-col justify-between';
+        card.dataset.characterName = name;
+
+        card.innerHTML = `
+          <div>
+            <h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3>
+            <p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p>
+            <p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>
+            ${char.auditionCut ? `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>` : ''}
+          </div>
+          <div class="mt-4 flex justify-end">
+            <span class="select-button bg-gray-200 text-[#2E4035] font-bold py-2 px-4 rounded-lg text-sm">Select Role</span>
+          </div>
+        `;
+
+        element.appendChild(card);
+      }
+    });
+    
+    console.log('Character cards loaded for', element.id);
+  }
+  
+  loadAuditionMaterials(element) {
+    // Materials are already loaded in the main script
+    console.log('Audition materials loaded');
   }
   
   setupFileUpload() {
@@ -1095,7 +1137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- DATA: CHARACTER INFORMATION & MATERIALS ---
-const characterData = {
+window.characterData = {
   "Baker": {
     category: "principal",
     vocalInfo: "Age 20–45, A♭2–G4 — Baritone",
@@ -1107,7 +1149,7 @@ const characterData = {
   "Baker's Wife": {
     category: "principal",
     vocalInfo: "Age 20–45, F3–G5 — Mezzo-soprano (strong belt/character mezzo)",
-    characterDescription: "Practical, witty, and driven, she is the true engine of the story. She longs for a family but also hungers for something "more," which leads her into moments of scheming, charm, and temptation. Her voice should carry warmth and intelligence, capable of quick, articulate patter as well as tender lyricism. A mezzo-soprano role, she requires resourcefulness in both character and tone, with sharp humor and emotional depth that embody both the joy and the cost of desire.",
+    characterDescription: "Practical, witty, and driven, she is the true engine of the story. She longs for a family but also hungers for something 'more,' which leads her into moments of scheming, charm, and temptation. Her voice should carry warmth and intelligence, capable of quick, articulate patter as well as tender lyricism. A mezzo-soprano role, she requires resourcefulness in both character and tone, with sharp humor and emotional depth that embody both the joy and the cost of desire.",
     auditionCut: "Moments in the Woods, m.27–64",
     sheetMusicUrl: "javascript:void(0);",
     audioDownloadUrl: "javascript:void(0);"
@@ -1115,7 +1157,7 @@ const characterData = {
   "Cinderella": {
     category: "principal",
     vocalInfo: "Age 20–35, G3–G5 — Soprano (lyric or light mezzo with soprano extension)",
-            characterDescription: "A thoughtful young woman who longs for a better life yet questions what \"happily ever after\" really means. Intelligent, observant, and often torn between desire and hesitation, she becomes a moral compass in the woods, learning to choose her own path. Vocally, she requires warmth and clarity—her voice is never just \"pretty,\" it must carry the story with wit, vulnerability, and strength.",
+    characterDescription: "A thoughtful young woman who longs for a better life yet questions what 'happily ever after' really means. Intelligent, observant, and often torn between desire and hesitation, she becomes a moral compass in the woods, learning to choose her own path. Vocally, she requires warmth and clarity—her voice is never just 'pretty,' it must carry the story with wit, vulnerability, and strength.",
     auditionCut: "On the Steps of the Palace, m.23–57",
     sheetMusicUrl: "https://drive.google.com/file/d/1IOMY1EDnYtFykIy9I-1n4yAjAuAGMFTZ/view?usp=drive_link",
     audioDownloadUrl: "https://drive.google.com/file/d/13pVy6Mtn9lIOI2EMUCsbPGckrmiGBw0b/view?usp=drive_link"
@@ -1145,7 +1187,7 @@ const characterData = {
   "Florinda & Lucinda": {
     category: "supporting",
     vocalInfo: "Age 14–35, C4–A♭5 — Mezzo/High-mezzo (belt/high-head mix)",
-    characterDescription: "Cinderella's vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry "up" leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power. Mezzo-soprano/character soprano; featured ensemble.",
+    characterDescription: "Cinderella's vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry 'up' leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power. Mezzo-soprano/character soprano; featured ensemble.",
     auditionCut: "Into the Woods Prologue, Festival section (their verses)",
     sheetMusicUrl: "javascript:void(0);",
     audioDownloadUrl: "javascript:void(0);"
@@ -1204,7 +1246,7 @@ const characterData = {
     category: "principal",
     vocalInfo: "Age 20–40, B3–A5 — High Soprano (light, innocent, often high head voice)",
     characterDescription: "Sheltered and theatrical, Rapunzel is a bright, inquisitive late-teen whose sweetness masks a quick, now-scarred intelligence. She sings in a light lyric soprano; the part demands crystalline head voice, conversational phrasing, and the ability to flip from breathy wonder to clipped, defensive wit in a single line.",
-    auditionCut: "Offstage vocalise: "Ah-ah-ah-ah-ah…" passage (as written in score around p. 87)",
+    auditionCut: "Offstage vocalise: 'Ah-ah-ah-ah-ah…' passage (as written in score around p. 87)",
     sheetMusicUrl: "javascript:void(0);",
     audioDownloadUrl: "javascript:void(0);"
   },
@@ -1239,8 +1281,8 @@ const characterData = {
   "Stepmother": {
     category: "supporting",
     vocalInfo: "Age 40–65, A3–F♯5 — Mezzo-soprano (sprechgesang)",
-    characterDescription: "The mean-spirited, demanding, and cruel.  Brisk, impeccably ordered and quietly terrified of disorder. She keeps the household — and its reputations — under strict management, speaking with clipped precision and a practiced disdain that reveals more fear than malice. Play her as economical and exact: every consonant a small command, every gesture a maintenance of control. The moment she slips, let it read as a human error, not confession.",
-    auditionCut: "Prologue, "Never wear mauve at a ball…"",
+    characterDescription: "The mean-spirited, demanding, and cruel. Brisk, impeccably ordered and quietly terrified of disorder. She keeps the household — and its reputations — under strict management, speaking with clipped precision and a practiced disdain that reveals more fear than malice. Play her as economical and exact: every consonant a small command, every gesture a maintenance of control. The moment she slips, let it read as a human error, not confession.",
+    auditionCut: "Prologue, 'Never wear mauve at a ball…'",
     sheetMusicUrl: "javascript:void(0);",
     audioDownloadUrl: "javascript:void(0);"
   },
@@ -1263,7 +1305,7 @@ const characterData = {
   "Wolf": {
     category: "supporting",
     vocalInfo: "Age 20–45, B♭2–G♭4 — Baritone (seductive, low chest and some upper mix)",
-    characterDescription: "The Wolf is sly charm wrapped in menace—a cabaret emcee in fur who embodies appetite and temptation. More seducer than snarler, he sells Red the thrill of straying from the path with wit and allure, making the audience laugh uneasily even as they sense the danger. His purpose is to unsettle, not leer, so that Red's later lesson—"I know things now"—lands with clarity.",
+    characterDescription: "The Wolf is sly charm wrapped in menace—a cabaret emcee in fur who embodies appetite and temptation. More seducer than snarler, he sells Red the thrill of straying from the path with wit and allure, making the audience laugh uneasily even as they sense the danger. His purpose is to unsettle, not leer, so that Red's later lesson—'I know things now'—lands with clarity.",
     auditionCut: "Hello, Little Girl, m.20–54",
     sheetMusicUrl: "javascript:void(0);",
     audioDownloadUrl: "javascript:void(0);"
@@ -1288,30 +1330,7 @@ const characterData = {
 
             let selectedCharacters = [];
 
-            const sortedCharacters = Object.keys(characterData).sort();
-            sortedCharacters.forEach(name => {
-                const char = characterData[name];
-                if (char.category === 'cameo') return;
-
-                const card = document.createElement('div');
-                card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent flex flex-col justify-between';
-                card.dataset.characterName = name;
-
-                card.innerHTML = `
-                    <div>
-                        <h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3>
-                        <p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p>
-                        <p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>
-                        ${char.auditionCut ? `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>` : ''}
-                    </div>
-                    <div class="mt-4 flex justify-end">
-                        <span class="select-button bg-gray-200 text-[#2E4035] font-bold py-2 px-4 rounded-lg text-sm">Select Role</span>
-                    </div>
-                `;
-
-                if (char.category === 'principal') principalCharacterGrid.appendChild(card);
-                else if (char.category === 'supporting') supportingCharacterGrid.appendChild(card);
-            });
+            // Character cards are now loaded via lazy loading system
 
             characterSelectionSection.addEventListener('click', (e) => {
                 const card = e.target.closest('.character-card');
@@ -1362,7 +1381,7 @@ const characterData = {
                 materialsContainer.appendChild(ensembleBlock);
 
                 selectedCharacters.forEach(name => {
-                    const char = characterData[name];
+                    const char = window.characterData[name];
                     if (char.sheetMusicUrl) {
                         const block = document.createElement('div');
                         block.className = 'bg-white p-4 rounded-lg border';
