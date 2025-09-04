@@ -665,29 +665,28 @@ class FormValidator {
   sanitizeInput(value, fieldName) {
     if (typeof value !== 'string') return value;
     
-    // Remove potentially dangerous characters
+    // Keep the original value for comparison
+    const original = value;
+    
+    // Remove only dangerous patterns without affecting normal text
     let sanitized = value
-      .replace(/[<>]/g, '') // Remove HTML tags
-      .replace(/javascript:/gi, '') // Remove javascript: protocol
-      .replace(/on\w+=/gi, '') // Remove event handlers
-      .trim();
+      .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
+      .replace(/<[^>]*on\w+\s*=.*?>/gi, '') // Remove event handlers in tags
+      .replace(/javascript\s*:/gi, ''); // Remove javascript: protocol
     
     // Field-specific sanitization
     switch (fieldName) {
-      case 'name':
-        // Only sanitize dangerous characters, not all non-alphabetic characters
-        sanitized = sanitized.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/on\w+=/gi, '');
-        break;
       case 'email':
         sanitized = sanitized.toLowerCase();
-        break;
-      case 'phone':
-        // Only remove obviously dangerous characters, keep phone formatting
-        sanitized = sanitized.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/on\w+=/gi, '');
         break;
       case 'vocalRange':
         sanitized = sanitized.toUpperCase();
         break;
+    }
+    
+    // Only trim if we're not in the middle of typing a space
+    if (original !== original.trimEnd() + ' ') {
+      sanitized = sanitized.trim();
     }
     
     return sanitized;
@@ -729,13 +728,23 @@ class FormValidator {
     const rule = this.validationRules[fieldName];
     if (!field || !rule) return true;
     
-    let value = field.value.trim();
+    // Don't trim here - let sanitizeInput handle it properly
+    let value = field.value;
     
     // Security: Sanitize input
     if (rule.sanitize) {
       value = this.sanitizeInput(value, fieldName);
       if (field.value !== value) {
-        field.value = value; // Update field with sanitized value
+        // Store cursor position
+        const cursorPos = field.selectionStart;
+        
+        // Update field with sanitized value
+        field.value = value;
+        
+        // Restore cursor position if possible
+        if (document.activeElement === field) {
+          field.setSelectionRange(cursorPos, cursorPos);
+        }
       }
     }
     
