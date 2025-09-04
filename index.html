@@ -275,7 +275,7 @@
              aria-invalid="false"
              autocomplete="tel">
       <div id="phone-error" class="error-message" role="alert" aria-live="polite"></div>
-      <div id="phone-help" class="help-text">Enter your phone number (e.g., 555-123-4567, (555) 123-4567, or +1 555 123 4567)</div>
+      <div id="phone-help" class="help-text">Enter your phone number</div>
     </div>
   </div>
 
@@ -458,9 +458,8 @@ class FormValidator {
       },
       conflicts: {
         required: true,
-        minLength: 10,
         maxLength: 1000,
-        message: 'Please provide details about your conflicts (at least 10 characters)',
+        message: 'Please provide details about your conflicts',
         sanitize: true
       },
       experience: {
