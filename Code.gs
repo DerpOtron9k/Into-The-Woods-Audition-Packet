@@ -131,76 +131,48 @@ function doPost(e) {
     sendEmailNotification_(input, headshotBlob);
     // debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
-    // POST-Redirect-GET: Use aggressive JavaScript redirect
+    // POST-Redirect-GET: Use meta refresh redirect (works in sandboxed iframes)
     const successUrl = 'https://intothewoods.vercel.app/?success=1';
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
 <title>Redirecting...</title>
+<meta http-equiv="refresh" content="0;url=${successUrl}">
 <script>
-  // Multiple redirect methods to ensure it works
+  // Fallback redirect methods
   try {
-    // Method 1: Direct assignment
     window.location.href = '${successUrl}';
-    
-    // Method 2: Replace current history entry
-    window.location.replace('${successUrl}');
-    
-    // Method 3: Force redirect after short delay
-    setTimeout(function() {
-      window.location.href = '${successUrl}';
-    }, 100);
-    
-    // Method 4: Top-level redirect (in case of iframe)
-    if (window.top !== window.self) {
-      window.top.location.href = '${successUrl}';
-    }
   } catch(e) {
-    // Fallback: show link
-    document.body.innerHTML = '<p>Redirecting... <a href="${successUrl}">Click here if not redirected automatically</a></p>';
+    // If JavaScript fails, meta refresh will handle it
   }
 </script>
 <body>
   <p>Redirecting to confirmation page...</p>
-  <p><a href="${successUrl}">Click here if not redirected automatically</a></p>
+  <p><a href="${successUrl}">Click here if you are not redirected automatically</a></p>
 </body>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
   } catch (err) {
     debugLog_({ marker: 'doPost_error', error: String(err), stack: err.stack });
     
-    // POST-Redirect-GET: Use aggressive JavaScript redirect for errors too
+    // POST-Redirect-GET: Use meta refresh redirect for errors too
     const errorUrl = 'https://intothewoods.vercel.app/?error=' + encodeURIComponent(String(err));
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
 <title>Redirecting...</title>
+<meta http-equiv="refresh" content="0;url=${errorUrl}">
 <script>
-  // Multiple redirect methods to ensure it works
+  // Fallback redirect methods
   try {
-    // Method 1: Direct assignment
     window.location.href = '${errorUrl}';
-    
-    // Method 2: Replace current history entry
-    window.location.replace('${errorUrl}');
-    
-    // Method 3: Force redirect after short delay
-    setTimeout(function() {
-      window.location.href = '${errorUrl}';
-    }, 100);
-    
-    // Method 4: Top-level redirect (in case of iframe)
-    if (window.top !== window.self) {
-      window.top.location.href = '${errorUrl}';
-    }
   } catch(e) {
-    // Fallback: show link
-    document.body.innerHTML = '<p>Redirecting... <a href="${errorUrl}">Click here if not redirected automatically</a></p>';
+    // If JavaScript fails, meta refresh will handle it
   }
 </script>
 <body>
   <p>Redirecting to error page...</p>
-  <p><a href="${errorUrl}">Click here if not redirected automatically</a></p>
+  <p><a href="${errorUrl}">Click here if you are not redirected automatically</a></p>
 </body>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
