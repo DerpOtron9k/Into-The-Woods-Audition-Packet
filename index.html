@@ -883,7 +883,7 @@ class FormValidator {
       await this.delay(500);
       this.showLoadingState('uploading');
       
-      // Security: Validate file if present
+      // Security: Validate file if present and convert to base64
       const fileInput = document.getElementById('headshot');
       console.log('File input check:', { fileInput, files: fileInput?.files, fileCount: fileInput?.files?.length });
       if (fileInput && fileInput.files.length > 0) {
@@ -892,10 +892,30 @@ class FormValidator {
           this.hideLoadingState();
           return;
         }
+        
+        // Convert file to base64 for reliable transmission
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64 = e.target.result.split(',')[1]; // Remove data:image/...;base64, prefix
+          console.log('File converted to base64, length:', base64.length);
+          
+          // Add base64 data as hidden fields
+          this.addHiddenField('_headshot_b64', base64);
+          this.addHiddenField('_headshot_name', file.name);
+          this.addHiddenField('_headshot_type', file.type);
+          
+          // Continue with form submission
+          this.submitFormWithFile();
+        };
+        reader.readAsDataURL(file);
+        return; // Exit early, form will be submitted in the callback
       } else {
         console.log('No file selected');
+        this.submitFormWithFile();
       }
       
+      // This code will only run if no file is selected
       await this.delay(1000);
       this.showLoadingState('processing');
       
@@ -906,6 +926,38 @@ class FormValidator {
       const form = document.getElementById('audition-form');
       form.submit();
       
+    } catch (error) {
+      this.hideLoadingState();
+      this.showSecurityError(error.message);
+      console.error('Form submission error:', error);
+    }
+  }
+  
+  // Helper method to add hidden fields
+  addHiddenField(name, value) {
+    const form = document.getElementById('audition-form');
+    let field = form.querySelector(`input[name="${name}"]`);
+    if (!field) {
+      field = document.createElement('input');
+      field.type = 'hidden';
+      field.name = name;
+      form.appendChild(field);
+    }
+    field.value = value;
+  }
+  
+  // Submit form with file handling
+  async submitFormWithFile() {
+    try {
+      await this.delay(1000);
+      this.showLoadingState('processing');
+      
+      await this.delay(500);
+      this.showLoadingState('submitting');
+      
+      // Submit form
+      const form = document.getElementById('audition-form');
+      form.submit();
     } catch (error) {
       this.hideLoadingState();
       this.showSecurityError(error.message);
