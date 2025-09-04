@@ -2,49 +2,55 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// Create dist directory if it doesn't exist
+// Create dist and public directories if they don't exist
 if (!fs.existsSync('dist')) {
   fs.mkdirSync('dist');
 }
 
-// Create dist/js directory if it doesn't exist
 if (!fs.existsSync('dist/js')) {
   fs.mkdirSync('dist/js');
 }
 
-// Create public directory (for Vercel deployment)
 if (!fs.existsSync('public')) {
   fs.mkdirSync('public');
 }
 
+if (!fs.existsSync('public/js')) {
+  fs.mkdirSync('public/js', { recursive: true });
+}
+
 // Copy HTML file
 fs.copyFileSync('src/index.html', 'dist/index.html');
+fs.copyFileSync('src/index.html', 'public/index.html');
 
 // Copy JS files
 const jsFiles = fs.readdirSync('src/js');
 jsFiles.forEach(file => {
   if (file.endsWith('.js')) {
     fs.copyFileSync(`src/js/${file}`, `dist/js/${file}`);
+    fs.copyFileSync(`src/js/${file}`, `public/js/${file}`);
   }
 });
 
 console.log('Files copied successfully!');
 
-// Compile Tailwind CSS using execSync
+// Compile Tailwind CSS directly to both dist and public
 try {
   console.log('Compiling Tailwind CSS...');
   
-  // Use node_modules/.bin directly instead of npx
-  const tailwindBin = path.join(process.cwd(), 'node_modules', '.bin', 'tailwindcss');
-  execSync(`${tailwindBin} -i ./src/css/main.css -o ./dist/styles.css --minify`, {
+  // Compile directly to public directory first
+  execSync('npx tailwindcss -i ./src/css/main.css -o ./public/styles.css --minify', {
     stdio: 'inherit'
   });
+  
+  // Then copy to dist
+  fs.copyFileSync('public/styles.css', 'dist/styles.css');
   
   console.log('Tailwind CSS compiled successfully!');
 } catch (error) {
   console.error('Error compiling Tailwind CSS:', error.message);
   
-  // Fallback: create a basic CSS file
+  // Create a fallback CSS file
   console.log('Creating fallback CSS file...');
   const fallbackCSS = `
 /* Fallback CSS - Tailwind compilation failed */
@@ -100,27 +106,9 @@ body { font-family: system-ui, sans-serif; }
 }
 `;
   
+  fs.writeFileSync('./public/styles.css', fallbackCSS);
   fs.writeFileSync('./dist/styles.css', fallbackCSS);
   console.log('Fallback CSS file created successfully!');
 }
 
-// Copy all files from dist to public (for Vercel deployment)
-console.log('Copying files to public directory for Vercel...');
-if (!fs.existsSync('public/js')) {
-  fs.mkdirSync('public/js', { recursive: true });
-}
-
-// Copy HTML file to public
-fs.copyFileSync('dist/index.html', 'public/index.html');
-
-// Copy CSS file to public
-fs.copyFileSync('dist/styles.css', 'public/styles.css');
-
-// Copy JS files to public
-jsFiles.forEach(file => {
-  if (file.endsWith('.js')) {
-    fs.copyFileSync(`src/js/${file}`, `public/js/${file}`);
-  }
-});
-
-console.log('Files copied to public directory successfully!');
+console.log('Build process completed successfully!');

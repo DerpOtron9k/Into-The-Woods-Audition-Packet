@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "watch": "node build.js"
+    "watch": "npx tailwindcss -i ./src/css/main.css -o ./public/styles.css --watch"
   },
   "keywords": [
     "audition",
