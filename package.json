@@ -1,0 +1,30 @@
+{
+  "name": "into-the-woods-audition-packet",
+  "version": "1.0.0",
+  "description": "Audition packet and sign-up form for Into the Woods.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tailwindcss -i ./src/css/main.css -o ./dist/styles.css --minify",
+    "watch": "tailwindcss -i ./src/css/main.css -o ./dist/styles.css --watch"
+  },
+  "keywords": [
+    "audition",
+    "theatre",
+    "google-apps-script"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "tailwindcss": "^3.4.17"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DerpOtron9k/Into-The-Woods-Audition-Packet.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DerpOtron9k/Into-The-Woods-Audition-Packet/issues"
+  },
+  "homepage": "https://github.com/DerpOtron9k/Into-The-Woods-Audition-Packet#readme"
+}
