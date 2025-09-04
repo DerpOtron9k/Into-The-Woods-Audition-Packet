@@ -416,6 +416,13 @@
         </div>
     </div>
 
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="fixed bottom-8 right-8 bg-[#2E4035] text-white rounded-full p-3 shadow-lg opacity-0 transition-opacity duration-300 hover:bg-[#405a49] focus:outline-none" aria-label="Scroll to top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
     <script>
 
 // --- ENHANCED FORM VALIDATION & UX WITH SECURITY ---
@@ -1123,9 +1130,36 @@ document.addEventListener('DOMContentLoaded', () => {
   new FormValidator();
   preloadCriticalResources();
   
+  // Initialize scroll to top button
+  initScrollToTopButton();
+  
   // Lazy load non-critical scripts after initial load
   setTimeout(loadNonCriticalScripts, 2000);
 });
+
+// Initialize scroll to top button
+const initScrollToTopButton = () => {
+  const scrollToTopBtn = document.getElementById('scroll-to-top');
+  
+  if (!scrollToTopBtn) return;
+  
+  // Show button when user scrolls down 300px
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      scrollToTopBtn.style.opacity = '1';
+    } else {
+      scrollToTopBtn.style.opacity = '0';
+    }
+  });
+  
+  // Smooth scroll to top when button is clicked
+  scrollToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+};
 
 // --- DATA: CHARACTER INFORMATION & MATERIALS ---
 window.characterData = {
