@@ -893,6 +893,62 @@ class FormValidator {
     }
   }
   
+  // Security: Check for suspicious patterns in form data
+  performSecurityChecks() {
+    // Check for suspicious patterns in form inputs
+    const fields = ['name', 'email', 'phone', 'conflicts', 'experience', 'skills'];
+    const suspiciousPatterns = [
+      /<script>/i,
+      /javascript:/i,
+      /on\w+=/i,
+      /eval\(/i
+    ];
+    
+    for (const fieldName of fields) {
+      const field = document.getElementById(fieldName);
+      if (!field) continue;
+      
+      const value = field.value;
+      for (const pattern of suspiciousPatterns) {
+        if (pattern.test(value)) {
+          this.showError('Suspicious input detected. Please remove special code or script tags.');
+          field.focus();
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+  
+  // Security: Show error message
+  showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message show';
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #dc2626;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      max-width: 300px;
+    `;
+    errorDiv.textContent = message;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.parentNode.removeChild(errorDiv);
+      }
+    }, 5000);
+  }
+  
   async handleFormSubmit(e) {
     e.preventDefault();
     
@@ -923,20 +979,83 @@ class FormValidator {
       const fileInput = document.getElementById('headshot');
       if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        if (!this.validateFileSecurity(file)) {
+        // Validate file security
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
           this.hideLoadingState();
+          this.showError('File size must be less than 5MB');
+          return;
+        }
+        
+        if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+          this.hideLoadingState();
+          this.showError('Please select a PNG or JPEG image');
           return;
         }
         
         // Convert file to base64 for reliable transmission
-        await this.convertFileToBase64(file);
+        try {
+          const reader = new FileReader();
+          const fileReadPromise = new Promise((resolve, reject) => {
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsDataURL(file);
+          });
+          
+          this.showLoadingState('uploading');
+          const base64Data = await fileReadPromise;
+          
+          // Extract the base64 data without the prefix
+          const base64Content = base64Data.split(',')[1];
+          
+          // Add hidden fields for the base64 data
+          const form = document.getElementById('audition-form');
+          
+          // Create or update hidden fields
+          let b64Field = document.getElementById('_headshot_b64');
+          if (!b64Field) {
+            b64Field = document.createElement('input');
+            b64Field.type = 'hidden';
+            b64Field.id = '_headshot_b64';
+            b64Field.name = '_headshot_b64';
+            form.appendChild(b64Field);
+          }
+          b64Field.value = base64Content;
+          
+          // Add type field
+          let typeField = document.getElementById('_headshot_type');
+          if (!typeField) {
+            typeField = document.createElement('input');
+            typeField.type = 'hidden';
+            typeField.id = '_headshot_type';
+            typeField.name = '_headshot_type';
+            form.appendChild(typeField);
+          }
+          typeField.value = file.type;
+          
+          // Add name field
+          let nameField = document.getElementById('_headshot_name');
+          if (!nameField) {
+            nameField = document.createElement('input');
+            nameField.type = 'hidden';
+            nameField.id = '_headshot_name';
+            nameField.name = '_headshot_name';
+            form.appendChild(nameField);
+          }
+          nameField.value = file.name;
+        } catch (error) {
+          this.hideLoadingState();
+          this.showError('Error processing image: ' + error.message);
+          return;
+        }
       }
       
       // Simulate processing stages
-      await this.delay(1000);
+      // Helper function for delay
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+      await delay(1000);
       this.showLoadingState('processing');
       
-      await this.delay(500);
+      await delay(500);
       this.showLoadingState('submitting');
       
       // Submit form (this will redirect to Google Apps Script)
@@ -950,33 +1069,7 @@ class FormValidator {
     }
   }
 
-  // Fix: Add missing showError method
-  showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message show';
-    errorDiv.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #dc2626;
-      color: white;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 10000;
-      max-width: 300px;
-    `;
-    errorDiv.textContent = message;
-    
-    document.body.appendChild(errorDiv);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (errorDiv.parentNode) {
-        errorDiv.parentNode.removeChild(errorDiv);
-      }
-    }, 5000);
-  }
+  // This has been moved to a proper implementation above
 
   // ... existing code ...
 }

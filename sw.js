@@ -69,8 +69,9 @@ self.addEventListener('fetch', event => {
         // Otherwise fetch from network
         return fetch(request)
           .then(fetchResponse => {
-            // Don't cache if not a valid response
-            if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+            // Don't cache if not a valid response or if it's a chrome-extension URL
+            if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic' || 
+                request.url.startsWith('chrome-extension://')) {
               return fetchResponse;
             }
 
@@ -80,7 +81,11 @@ self.addEventListener('fetch', event => {
             // Cache dynamic content (including external resources)
             caches.open(DYNAMIC_CACHE)
               .then(cache => {
-                cache.put(request, responseToCache);
+                try {
+                  cache.put(request, responseToCache);
+                } catch (error) {
+                  console.log('Cache put error:', error);
+                }
               });
 
             return fetchResponse;
