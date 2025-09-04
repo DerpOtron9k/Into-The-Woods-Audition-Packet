@@ -1391,8 +1391,7 @@ const characterData = {
             });
 
             backToStartBtn.addEventListener('click', () => {
-                // Clear URL parameters and hash to reset page state
-                window.history.replaceState({}, document.title, window.location.pathname);
+                // Hide confirmation and show main content
                 confirmationSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 document.querySelectorAll('.character-card.selected').forEach(card => card.classList.remove('selected'));
@@ -1405,20 +1404,19 @@ const characterData = {
             const success = urlParams.get('success');
             const error = urlParams.get('error');
             
+            // Clean up URL parameters immediately to prevent reload issues
+            if (success || error) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
             if (success === '1') {
                 // Show success confirmation
                 mainContent.classList.add('hidden');
                 registrationSection.classList.add('hidden');
                 confirmationSection.classList.remove('hidden');
-                
-                // Clean up URL parameters
-                window.history.replaceState({}, document.title, window.location.pathname);
             } else if (error) {
                 // Show error message
                 alert('Submission failed: ' + decodeURIComponent(error));
-                
-                // Clean up URL parameters
-                window.history.replaceState({}, document.title, window.location.pathname);
             } else if (window.location.hash === '#submitted') {
                 // Legacy hash-based success (for backwards compatibility)
                 mainContent.classList.add('hidden'); 
