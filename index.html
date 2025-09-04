@@ -1429,18 +1429,21 @@ window.characterData = {
                 registrationSection.classList.add('hidden');
                 confirmationSection.classList.remove('hidden');
                 
-                // Clean up URL parameters AFTER processing them
+                // Clean up URL parameters immediately after showing success
                 window.history.replaceState({}, document.title, window.location.pathname);
             } else if (error) {
                 // Show error message
                 alert('Submission failed: ' + decodeURIComponent(error));
                 
-                // Clean up URL parameters AFTER processing them
+                // Clean up URL parameters immediately after showing error
                 window.history.replaceState({}, document.title, window.location.pathname);
             } else if (window.location.hash === '#submitted') {
                 // Legacy hash-based success (for backwards compatibility)
                 mainContent.classList.add('hidden'); 
                 confirmationSection.classList.remove('hidden');
+                
+                // Clean up URL parameters immediately after showing success
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         });
     </script>
