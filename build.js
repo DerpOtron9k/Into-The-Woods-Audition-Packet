@@ -25,27 +25,14 @@ jsFiles.forEach(file => {
 
 console.log('Files copied successfully!');
 
-// Compile Tailwind CSS using require() instead of execSync
+// Compile Tailwind CSS using execSync
 try {
   console.log('Compiling Tailwind CSS...');
   
-  // Use require to load tailwindcss directly
-  const tailwindcss = require('tailwindcss');
-  const postcss = require('postcss');
-  
-  // Read the input CSS file
-  const inputCSS = fs.readFileSync('./src/css/main.css', 'utf8');
-  
-  // Process with Tailwind CSS
-  const result = await postcss([
-    tailwindcss(require('./tailwind.config.js'))
-  ]).process(inputCSS, {
-    from: './src/css/main.css',
-    to: './dist/styles.css'
+  // Use execSync with npx to run tailwindcss
+  execSync('npx tailwindcss -i ./src/css/main.css -o ./dist/styles.css --minify', {
+    stdio: 'inherit'
   });
-  
-  // Write the output
-  fs.writeFileSync('./dist/styles.css', result.css);
   
   console.log('Tailwind CSS compiled successfully!');
 } catch (error) {
