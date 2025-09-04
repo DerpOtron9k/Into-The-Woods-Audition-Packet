@@ -1391,7 +1391,8 @@ const characterData = {
             });
 
             backToStartBtn.addEventListener('click', () => {
-                window.location.hash = '';
+                // Clear URL parameters and hash to reset page state
+                window.history.replaceState({}, document.title, window.location.pathname);
                 confirmationSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 document.querySelectorAll('.character-card.selected').forEach(card => card.classList.remove('selected'));
