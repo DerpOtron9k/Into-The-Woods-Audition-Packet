@@ -266,7 +266,7 @@
              aria-invalid="false"
              autocomplete="name">
       <div id="name-error" class="error-message" role="alert" aria-live="polite"></div>
-      <div id="name-help" class="help-text">Enter your full legal name (2-50 characters)</div>
+      <div id="name-help" class="help-text">Enter your full name</div>
     </div>
     <div class="form-group">
       <label for="phone" class="required" id="phone-label">Phone Number</label>
@@ -275,7 +275,7 @@
              aria-invalid="false"
              autocomplete="tel">
       <div id="phone-error" class="error-message" role="alert" aria-live="polite"></div>
-      <div id="phone-help" class="help-text">Enter your phone number (e.g., 555-123-4567)</div>
+      <div id="phone-help" class="help-text">Enter your phone number (e.g., 555-123-4567, (555) 123-4567, or +1 555 123 4567)</div>
     </div>
   </div>
 
@@ -433,9 +433,9 @@ class FormValidator {
       name: {
         required: true,
         minLength: 2,
-        maxLength: 50,
-        pattern: /^[a-zA-Z\s'-]+$/,
-        message: 'Please enter a valid name (2-50 characters, letters only)',
+        maxLength: 30,
+        pattern: /^[a-zA-Z\s'.-]+$/,
+        message: 'Please enter a valid name (2-30 characters)',
         sanitize: true
       },
       email: {
@@ -447,7 +447,7 @@ class FormValidator {
       },
       phone: {
         required: true,
-        pattern: /^[\+]?[1-9][\d]{0,15}$/,
+        pattern: /^[\+]?[\d\s\-\(\)]{7,20}$/,
         message: 'Please enter a valid phone number',
         sanitize: true
       },
@@ -568,10 +568,27 @@ class FormValidator {
     const previewImage = document.getElementById('preview-image');
     const removeBtn = document.getElementById('remove-file');
     
-    if (!fileInput || !uploadArea) return;
+    if (!fileInput || !uploadArea) {
+      console.error('File upload elements not found');
+      return;
+    }
     
-    // Click to upload
-    uploadArea.addEventListener('click', () => fileInput.click());
+    // Click to upload - make sure it works
+    uploadArea.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      fileInput.click();
+    });
+    
+    // Also make the label clickable
+    const label = uploadArea.querySelector('label[for="headshot"]');
+    if (label) {
+      label.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInput.click();
+      });
+    }
     
     // Drag and drop
     uploadArea.addEventListener('dragover', (e) => {
@@ -628,13 +645,15 @@ class FormValidator {
     // Field-specific sanitization
     switch (fieldName) {
       case 'name':
-        sanitized = sanitized.replace(/[^a-zA-Z\s'-]/g, '');
+        // Only sanitize dangerous characters, not all non-alphabetic characters
+        sanitized = sanitized.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/on\w+=/gi, '');
         break;
       case 'email':
         sanitized = sanitized.toLowerCase();
         break;
       case 'phone':
-        sanitized = sanitized.replace(/[^\d+\-\(\)\s]/g, '');
+        // Only remove obviously dangerous characters, keep phone formatting
+        sanitized = sanitized.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/on\w+=/gi, '');
         break;
       case 'vocalRange':
         sanitized = sanitized.toUpperCase();
