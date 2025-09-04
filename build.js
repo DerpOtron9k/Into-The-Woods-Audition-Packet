@@ -12,6 +12,11 @@ if (!fs.existsSync('dist/js')) {
   fs.mkdirSync('dist/js');
 }
 
+// Create public directory (for Vercel deployment)
+if (!fs.existsSync('public')) {
+  fs.mkdirSync('public');
+}
+
 // Copy HTML file
 fs.copyFileSync('src/index.html', 'dist/index.html');
 
@@ -29,8 +34,9 @@ console.log('Files copied successfully!');
 try {
   console.log('Compiling Tailwind CSS...');
   
-  // Use execSync with npx to run tailwindcss
-  execSync('npx tailwindcss -i ./src/css/main.css -o ./dist/styles.css --minify', {
+  // Use node_modules/.bin directly instead of npx
+  const tailwindBin = path.join(process.cwd(), 'node_modules', '.bin', 'tailwindcss');
+  execSync(`${tailwindBin} -i ./src/css/main.css -o ./dist/styles.css --minify`, {
     stdio: 'inherit'
   });
   
@@ -97,3 +103,24 @@ body { font-family: system-ui, sans-serif; }
   fs.writeFileSync('./dist/styles.css', fallbackCSS);
   console.log('Fallback CSS file created successfully!');
 }
+
+// Copy all files from dist to public (for Vercel deployment)
+console.log('Copying files to public directory for Vercel...');
+if (!fs.existsSync('public/js')) {
+  fs.mkdirSync('public/js', { recursive: true });
+}
+
+// Copy HTML file to public
+fs.copyFileSync('dist/index.html', 'public/index.html');
+
+// Copy CSS file to public
+fs.copyFileSync('dist/styles.css', 'public/styles.css');
+
+// Copy JS files to public
+jsFiles.forEach(file => {
+  if (file.endsWith('.js')) {
+    fs.copyFileSync(`src/js/${file}`, `public/js/${file}`);
+  }
+});
+
+console.log('Files copied to public directory successfully!');
