@@ -32,6 +32,17 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 /*****************************************/
 
+// ========== DRIVE MONITOR CONFIG ==========
+// Sheet Music folder
+const SHEET_MUSIC_FOLDER_ID = '1nLA6hGUkMF-RXS-6ncWy3Iik8a4wo2T1';
+// Audio folder
+const AUDIO_FOLDER_ID = '1nCM6xs80IlZY0gF-AQ5T-RnteHsBhwt5';
+
+const SNAPSHOT_PROP_PREFIX = 'MONITOR_SNAPSHOT_';
+const SNAPSHOT_KEY_SHEET = SNAPSHOT_PROP_PREFIX + 'SHEET_MUSIC';
+const SNAPSHOT_KEY_AUDIO = SNAPSHOT_PROP_PREFIX + 'AUDIO';
+// ==========================================
+
 /** Web-app entry: FORM POST → sheet append → email → HTML redirect */
 function doPost(e) {
   try {
@@ -187,6 +198,23 @@ function doGet(e) {
     const stamp = Utilities.formatDate(new Date(), 'America/Chicago', 'MM/dd/yyyy hh:mm:ss a');
     return ContentService.createTextOutput('OK :: audition-webhook v2.1 :: ' + stamp)
       .setMimeType(ContentService.MimeType.TEXT);
+  }
+  // JSON feeds for monitored folders
+  if (e && e.parameter && e.parameter.feed) {
+    const feed = String(e.parameter.feed);
+    if (feed === 'sheet') {
+      return jsonOutput_(listFolderItems_(SHEET_MUSIC_FOLDER_ID));
+    }
+    if (feed === 'audio') {
+      return jsonOutput_(listFolderItems_(AUDIO_FOLDER_ID));
+    }
+    if (feed === 'index') {
+      return jsonOutput_({
+        sheet: listFolderItems_(SHEET_MUSIC_FOLDER_ID),
+        audio: listFolderItems_(AUDIO_FOLDER_ID),
+        generatedAt: new Date().toISOString()
+      });
+    }
   }
   return htmlInfo_();
 }
@@ -344,6 +372,45 @@ function toScalar_(v) {
   if (v == null) return '';
   if (Array.isArray(v)) return v.join(', ');
   return String(v);
+}
+
+/** JSON response helper */
+function jsonOutput_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * List files in a Drive folder (shallow) with stable fields
+ * @param {string} folderId
+ * @returns {Array<Object>} items
+ */
+function listFolderItems_(folderId) {
+  const folder = DriveApp.getFolderById(folderId);
+  const files = folder.getFiles();
+  const items = [];
+  while (files.hasNext()) {
+    const f = files.next();
+    items.push({
+      id: f.getId(),
+      name: f.getName(),
+      mimeType: f.getMimeType(),
+      size: safeGetSize_(f),
+      url: f.getUrl(),
+      lastUpdated: toIso_(f.getLastUpdated())
+    });
+  }
+  // Sort for deterministic output
+  items.sort((a, b) => a.name.localeCompare(b.name));
+  return items;
+}
+
+function safeGetSize_(file) {
+  try { return file.getSize(); } catch (_) { return null; }
+}
+
+function toIso_(d) {
+  try { return d instanceof Date ? new Date(d).toISOString() : null; } catch (_) { return null; }
 }
 
 /**
@@ -939,4 +1006,117 @@ function getEmailStatusReport_() {
       timestamp: new Date().toISOString()
     };
   }
+}
+
+/* ========== DRIVE MONITOR ENGINE ========== */
+
+/** Serialize a compact snapshot string for change detection */
+function makeSnapshotString_(items) {
+  // id|name|size|lastUpdated per line, sorted by name already
+  const lines = (items || []).map(i => [i.id, i.name, i.size || 0, i.lastUpdated || ''].join('|'));
+  return lines.join('\n');
+}
+
+/** Load previous snapshot from properties */
+function loadSnapshot_(key) {
+  const props = PropertiesService.getScriptProperties();
+  return props.getProperty(key) || '';
+}
+
+/** Save snapshot to properties */
+function saveSnapshot_(key, snapshot) {
+  const props = PropertiesService.getScriptProperties();
+  props.setProperty(key, snapshot || '');
+}
+
+/** Compute diff between two snapshots */
+function diffSnapshots_(prevSnap, nextSnap) {
+  const toMap = snap => {
+    const map = new Map();
+    (snap ? snap.split('\n') : []).forEach(line => {
+      if (!line) return;
+      const [id, name, size, lastUpdated] = line.split('|');
+      map.set(id, { id, name, size, lastUpdated, raw: line });
+    });
+    return map;
+  };
+  const prev = toMap(prevSnap);
+  const next = toMap(nextSnap);
+
+  const added = [];
+  const removed = [];
+  const changed = [];
+
+  next.forEach((v, id) => {
+    if (!prev.has(id)) added.push(v);
+    else if (prev.get(id).raw !== v.raw) changed.push(v);
+  });
+  prev.forEach((v, id) => {
+    if (!next.has(id)) removed.push(v);
+  });
+
+  return { added, removed, changed };
+}
+
+/** Build human-readable email for changes */
+function formatChangesEmail_(label, diff, baseUrl) {
+  const fmt = arr => arr.map(i => `- ${i.name}`).join('\n') || '(none)';
+  const sections = [
+    `${label} — Drive Changes`,
+    '',
+    `Added:\n${fmt(diff.added)}`,
+    '',
+    `Removed:\n${fmt(diff.removed)}`,
+    '',
+    `Modified:\n${fmt(diff.changed)}`,
+    '',
+    `Feed JSON: ${baseUrl}?feed=${label.toLowerCase()}`
+  ];
+  return sections.join('\n');
+}
+
+/** Time-driven monitor entry point */
+function monitorDriveFolders() {
+  // Gather current items
+  const sheetItems = listFolderItems_(SHEET_MUSIC_FOLDER_ID);
+  const audioItems = listFolderItems_(AUDIO_FOLDER_ID);
+
+  const sheetSnap = makeSnapshotString_(sheetItems);
+  const audioSnap = makeSnapshotString_(audioItems);
+
+  const prevSheet = loadSnapshot_(SNAPSHOT_KEY_SHEET);
+  const prevAudio = loadSnapshot_(SNAPSHOT_KEY_AUDIO);
+
+  const sheetDiff = diffSnapshots_(prevSheet, sheetSnap);
+  const audioDiff = diffSnapshots_(prevAudio, audioSnap);
+
+  const hasChanges = sheetDiff.added.length || sheetDiff.removed.length || sheetDiff.changed.length ||
+                     audioDiff.added.length || audioDiff.removed.length || audioDiff.changed.length;
+
+  if (hasChanges) {
+    const webAppUrl = ScriptApp.getService().getUrl();
+    const msg1 = formatChangesEmail_('Sheet', sheetDiff, webAppUrl);
+    const msg2 = formatChangesEmail_('Audio', audioDiff, webAppUrl);
+    const body = [msg1, '', msg2].join('\n');
+
+    // Send admin email using existing fallback
+    sendEmailWithFallback_({
+      to: 'staheli.andrew.g@gmail.com',
+      subject: 'Drive Monitor: Changes detected',
+      body: body,
+      emailType: 'drive_monitor'
+    });
+  }
+
+  // Persist new snapshots
+  saveSnapshot_(SNAPSHOT_KEY_SHEET, sheetSnap);
+  saveSnapshot_(SNAPSHOT_KEY_AUDIO, audioSnap);
+}
+
+/** One-time initializer to seed snapshots without sending email */
+function initDriveMonitorSnapshots() {
+  const sheetSnap = makeSnapshotString_(listFolderItems_(SHEET_MUSIC_FOLDER_ID));
+  const audioSnap = makeSnapshotString_(listFolderItems_(AUDIO_FOLDER_ID));
+  saveSnapshot_(SNAPSHOT_KEY_SHEET, sheetSnap);
+  saveSnapshot_(SNAPSHOT_KEY_AUDIO, audioSnap);
 }
