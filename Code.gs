@@ -131,36 +131,76 @@ function doPost(e) {
     sendEmailNotification_(input, headshotBlob);
     // debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
-    // POST-Redirect-GET: Use proper HTTP redirect instead of HTML page
+    // POST-Redirect-GET: Use aggressive JavaScript redirect
     const successUrl = 'https://intothewoods.vercel.app/?success=1';
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
 <title>Redirecting...</title>
 <script>
-  // Immediate redirect to prevent form resubmission
-  window.location.href = '${successUrl}';
+  // Multiple redirect methods to ensure it works
+  try {
+    // Method 1: Direct assignment
+    window.location.href = '${successUrl}';
+    
+    // Method 2: Replace current history entry
+    window.location.replace('${successUrl}');
+    
+    // Method 3: Force redirect after short delay
+    setTimeout(function() {
+      window.location.href = '${successUrl}';
+    }, 100);
+    
+    // Method 4: Top-level redirect (in case of iframe)
+    if (window.top !== window.self) {
+      window.top.location.href = '${successUrl}';
+    }
+  } catch(e) {
+    // Fallback: show link
+    document.body.innerHTML = '<p>Redirecting... <a href="${successUrl}">Click here if not redirected automatically</a></p>';
+  }
 </script>
 <body>
   <p>Redirecting to confirmation page...</p>
+  <p><a href="${successUrl}">Click here if not redirected automatically</a></p>
 </body>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
   } catch (err) {
     debugLog_({ marker: 'doPost_error', error: String(err), stack: err.stack });
     
-    // POST-Redirect-GET: Use proper HTTP redirect for errors too
+    // POST-Redirect-GET: Use aggressive JavaScript redirect for errors too
     const errorUrl = 'https://intothewoods.vercel.app/?error=' + encodeURIComponent(String(err));
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
 <title>Redirecting...</title>
 <script>
-  // Immediate redirect to prevent form resubmission
-  window.location.href = '${errorUrl}';
+  // Multiple redirect methods to ensure it works
+  try {
+    // Method 1: Direct assignment
+    window.location.href = '${errorUrl}';
+    
+    // Method 2: Replace current history entry
+    window.location.replace('${errorUrl}');
+    
+    // Method 3: Force redirect after short delay
+    setTimeout(function() {
+      window.location.href = '${errorUrl}';
+    }, 100);
+    
+    // Method 4: Top-level redirect (in case of iframe)
+    if (window.top !== window.self) {
+      window.top.location.href = '${errorUrl}';
+    }
+  } catch(e) {
+    // Fallback: show link
+    document.body.innerHTML = '<p>Redirecting... <a href="${errorUrl}">Click here if not redirected automatically</a></p>';
+  }
 </script>
 <body>
   <p>Redirecting to error page...</p>
+  <p><a href="${errorUrl}">Click here if not redirected automatically</a></p>
 </body>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
