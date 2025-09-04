@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "watch": "npx tailwindcss -i ./src/css/main.css -o ./dist/styles.css --watch"
+    "watch": "node build.js"
   },
   "keywords": [
     "audition",
@@ -17,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "tailwindcss": "^3.4.17",
+    "postcss": "^8.4.35",
     "prettier-plugin-tailwindcss": "^0.6.8"
   }
 }
