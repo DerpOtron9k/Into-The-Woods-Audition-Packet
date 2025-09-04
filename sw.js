@@ -5,12 +5,10 @@ const CACHE_NAME = 'intothewoods-v1.0.0';
 const STATIC_CACHE = 'static-v1.0.0';
 const DYNAMIC_CACHE = 'dynamic-v1.0.0';
 
-// Resources to cache immediately
+// Resources to cache immediately (only local resources)
 const STATIC_ASSETS = [
   '/',
-  '/index.html',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap'
+  '/index.html'
 ];
 
 // Install event - cache static assets
@@ -79,7 +77,7 @@ self.addEventListener('fetch', event => {
             // Clone the response
             const responseToCache = fetchResponse.clone();
 
-            // Cache dynamic content
+            // Cache dynamic content (including external resources)
             caches.open(DYNAMIC_CACHE)
               .then(cache => {
                 cache.put(request, responseToCache);
