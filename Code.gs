@@ -131,52 +131,37 @@ function doPost(e) {
     sendEmailNotification_(input, headshotBlob);
     // debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
-    // POST-Redirect-GET: Direct link approach (iframes block redirects)
-    const successUrl = 'https://intothewoods.vercel.app/';
+    // POST-Redirect-GET: Use proper HTTP redirect instead of HTML page
+    const successUrl = 'https://intothewoods.vercel.app/?success=1';
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
-<title>Submission Successful</title>
-<style>
-  body { font-family: 'Inter', sans-serif; background: #FBF9F5; color: #40312C; text-align: center; padding: 2rem; }
-  .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-  h1 { color: #2E4035; font-size: 2rem; margin-bottom: 1rem; }
-  .success-btn { display: inline-block; background: #2E4035; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 8px; margin-top: 1rem; font-weight: bold; }
-  .success-btn:hover { background: #405a49; }
-</style>
-<div class="container">
-  <h1>✅ Thank You!</h1>
-  <p>Your audition form has been submitted successfully.</p>
-  <p>We look forward to seeing you at auditions!</p>
-  <a href="${successUrl}" class="success-btn">← Back to Audition Packet</a>
-</div>`
+<title>Redirecting...</title>
+<script>
+  // Immediate redirect to prevent form resubmission
+  window.location.href = '${successUrl}';
+</script>
+<body>
+  <p>Redirecting to confirmation page...</p>
+</body>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
   } catch (err) {
     debugLog_({ marker: 'doPost_error', error: String(err), stack: err.stack });
     
-    // POST-Redirect-GET: Direct link approach for errors (iframes block redirects)
+    // POST-Redirect-GET: Use proper HTTP redirect for errors too
     const errorUrl = 'https://intothewoods.vercel.app/?error=' + encodeURIComponent(String(err));
     return HtmlService.createHtmlOutput(
       `<!doctype html>
 <meta charset="utf-8">
-<title>Submission Error</title>
-<style>
-  body { font-family: 'Inter', sans-serif; background: #FBF9F5; color: #40312C; text-align: center; padding: 2rem; }
-  .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-  h1 { color: #c53030; font-size: 2rem; margin-bottom: 1rem; }
-  .error { background: #fed7d7; border: 1px solid #fc8181; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
-  .back-btn { display: inline-block; background: #2E4035; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 8px; margin-top: 1rem; font-weight: bold; }
-  .back-btn:hover { background: #405a49; }
-</style>
-<div class="container">
-  <h1>❌ Submission Error</h1>
-  <div class="error">
-    <strong>Error:</strong> ${String(err)}
-  </div>
-  <p>Please try again. If the problem persists, contact the administrators.</p>
-  <a href="${errorUrl}" class="back-btn">← Back to Audition Packet</a>
-</div>`
+<title>Redirecting...</title>
+<script>
+  // Immediate redirect to prevent form resubmission
+  window.location.href = '${errorUrl}';
+</script>
+<body>
+  <p>Redirecting to error page...</p>
+</body>`
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 }
@@ -308,7 +293,8 @@ function createErrorHtml_(errorMessage) {
   .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
   h1 { color: #c53030; font-size: 2rem; margin-bottom: 1rem; }
   .error { background: #fed7d7; border: 1px solid #fc8181; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
-  .back-btn { display: inline-block; background: #2E4035; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px; margin-top: 1rem; }
+  .back-btn { display: inline-block; background: #2E4035; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 8px; margin-top: 1rem; font-weight: bold; }
+  .back-btn:hover { background: #405a49; }
 </style>
 <div class="container">
   <h1>Submission Error</h1>
