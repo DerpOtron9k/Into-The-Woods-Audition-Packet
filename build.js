@@ -34,34 +34,72 @@ jsFiles.forEach(file => {
 
 console.log('Files copied successfully!');
 
-// Compile Tailwind CSS directly to both dist and public
+// Compile Tailwind CSS
 try {
   console.log('Compiling Tailwind CSS...');
   
-  // Compile directly to public directory first
+  // Create a temporary CSS file that includes the Google Fonts import
+  const mainCssContent = fs.readFileSync('src/css/main.css', 'utf8');
+  
+  // Compile Tailwind CSS
   execSync('npx tailwindcss -i ./src/css/main.css -o ./public/styles.css --minify', {
     stdio: 'inherit'
   });
   
-  // Then copy to dist
+  // Copy to dist
   fs.copyFileSync('public/styles.css', 'dist/styles.css');
   
   console.log('Tailwind CSS compiled successfully!');
 } catch (error) {
   console.error('Error compiling Tailwind CSS:', error.message);
   
-  // Create a fallback CSS file
+  // Create a fallback CSS file with Google Fonts import
   console.log('Creating fallback CSS file...');
   const fallbackCSS = `
 /* Fallback CSS - Tailwind compilation failed */
-body { font-family: system-ui, sans-serif; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-.btn { padding: 0.5rem 1rem; background: #333; color: white; border: none; border-radius: 0.25rem; }
-.form-group { margin-bottom: 1rem; }
-.form-group label { display: block; margin-bottom: 0.25rem; font-weight: 500; }
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 0.25rem;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+body { font-family: 'Inter', sans-serif; }
+h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+:root {
+  --color-primary: #2E4035;
+  --color-secondary: #F0F5F2;
+  --color-accent: #BFAE9C;
 }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+.btn { padding: 0.5rem 1rem; background: var(--color-primary); color: white; border: none; border-radius: 0.25rem; }
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group label.required::after { content: '*'; color: #dc2626; margin-left: 0.25rem; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 0.75rem 1rem; border: 2px solid #d1d5db; border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--color-primary); outline: none; box-shadow: 0 0 0 4px rgba(46, 64, 53, 0.1);
+}
+.error-message { margin-top: 0.25rem; display: none; font-size: 0.875rem; color: #dc2626; }
+.error-message.show { display: block; }
+.help-text { margin-top: 0.25rem; font-size: 0.875rem; color: #6b7280; }
+.success-message { margin-top: 0.25rem; display: none; font-size: 0.875rem; color: #16a34a; }
+.success-message.show { display: block; }
+
+.character-card { cursor: pointer; border: 2px solid transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+  transition: all 0.2s ease-in-out; padding: 1.25rem; background-color: #f9fafb; border-radius: 0.5rem; }
+.character-card:hover { transform: translateY(-0.25rem); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); border-color: #d1d5db; }
+.character-card.selected { border-color: var(--color-primary); background-color: var(--color-secondary); 
+  transform: translateY(-0.25rem); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
+
+.storybook-container { max-width: 48rem; margin: 2rem auto; padding: 2rem; background: white; 
+  border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
+@media (min-width: 640px) { .storybook-container { padding: 3rem; } }
+
+.decorative-line { height: 1px; margin: 2.5rem 0; 
+  background: linear-gradient(to right, transparent, var(--color-accent), transparent); }
+
+/* Basic utility classes */
 .hidden { display: none; }
 .text-center { text-align: center; }
 .mb-4 { margin-bottom: 1rem; }
@@ -96,7 +134,7 @@ body { font-family: system-ui, sans-serif; }
 .list-disc { list-style-type: disc; }
 .list-inside { list-style-position: inside; }
 .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
-.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.transition-colors { transition-property: color, background-color, border-color; transition-duration: 150ms; }
 .duration-300 { transition-duration: 300ms; }
 .hover\\:bg-gray-200:hover { background-color: #e5e7eb; }
 .hover\\:underline:hover { text-decoration: underline; }
