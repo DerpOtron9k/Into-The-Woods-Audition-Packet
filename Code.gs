@@ -38,14 +38,8 @@ function doPost(e) {
     const input = parsePayload_(e);
     authCheck_(input, e);
 
-    debugLog_({
-      marker: 'payload_received',
-      hasParam_b64: !!(input && input._headshot_b64),
-      b64_len: input && input._headshot_b64 ? String(input._headshot_b64).length : 0,
-      postType: e && e.postData ? e.postData.type : 'none',
-      postLen: e && e.postData && e.postData.contents ? e.postData.contents.length : 0,
-      inputKeys: input ? Object.keys(input) : []
-    });
+    // Debug: Basic payload info (production logging)
+    debugLog_({ marker: 'payload_received', inputKeys: input ? Object.keys(input) : [] });
 
     // Timestamp (Central Time)
     input._receivedAt = Utilities.formatDate(new Date(), 'America/Chicago', 'MM/dd/yyyy hh:mm:ss a');
@@ -56,7 +50,7 @@ function doPost(e) {
     // Native Apps Script path
     if (e && e.files && e.files.headshot) {
       headshotBlob = e.files.headshot;
-      debugLog_({ marker: 'native_file_found', name: headshotBlob.getName(), type: headshotBlob.getContentType() });
+      // debugLog_({ marker: 'native_file_found', name: headshotBlob.getName(), type: headshotBlob.getContentType() });
     }
 
     // Robust fallback: parse multipart when native path absent
@@ -65,11 +59,11 @@ function doPost(e) {
         e.postData.type.indexOf('multipart/form-data') !== -1 &&
         typeof e.postData.contents === 'string' && e.postData.contents.length > 0) {
 
-      debugLog_({ marker: 'attempting_multipart_parse' });
+      // debugLog_({ marker: 'attempting_multipart_parse' });
       const parsed = parseMultipartRobust_(e.postData.type, e.postData.contents, 'headshot');
       if (parsed && parsed.blob) {
         headshotBlob = parsed.blob;
-        debugLog_({ marker: 'multipart_success', name: parsed.filename, type: parsed.contentType });
+        // debugLog_({ marker: 'multipart_success', name: parsed.filename, type: parsed.contentType });
       }
     }
 
@@ -80,9 +74,9 @@ function doPost(e) {
         const rawName = (input._headshot_name || 'upload-headshot').toString();
         const bytes = Utilities.base64Decode(input._headshot_b64);
         headshotBlob = Utilities.newBlob(bytes, mime, rawName + guessExtFromMime_(mime));
-        debugLog_({ marker: 'base64_success', name: headshotBlob.getName(), type: headshotBlob.getContentType(), size: bytes.length });
+        // debugLog_({ marker: 'base64_success', name: headshotBlob.getName(), type: headshotBlob.getContentType(), size: bytes.length });
       } catch (e2) {
-        debugLog_({ marker: 'base64_decode_fail', error: String(e2) });
+        debugLog_({ marker: 'base64_decode_fail', error: String(e2) }); // Keep error logging
       }
       // Do not push these large fields into the sheet
       delete input._headshot_b64;
@@ -95,13 +89,13 @@ function doPost(e) {
       validateHeadshot_(headshotBlob);
     }
 
-    debugLog_({
-      marker: 'headshot_final_state',
-      haveBlob: !!headshotBlob,
-      mime: headshotBlob ? headshotBlob.getContentType() : '',
-      name: headshotBlob ? headshotBlob.getName() : '',
-      size: headshotBlob ? headshotBlob.getBytes().length : 0
-    });
+    // debugLog_({
+    //   marker: 'headshot_final_state',
+    //   haveBlob: !!headshotBlob,
+    //   mime: headshotBlob ? headshotBlob.getContentType() : '',
+    //   name: headshotBlob ? headshotBlob.getName() : '',
+    //   size: headshotBlob ? headshotBlob.getBytes().length : 0
+    // });
 
     // Headshots are only used for email attachments (no Drive storage)
     if (headshotBlob) {
@@ -116,26 +110,26 @@ function doPost(e) {
     const { sheet } = openSheet_();
     const row = HEADERS.map(h => toScalar_(input[h]));
     
-    // Debug the row mapping
-    debugLog_({ 
-      marker: 'row_mapping_debug',
-      headers: HEADERS,
-      rowData: row,
-      inputSample: {
-        name: input.name,
-        email: input.email,
-        phone: input.phone,
-        selected_roles: input.selected_roles,
-        headshotUrl: input.headshotUrl
-      }
-    });
+    // Debug: Row mapping (keep minimal for production)
+    // debugLog_({ 
+    //   marker: 'row_mapping_debug',
+    //   headers: HEADERS,
+    //   rowData: row,
+    //   inputSample: {
+    //     name: input.name,
+    //     email: input.email,
+    //     phone: input.phone,
+    //     selected_roles: input.selected_roles,
+    //     headshotUrl: input.headshotUrl
+    //   }
+    // });
     
     sheet.appendRow(row);
-    debugLog_({ marker: 'sheet_append_success', lastRow: sheet.getLastRow() });
+    // debugLog_({ marker: 'sheet_append_success', lastRow: sheet.getLastRow() });
 
     // Notify
     sendEmailNotification_(input, headshotBlob);
-    debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
+    // debugLog_({ ts: input._receivedAt, mail: 'notifications_dispatched' });
 
     // POST-Redirect-GET: Direct link approach (iframes block redirects)
     const successUrl = 'https://intothewoods.vercel.app/?success=1';
@@ -253,12 +247,12 @@ function validateHeadshot_(blob) {
     throw new Error(`Invalid file type: ${contentType}. Please use JPG or PNG format.`);
   }
   
-  debugLog_({ 
-    marker: 'headshot_validation_passed', 
-    size: size, 
-    type: contentType,
-    sizeMB: Math.round(size/1024/1024 * 100) / 100
-  });
+  // debugLog_({ 
+  //   marker: 'headshot_validation_passed', 
+  //   size: size, 
+  //   type: contentType,
+  //   sizeMB: Math.round(size/1024/1024 * 100) / 100
+  // });
 }
 
 function sanitizeName_(name) {
@@ -276,12 +270,12 @@ function openSheet_() {
   const same = current.length === HEADERS.length && current.every((h, i) => h === HEADERS[i]);
   
   if (!same) {
-    debugLog_({ 
-      marker: 'headers_mismatch', 
-      expected: HEADERS, 
-      current: current,
-      fixing: true
-    });
+    // debugLog_({ 
+    //   marker: 'headers_mismatch', 
+    //   expected: HEADERS, 
+    //   current: current,
+    //   fixing: true
+    // });
     sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
   }
   
@@ -678,12 +672,12 @@ function sendEmailWithFallback_(emailOptions) {
     if (inlineImages) mailOpts.inlineImages = inlineImages;
     
     MailApp.sendEmail(mailOpts);
-    debugLog_({ 
-      mail: `${emailType}_success`, 
-      method: 'gmail_api',
-      to: to, 
-      subject: subject 
-    });
+    // debugLog_({ 
+    //   mail: `${emailType}_success`, 
+    //   method: 'gmail_api',
+    //   to: to, 
+    //   subject: subject 
+    // });
     return true;
     
   } catch (gmailError) {
@@ -703,23 +697,23 @@ function sendEmailWithFallback_(emailOptions) {
       // Strategy 2: Store in Google Sheets as fallback
       const stored = storeEmailInSheets_(emailOptions);
       if (stored) {
-        debugLog_({ 
-          mail: `${emailType}_fallback_sheets`, 
-          method: 'google_sheets',
-          to: to,
-          subject: subject
-        });
+        // debugLog_({ 
+        //   mail: `${emailType}_fallback_sheets`, 
+        //   method: 'google_sheets',
+        //   to: to,
+        //   subject: subject
+        // });
         return true;
       }
       
       // Strategy 3: Store in Properties for manual processing
       storeFailedEmail_(emailOptions);
-      debugLog_({ 
-        mail: `${emailType}_fallback_properties`, 
-        method: 'script_properties',
-        to: to,
-        subject: subject
-      });
+      // debugLog_({ 
+      //   mail: `${emailType}_fallback_properties`, 
+      //   method: 'script_properties',
+      //   to: to,
+      //   subject: subject
+      // });
       return false;
     }
     
@@ -767,7 +761,7 @@ function storeEmailInSheets_(emailOptions) {
       mail: 'sheets_fallback_failed', 
       error: String(error),
       emailType: emailOptions.emailType
-    });
+    }); // Keep error logging
     return false;
   }
 }
@@ -799,7 +793,7 @@ function storeFailedEmail_(emailOptions) {
       mail: 'properties_fallback_failed', 
       error: String(error),
       emailType: emailOptions.emailType
-    });
+    }); // Keep error logging
   }
 }
 
@@ -818,11 +812,11 @@ function cleanupOldFailedEmails_() {
       
       keysToDelete.forEach(key => props.deleteProperty(key));
       
-      debugLog_({ 
-        mail: 'cleanup_old_emails', 
-        deleted: keysToDelete.length,
-        remaining: failedKeys.length - keysToDelete.length
-      });
+      // debugLog_({ 
+      //   mail: 'cleanup_old_emails', 
+      //   deleted: keysToDelete.length,
+      //   remaining: failedKeys.length - keysToDelete.length
+      // });
     }
   } catch (error) {
     debugLog_({ mail: 'cleanup_failed', error: String(error) });
@@ -838,10 +832,10 @@ function retryFailedEmails_() {
     const props = PropertiesService.getScriptProperties();
     const failedKeys = props.getKeys().filter(key => key.startsWith('FAILED_EMAIL_'));
     
-    debugLog_({ 
-      mail: 'retry_failed_emails_start', 
-      count: failedKeys.length 
-    });
+    // debugLog_({ 
+    //   mail: 'retry_failed_emails_start', 
+    //   count: failedKeys.length 
+    // });
     
     let successCount = 0;
     let failCount = 0;
@@ -863,12 +857,12 @@ function retryFailedEmails_() {
         if (success) {
           props.deleteProperty(key);
           successCount++;
-          debugLog_({ 
-            mail: 'retry_email_success', 
-            key: key,
-            to: emailData.to,
-            retryCount: emailData.retryCount
-          });
+          // debugLog_({ 
+          //   mail: 'retry_email_success', 
+          //   key: key,
+          //   to: emailData.to,
+          //   retryCount: emailData.retryCount
+          // });
         } else {
           // Update retry count in properties
           props.setProperty(key, JSON.stringify(emailData));
@@ -877,12 +871,12 @@ function retryFailedEmails_() {
           // Delete if too many retries
           if (emailData.retryCount >= 5) {
             props.deleteProperty(key);
-            debugLog_({ 
-              mail: 'retry_email_abandoned', 
-              key: key,
-              to: emailData.to,
-              retryCount: emailData.retryCount
-            });
+            // debugLog_({ 
+            //   mail: 'retry_email_abandoned', 
+            //   key: key,
+            //   to: emailData.to,
+            //   retryCount: emailData.retryCount
+            // });
           }
         }
         
@@ -896,12 +890,12 @@ function retryFailedEmails_() {
       }
     });
     
-    debugLog_({ 
-      mail: 'retry_failed_emails_complete', 
-      success: successCount,
-      failed: failCount,
-      total: failedKeys.length
-    });
+    // debugLog_({ 
+    //   mail: 'retry_failed_emails_complete', 
+    //   success: successCount,
+    //   failed: failCount,
+    //   total: failedKeys.length
+    // });
     
   } catch (error) {
     debugLog_({ 
