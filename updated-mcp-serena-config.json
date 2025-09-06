@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "R:\\GitHub\\serena\\.venv\\Scripts\\python.exe",
+      "args": [
+        "-m", "serena.mcp_server",
+        "--project", "R:\\GitHub\\Into-The-Woods-Audition-Packet\\castable-app",
+        "--context", "web-app",
+        "--mode", "interactive", "editing"
+      ],
+      "cwd": "R:\\GitHub\\serena"
+    }
+  }
+}
