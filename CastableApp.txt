@@ -1,0 +1,93 @@
+# **Development Brief & Instructions for Castable**
+
+**To the AI Development Assistant:**
+
+This document provides the complete context and instructions for building a new SaaS application called **Castable**. Your task is to act as the primary developer, using the provided Product Requirements Document (PRD) to break down the project into a list of actionable development tasks.
+
+## **1\. Project Vision & Goal**
+
+**Castable** is a web application designed to be the easiest, most elegant way for community theaters, schools, and local production companies to create professional, interactive audition packets and manage their applicants.
+
+The core mission is **simplicity as a superpower**. We are not building a complex, feature-heavy enterprise tool. We are building a focused product that excels at one thing: transforming the tedious administrative work of auditions into a beautiful, streamlined experience for both directors and actors.
+
+## **2\. The Origin Story: The Prototype**
+
+The concept for Castable was validated with a simple but effective prototype. It's crucial to understand this starting point.
+
+* **Technology:** The prototype is a single index.html file.  
+* **Functionality:** It features a web form that allows a director to input show information. Form submission is handled by a **Google Apps Script** which collects the data.  
+* **Prototype URL:** You can view the live prototype at https://intothewoods.vercel.app.  
+* **Conclusion:** This prototype proved that the core workflow is valuable. Now, we are moving forward to build the real, scalable SaaS application. The goal is to evolve far beyond the capabilities of the initial HTML page and Google Script.
+
+## **3\. The Path Forward: Building the MVP**
+
+The primary objective is to transition from the prototype's limitations to a robust, multi-user SaaS application based on a modern technology stack.
+
+**The Approved Technology Stack is:**
+
+* **Frontend:** Next.js (React)  
+* **Hosting:** Vercel  
+* **Backend:** Node.js (via Next.js API Routes)  
+* **Database:** PostgreSQL  
+* **File Storage:** Amazon S3  
+* **Authentication:** Clerk (preferred for its simplicity and Next.js integration)  
+* **Payment Processing:** Stripe
+
+## **4\. Core Instructions & Workflow**
+
+1. **Single Source of Truth:** The **Product Requirements Document (PRD)** provided below is the definitive specification for this project. You MUST use it as the single source of truth to generate the development tasks.  
+2. **Task Management:** You MUST use the ai-dev-tasks process. Your first step is to read and understand the PRD. Then, break down the "In-Scope Features (MVP)" section into a series of actionable development tasks or tickets.  
+3. **Initial Focus:** The immediate priority is to build the foundational structure of the application, moving away from the static prototype model.
+
+## **5\. The Product Requirements Document (PRD)**
+
+*This is the official specification for the Castable MVP.*
+
+### **Product Requirements Document: Castable MVP**
+
+#### **1\. Overview**
+
+* **Problem Statement:** Community theaters and schools lack simple, affordable, and professional tools for managing auditions, forcing them to use cumbersome, manual processes.  
+* **Vision:** To provide the easiest way for these organizations to create professional audition packets and manage applicants.  
+* **Target Audience:** Community theaters, high schools, independent producers, church/youth groups.  
+* **Key Goals:** Enable a \<10 minute show setup, provide a simple applicant viewer, and streamline the entire director-to-actor pipeline.
+
+#### **2\. User Stories**
+
+* **As a director,** I want to quickly create a professional-looking audition page, so I can attract more actors and spend less time on admin.  
+* **As a director,** I want a simple, centralized place to view all applicant info, so my team can easily review submissions.  
+* **As an actor,** I want to easily find materials and apply from a single page, so the process is convenient.
+
+#### **3\. Scope**
+
+* **In-Scope (MVP):** Secure user accounts, guided show setup dashboard, one-click public audition page generation, pre-designed templates, a simple applicant viewer, and billing integration.  
+* **Out-of-Scope (MVP):** A national talent network, direct messaging tools, advanced analytics, third-party integrations.
+
+#### **4\. Requirements**
+
+* **Functional:**  
+  * **Director Dashboard:** Secure sign-up/login; a central view of all shows; a guided wizard for creating shows (inputting details, characters, uploading PDFs/MP3s); a template selector.  
+  * **Applicant Viewer:** A sortable list of all applicants; search/filter functionality; a detailed view for each applicant with their data, headshot, and a system for private notes/ratings.  
+  * **Public Audition Page:** Must be mobile-responsive; display all show info; have embedded media players for materials; include a simple application form with a file uploader.  
+  * **Billing:** Allow users to select and pay for plans via Stripe.  
+* **Technical Stack:** Next.js, Vercel, PostgreSQL, Amazon S3, Clerk, Stripe.
+
+#### **5\. Success Metrics**
+
+* **Activation Rate:** \>60% of new users publish their first show within 7 days.  
+* **Time-to-Value:** Average time to create and publish a show is under 10 minutes.  
+* **Conversion Rate:** \>5% of free-tier users convert to a paid plan.
+
+## **6\. Your First Actions**
+
+Your first responsibility is to plan the development work before writing any code.
+
+1. **Process the PRD & Create Tasks:** Your first action is to thoroughly review the Product Requirements Document (PRD) in Section 5\. Using this PRD as your single source of truth, generate a detailed task list or set of development tickets required to build the MVP.  
+2. **Begin Foundational Implementation:** Once the task plan is generated, you can begin development. I recommend starting with the foundational tickets in this sequence:  
+   * **Project Scaffolding:** Create a new Next.js application using create-next-app.  
+   * **Authentication:** Integrate **Clerk** to handle user sign-up, sign-in, and user profiles.  
+   * **Database Setup:** Configure the project to connect to a PostgreSQL database and create the initial schema for users, shows, and applicants.  
+   * **Core UI \- Show Creation:** Begin building the UI for the "Show Setup" dashboard.  
+   * **API Endpoint \- Save Show:** Create the first API endpoint (/api/shows) to save show data to the database.
+
+Please confirm you have understood these instructions and present your initial task breakdown as a list of specific, actionable development tickets.
