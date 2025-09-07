@@ -1,9 +1,9 @@
 // Service Worker for Into the Woods Audition Packet
 // Provides caching and offline support
 
-const CACHE_NAME = 'intothewoods-v1.0.0';
-const STATIC_CACHE = 'static-v1.0.0';
-const DYNAMIC_CACHE = 'dynamic-v1.0.0';
+const CACHE_NAME = 'intothewoods-v1.0.1';
+const STATIC_CACHE = 'static-v1.0.1';
+const DYNAMIC_CACHE = 'dynamic-v1.0.1';
 
 // Resources to cache immediately (only local resources)
 const STATIC_ASSETS = [
@@ -24,7 +24,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and force cache reset
 self.addEventListener('activate', event => {
   console.log('Service Worker activating...');
   event.waitUntil(
@@ -32,12 +32,21 @@ self.addEventListener('activate', event => {
       .then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
+            // Delete ALL old caches to force fresh content
             if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
               console.log('Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
+      })
+      .then(() => {
+        // Force all clients to reload to get fresh content
+        return self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({ type: 'CACHE_UPDATED' });
+          });
+        });
       })
       .then(() => self.clients.claim())
   );
