@@ -452,10 +452,10 @@ function sendEmailNotification_(data, headshotBlob) {
   htmlBody += `<li><strong>Any Role:</strong> ${data.any_role === 'yes' ? 'Yes' : 'No'}</li>`;
   htmlBody += `<li><strong>Vocal Part:</strong> ${S(data.vocal_part)}</li>`;
   htmlBody += `<li><strong>Vocal Range:</strong> ${S(data.vocal_range)}</li>`;
+  htmlBody += `<li><strong>Experience:</strong><br>${(S(data.experience) || 'Not provided').replace(/\n/g, '<br>')}</li>`;
+  htmlBody += `<li><strong>Skills:</strong><br>${(S(data.skills) || 'Not provided').replace(/\n/g, '<br>')}</li>`;
+  htmlBody += `<li><strong>Conflicts:</strong><br>${(S(data.conflicts) || 'Not provided').replace(/\n/g, '<br>')}</li>`;
   htmlBody += '</ul>';
-  htmlBody += `<p><strong>Experience:</strong><br>${(S(data.experience) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
-  htmlBody += `<p><strong>Skills:</strong><br>${(S(data.skills) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
-  htmlBody += `<p><strong>Conflicts:</strong><br>${(S(data.conflicts) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
   
   if (headshotBlob) {
     const cid = 'headshotImage';
