@@ -694,8 +694,8 @@ class FormValidator {
         break;
     }
     
-    // Only trim if we're not in the middle of typing a space
-    if (original !== original.trimEnd() + ' ') {
+    // Don't trim spaces for textarea fields to allow normal typing
+    if (fieldName !== 'conflicts' && fieldName !== 'experience' && fieldName !== 'skills') {
       sanitized = sanitized.trim();
     }
     
