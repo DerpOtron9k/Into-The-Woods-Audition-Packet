@@ -438,10 +438,7 @@ function sendEmailNotification_(data, headshotBlob) {
     S(data.skills) || 'Not provided',
     '',
     'Conflicts:',
-    S(data.conflicts) || 'Not provided',
-    '',
-    'Headshot URL:',
-    S(data._headshotUrlRaw || data.headshotUrl) || 'No headshot uploaded'
+    S(data.conflicts) || 'Not provided'
   ];
   const adminBody = lines.join('\n');
 
@@ -459,14 +456,6 @@ function sendEmailNotification_(data, headshotBlob) {
   htmlBody += `<p><strong>Experience:</strong><br>${(S(data.experience) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
   htmlBody += `<p><strong>Skills:</strong><br>${(S(data.skills) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
   htmlBody += `<p><strong>Conflicts:</strong><br>${(S(data.conflicts) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
-
-  if (S(data._headshotUrlRaw)) {
-    htmlBody += `<p><strong>Headshot:</strong> Image attached to email</p>`;
-  } else if (headshotBlob) {
-    htmlBody += `<p><strong>Headshot:</strong> Headshot uploaded but Drive save failed (see attachment)</p>`;
-  } else {
-    htmlBody += `<p><strong>Headshot:</strong> No headshot uploaded</p>`;
-  }
   
   if (headshotBlob) {
     const cid = 'headshotImage';
