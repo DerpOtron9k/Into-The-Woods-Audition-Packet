@@ -45,7 +45,7 @@
             }
         };
     </script>
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="https://cdn.tailwindcss.com?v=1.0.0" defer></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
@@ -1097,9 +1097,16 @@ class FormValidator {
 // Performance: Service Worker registration for caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    // Add timestamp to force service worker updates
+    navigator.serviceWorker.register(`/sw.js?v=${Date.now()}`)
       .then(registration => {
         console.log('SW registered: ', registration);
+        
+        // Check for updates every time the page loads
+        registration.addEventListener('updatefound', () => {
+          console.log('Service worker update found, reloading...');
+          window.location.reload();
+        });
         
         // Listen for cache update messages from service worker
         navigator.serviceWorker.addEventListener('message', event => {
@@ -1108,6 +1115,9 @@ if ('serviceWorker' in navigator) {
             window.location.reload();
           }
         });
+        
+        // Force update check on every page load
+        registration.update();
       })
       .catch(registrationError => {
         console.log('SW registration failed: ', registrationError);

@@ -1,9 +1,11 @@
 // Service Worker for Into the Woods Audition Packet
 // Provides caching and offline support
 
-const CACHE_NAME = 'intothewoods-v1.0.2';
-const STATIC_CACHE = 'static-v1.0.2';
-const DYNAMIC_CACHE = 'dynamic-v1.0.2';
+// Auto-generate version based on timestamp for every deployment
+const VERSION = Date.now();
+const CACHE_NAME = `intothewoods-v${VERSION}`;
+const STATIC_CACHE = `static-v${VERSION}`;
+const DYNAMIC_CACHE = `dynamic-v${VERSION}`;
 
 // Resources to cache immediately (only local resources)
 const STATIC_ASSETS = [

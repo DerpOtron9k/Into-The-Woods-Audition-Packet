@@ -461,7 +461,7 @@ function sendEmailNotification_(data, headshotBlob) {
   htmlBody += `<p><strong>Conflicts:</strong><br>${(S(data.conflicts) || 'Not provided').replace(/\n/g, '<br>')}</p>`;
 
   if (S(data._headshotUrlRaw)) {
-    htmlBody += `<p><strong>Headshot:</strong> <a href="${S(data._headshotUrlRaw)}">View in Drive</a></p>`;
+    htmlBody += `<p><strong>Headshot:</strong> Image attached to email</p>`;
   } else if (headshotBlob) {
     htmlBody += `<p><strong>Headshot:</strong> Headshot uploaded but Drive save failed (see attachment)</p>`;
   } else {
