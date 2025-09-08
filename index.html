@@ -741,8 +741,8 @@ class FormValidator {
     // Don't trim here - let sanitizeInput handle it properly
     let value = field.value;
     
-    // Security: Sanitize input
-    if (rule.sanitize) {
+    // Security: Sanitize input (skip for textarea fields to allow normal typing)
+    if (rule.sanitize && !['conflicts', 'experience', 'skills'].includes(fieldName)) {
       value = this.sanitizeInput(value, fieldName);
       if (field.value !== value) {
         // Store cursor position
