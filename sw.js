@@ -1,9 +1,9 @@
 // Service Worker for Into the Woods Audition Packet
 // Provides caching and offline support
 
-const CACHE_NAME = 'intothewoods-v1.0.1';
-const STATIC_CACHE = 'static-v1.0.1';
-const DYNAMIC_CACHE = 'dynamic-v1.0.1';
+const CACHE_NAME = 'intothewoods-v1.0.2';
+const STATIC_CACHE = 'static-v1.0.2';
+const DYNAMIC_CACHE = 'dynamic-v1.0.2';
 
 // Resources to cache immediately (only local resources)
 const STATIC_ASSETS = [
@@ -30,13 +30,11 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(cacheNames => {
+        // Delete ALL caches to force complete refresh
         return Promise.all(
           cacheNames.map(cacheName => {
-            // Delete ALL old caches to force fresh content
-            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-              console.log('Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
+            console.log('Deleting cache:', cacheName);
+            return caches.delete(cacheName);
           })
         );
       })
