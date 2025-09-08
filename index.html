@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-Control" content="max-age=0, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Into the Woods Audition Packet</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>">
     
@@ -1097,27 +1096,15 @@ class FormValidator {
 // Performance: Service Worker registration for caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // Add timestamp to force service worker updates
-    navigator.serviceWorker.register(`/sw.js?v=${Date.now()}`)
+    navigator.serviceWorker.register('/sw.js')
       .then(registration => {
         console.log('SW registered: ', registration);
         
-        // Check for updates every time the page loads
+        // Only check for updates, don't auto-reload
         registration.addEventListener('updatefound', () => {
-          console.log('Service worker update found, reloading...');
-          window.location.reload();
+          console.log('Service worker update found');
+          // Don't auto-reload to prevent infinite loops
         });
-        
-        // Listen for cache update messages from service worker
-        navigator.serviceWorker.addEventListener('message', event => {
-          if (event.data && event.data.type === 'CACHE_UPDATED') {
-            console.log('Cache updated, reloading page...');
-            window.location.reload();
-          }
-        });
-        
-        // Force update check on every page load
-        registration.update();
       })
       .catch(registrationError => {
         console.log('SW registration failed: ', registrationError);

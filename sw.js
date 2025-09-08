@@ -1,16 +1,14 @@
 // Service Worker for Into the Woods Audition Packet
 // Provides caching and offline support
 
-// Auto-generate version based on timestamp for every deployment
-const VERSION = Date.now();
-const CACHE_NAME = `intothewoods-v${VERSION}`;
-const STATIC_CACHE = `static-v${VERSION}`;
-const DYNAMIC_CACHE = `dynamic-v${VERSION}`;
+const CACHE_NAME = 'intothewoods-v1.0.3';
+const STATIC_CACHE = 'static-v1.0.3';
+const DYNAMIC_CACHE = 'dynamic-v1.0.3';
 
 // Resources to cache immediately (only local resources)
 const STATIC_ASSETS = [
-  '/',
-  '/index.html'
+  './',
+  './index.html'
 ];
 
 // Install event - cache static assets
@@ -26,27 +24,20 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event - clean up old caches and force cache reset
+// Activate event - clean up old caches
 self.addEventListener('activate', event => {
   console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys()
       .then(cacheNames => {
-        // Delete ALL caches to force complete refresh
         return Promise.all(
           cacheNames.map(cacheName => {
-            console.log('Deleting cache:', cacheName);
-            return caches.delete(cacheName);
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
           })
         );
-      })
-      .then(() => {
-        // Force all clients to reload to get fresh content
-        return self.clients.matchAll().then(clients => {
-          clients.forEach(client => {
-            client.postMessage({ type: 'CACHE_UPDATED' });
-          });
-        });
       })
       .then(() => self.clients.claim())
   );
@@ -102,7 +93,7 @@ self.addEventListener('fetch', event => {
           .catch(() => {
             // Return offline page for navigation requests
             if (request.destination === 'document') {
-              return caches.match('/index.html');
+              return caches.match('./index.html');
             }
           });
       })
