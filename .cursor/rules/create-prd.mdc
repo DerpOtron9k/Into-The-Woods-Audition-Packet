@@ -5,57 +5,43 @@ alwaysApply: false
 ---
 # Rule: Generating a Product Requirements Document (PRD)
 
-## Goal
+Use the comprehensive PRD creation process from `ai-dev-tasks/create-prd.md`. This rule guides the AI to create detailed, actionable PRDs that serve as the single source of truth for development work.
 
-To guide an AI assistant in creating a detailed Product Requirements Document (PRD) in Markdown format, based on an initial user prompt. The PRD should be clear, actionable, and suitable for a junior developer to understand and implement the feature.
+## Key Process Steps
 
-## Process
+1. **Ask Clarifying Questions** - Must gather sufficient detail before writing
+2. **Follow PRD Structure** - Use the 8-section template for comprehensive coverage
+3. **Target Junior Developers** - Write clear, explicit requirements
+4. **Save in Tasks Directory** - Store as `PRD-[FEATURE-NAME].md`
 
-1.  **Receive Initial Prompt:** The user provides a brief description or request for a new feature or functionality.
-2.  **Ask Clarifying Questions:** Before writing the PRD, the AI *must* ask clarifying questions to gather sufficient detail. The goal is to understand the "what" and "why" of the feature, not necessarily the "how" (which the developer will figure out).
-3.  **Generate PRD:** Based on the initial prompt and the user's answers to the clarifying questions, generate a PRD using the structure outlined below.
-4.  **Save PRD:** Save the generated document as `[feature-name]-PRD.md` inside the `/tasks` directory.
+## Clarifying Questions to Ask
 
-## Clarifying Questions (Examples)
+- **Problem/Goal**: What problem does this feature solve?
+- **Target User**: Who is the primary user?
+- **Core Functionality**: What are the key actions users should perform?
+- **User Stories**: Can you provide specific user scenarios?
+- **Success Criteria**: How will we know when this is successful?
+- **Scope/Boundaries**: What should this NOT do?
+- **Data Requirements**: What data needs to be handled?
+- **Design/UI**: Any specific design requirements?
+- **Edge Cases**: What edge cases should we consider?
 
-The AI should adapt its questions based on the prompt, but here are some common areas to explore:
+## PRD Structure (8 Sections)
 
-*   **Problem/Goal:** "What problem does this feature solve for the user?" or "What is the main goal we want to achieve with this feature?"
-*   **Target User:** "Who is the primary user of this feature?"
-*   **Core Functionality:** "Can you describe the key actions a user should be able to perform with this feature?"
-*   **User Stories:** "Could you provide a few user stories? (e.g., As a [type of user], I want to [perform an action] so that [benefit].)"
-*   **Acceptance Criteria:** "How will we know when this feature is successfully implemented? What are the key success criteria?"
-*   **Scope/Boundaries:** "Are there any specific things this feature *should not* do (non-goals)?"
-*   **Data Requirements:** "What kind of data does this feature need to display or manipulate?"
-*   **Design/UI:** "Are there any existing design mockups or UI guidelines to follow?" or "Can you describe the desired look and feel?"
-*   **Edge Cases:** "Are there any potential edge cases or error conditions we should consider?"
+1. **Introduction/Overview** - Feature description, problem, target audience, goals
+2. **User Stories** - Primary personas, user journeys, use cases
+3. **Functional Requirements** - Core features, UI requirements, data needs
+4. **Technical Requirements** - Tech stack, performance, security, scalability
+5. **Success Metrics** - How success will be measured, KPIs
+6. **Non-Goals (Out of Scope)** - What this will NOT include
+7. **Design Considerations** - UI/UX, accessibility, mobile, brand guidelines
+8. **Open Questions** - Areas needing clarification, unknowns, dependencies
 
-## PRD Structure
+## Instructions
 
-The generated PRD should include the following sections:
-
-1.  **Introduction/Overview:** Briefly describe the feature and the problem it solves. State the goal.
-2.  **Goals:** List the specific, measurable objectives for this feature.
-3.  **User Stories:** Detail the user narratives describing feature usage and benefits.
-4.  **Functional Requirements:** List the specific functionalities the feature must have. Use clear, concise language (e.g., "The system must allow users to upload a profile picture."). Number these requirements.
-5.  **Non-Goals (Out of Scope):** Clearly state what this feature will *not* include to manage scope.
-6.  **Design Considerations (Optional):** Link to mockups, describe UI/UX requirements, or mention relevant components/styles if applicable.
-7.  **Technical Considerations (Optional):** Mention any known technical constraints, dependencies, or suggestions (e.g., "Should integrate with the existing Auth module").
-8.  **Success Metrics:** How will the success of this feature be measured? (e.g., "Increase user engagement by 10%", "Reduce support tickets related to X").
-9.  **Open Questions:** List any remaining questions or areas needing further clarification.
-
-## Target Audience
-
-Assume the primary reader of the PRD is a **junior developer**. Therefore, requirements should be explicit, unambiguous, and avoid jargon where possible. Provide enough detail for them to understand the feature's purpose and core logic.
-
-## Output
-
-*   **Format:** Markdown (`.md`)
-*   **Location:** `/tasks/`
-*   **Filename:** `PRD-[MEANINGFUL-FEATURE-NAME].md` (e.g., `PRD-USER-PROFILE-EDITING.md`)
-
-## Final instructions
-
-1. Do NOT start implmenting the PRD
-2. Make sure to ask the user clarifying questions
-3. Take the user's answers to the clarifying questions and improve the PRD
+1. Ask clarifying questions before writing the PRD
+2. Use the 8-section structure above
+3. Be specific and actionable in requirements
+4. Include enough detail for a developer to understand scope
+5. Save as `PRD-[FEATURE-NAME].md` in `/tasks` directory
+6. Do NOT start implementing the PRD

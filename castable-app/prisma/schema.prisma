@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Clerk User ID Table
+// This table is used to create a relationship between our database
+// and Clerk's user management system.
+model User {
+  id        String  @id @unique
+  email     String  @unique
+  shows     Show[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Show {
+  id              String      @id @default(cuid())
+  title           String
+  description     String?
+  director        String
+  organization    String?
+  auditionDate    DateTime?
+  deadline        DateTime?
+  location        String?
+  contactEmail    String
+  contactPhone    String?
+  status          String      @default("draft") // draft, active, closed
+  publicUrl       String?     @unique // Public URL for the show
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  characters      Character[]
+  applicants      Applicant[]
+  auditionMaterials AuditionMaterial[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Character {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  gender      String  @default("Any") // Male, Female, Any
+  ageRange    String?
+  vocalRange  String?
+  notes       String?
+  showId      String
+  show        Show    @relation(fields: [showId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditionMaterial {
+  id          String   @id @default(cuid())
+  type        String   // script, music, video, other
+  fileName    String
+  fileUrl     String
+  fileSize    Int?
+  mimeType    String?
+  showId      String
+  show        Show     @relation(fields: [showId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Applicant {
+  id              String    @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  headshotUrl     String?
+  resumeUrl       String?
+  auditionFileUrl String?
+  showId          String
+  show            Show      @relation(fields: [showId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
