@@ -13,7 +13,8 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  FileText
 } from 'lucide-react'
 // import { UserButton } from '@clerk/nextjs'
 
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'My Shows', href: '/dashboard/shows', icon: Users },
   { name: 'Create Show', href: '/dashboard/shows/create', icon: Plus },
+  { name: 'Templates', href: '/dashboard/templates', icon: FileText },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 

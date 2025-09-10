@@ -19,7 +19,8 @@ import {
   Trash2, 
   Users,
   Calendar,
-  FileText
+  FileText,
+  Copy
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -44,6 +45,7 @@ export default function ShowsPage() {
   const [shows, setShows] = useState<Show[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [duplicating, setDuplicating] = useState<string | null>(null)
 
   useEffect(() => {
     fetchShows()
@@ -62,6 +64,35 @@ export default function ShowsPage() {
       setError('Failed to load shows')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const duplicateShow = async (showId: string) => {
+    setDuplicating(showId)
+    try {
+      const response = await fetch(`/api/shows/${showId}/duplicate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to duplicate show')
+      }
+      
+      const data = await response.json()
+      
+      // Refresh the shows list
+      await fetchShows()
+      
+      // Show success message
+      alert(`Show "${data.show.title}" duplicated successfully!`)
+    } catch (error) {
+      console.error('Error duplicating show:', error)
+      alert('Failed to duplicate show. Please try again.')
+    } finally {
+      setDuplicating(null)
     }
   }
 
@@ -259,9 +290,20 @@ export default function ShowsPage() {
                           View Public Page
                         </Link>
                       </Button>
-                      <Button variant="outline" size="sm">
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Show
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/dashboard/shows/${show.id}/edit`}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Show
+                        </Link>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => duplicateShow(show.id)}
+                        disabled={duplicating === show.id}
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        {duplicating === show.id ? 'Duplicating...' : 'Duplicate'}
                       </Button>
                       <Button variant="outline" size="sm">
                         <Calendar className="mr-2 h-4 w-4" />

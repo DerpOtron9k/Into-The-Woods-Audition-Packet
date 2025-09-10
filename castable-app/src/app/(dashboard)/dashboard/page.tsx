@@ -9,29 +9,47 @@ import {
   Calendar,
   TrendingUp,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Copy
 } from 'lucide-react'
 import Link from 'next/link'
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from '@/lib/prisma'
+import { DuplicateShowButton } from '@/components/duplicate-show-button'
+import { isMockAuthEnabled, getMockAuth } from '@/lib/mock-auth'
 
 export default async function DashboardPage() {
-  const { userId } = await auth()
+  let userId: string | null = null
+  
+  if (isMockAuthEnabled()) {
+    const mockAuth = getMockAuth()
+    userId = mockAuth.userId
+  } else {
+    const authResult = await auth()
+    userId = authResult.userId
+  }
   
   if (!userId) {
     return <div>Please sign in to view your dashboard.</div>
   }
 
   // Get real data from database
-  const shows = await prisma.show.findMany({
-    where: { userId },
-    include: {
-      characters: true,
-      applicants: true,
-      auditionMaterials: true,
-    },
-    orderBy: { createdAt: 'desc' }
-  })
+  let shows = []
+  try {
+    shows = await prisma.show.findMany({
+      where: { userId },
+      include: {
+        characters: true,
+        applicants: true,
+        auditionMaterials: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+  } catch (error) {
+    console.error('Database error:', error)
+    // Fallback to empty array if database issues
+    shows = []
+  }
 
   const totalShows = shows.length
   const totalApplicants = shows.reduce((sum, show) => sum + show.applicants.length, 0)
@@ -260,14 +278,13 @@ export default async function DashboardPage() {
                     <Badge variant={show.status === 'active' ? 'default' : 'secondary'}>
                       {show.status}
                     </Badge>
-                    {show.publicUrl && (
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={show.publicUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4 mr-1" />
-                          View Public
-                        </a>
-                      </Button>
-                    )}
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/shows/${show.id}`}>
+                        <ExternalLink className="h-4 w-4 mr-1" />
+                        View Public
+                      </Link>
+                    </Button>
+                    <DuplicateShowButton showId={show.id} showTitle={show.title} />
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/dashboard/shows/${show.id}`}>
                         Manage

@@ -21,6 +21,7 @@ model User {
   id        String  @id @unique
   email     String  @unique
   shows     Show[]
+  templates ShowTemplate[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -37,7 +38,6 @@ model Show {
   contactEmail    String
   contactPhone    String?
   status          String      @default("draft") // draft, active, closed
-  publicUrl       String?     @unique // Public URL for the show
   userId          String
   user            User        @relation(fields: [userId], references: [id])
   characters      Character[]
@@ -86,4 +86,50 @@ model Applicant {
   show            Show      @relation(fields: [showId], references: [id])
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+model ShowTemplate {
+  id              String      @id @default(cuid())
+  name            String      // Template name (e.g., "Musical Template", "Drama Template")
+  description     String?     // Template description
+  title           String?     // Default show title (can be overridden)
+  showDescription String?     // Default show description
+  director        String?     // Default director name
+  organization    String?     // Default organization
+  location        String?     // Default location
+  contactEmail    String?     // Default contact email
+  contactPhone    String?     // Default contact phone
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  characters      TemplateCharacter[]
+  auditionMaterials TemplateAuditionMaterial[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model TemplateCharacter {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  gender      String       @default("Any") // Male, Female, Any
+  ageRange    String?
+  vocalRange  String?
+  notes       String?
+  templateId  String
+  template    ShowTemplate @relation(fields: [templateId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model TemplateAuditionMaterial {
+  id          String       @id @default(cuid())
+  type        String       // script, music, video, other
+  fileName    String
+  fileUrl     String
+  fileSize    Int?
+  mimeType    String?
+  templateId  String
+  template    ShowTemplate @relation(fields: [templateId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }

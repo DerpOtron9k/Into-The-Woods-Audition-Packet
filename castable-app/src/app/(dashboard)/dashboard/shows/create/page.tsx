@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Progress } from '@/components/ui/progress'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -23,8 +24,13 @@ import {
   Video,
   ExternalLink,
   Copy,
-  Check
+  Check,
+  Save,
+  MapPin,
+  Mail,
+  Phone
 } from 'lucide-react'
+import { trackShowCreated } from '@/lib/analytics'
 import Link from 'next/link'
 
 interface Character {
@@ -60,6 +66,7 @@ const STEPS = [
   { id: 'basic', title: 'Basic Information', description: 'Show details and contact info' },
   { id: 'characters', title: 'Characters', description: 'Define roles and requirements' },
   { id: 'materials', title: 'Audition Materials', description: 'Upload scripts, music, and videos' },
+  { id: 'preview', title: 'Preview', description: 'See how your show will look to actors' },
   { id: 'review', title: 'Review & Publish', description: 'Final review before going live' },
 ]
 
@@ -78,11 +85,37 @@ export default function CreateShowPage() {
     characters: [],
     auditionMaterials: {}
   })
+  const [isLoadingFromTemplate, setIsLoadingFromTemplate] = useState(false)
+
+  // Load template data on component mount
+  useEffect(() => {
+    const templateData = sessionStorage.getItem('templateData')
+    if (templateData) {
+      try {
+        const parsed = JSON.parse(templateData)
+        setShowData(prev => ({
+          ...prev,
+          ...parsed,
+          // Ensure characters have proper structure
+          characters: parsed.characters || []
+        }))
+        setIsLoadingFromTemplate(true)
+        // Clear template data from session storage
+        sessionStorage.removeItem('templateData')
+      } catch (error) {
+        console.error('Error loading template data:', error)
+      }
+    }
+  }, [])
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCreated, setShowCreated] = useState(false)
-  const [publicUrl, setPublicUrl] = useState('')
+  const [createdShowId, setCreatedShowId] = useState('')
   const [copied, setCopied] = useState(false)
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false)
+  const [templateName, setTemplateName] = useState('')
+  const [templateDescription, setTemplateDescription] = useState('')
+  const [showSaveTemplateDialog, setShowSaveTemplateDialog] = useState(false)
 
   const addCharacter = () => {
     const newCharacter: Character = {
@@ -152,7 +185,10 @@ export default function CreateShowPage() {
       const result = await response.json()
       console.log('Show created successfully:', result.show)
       
-      setPublicUrl(result.publicUrl)
+      // Track analytics event
+      trackShowCreated(result.show.id, result.show.title)
+      
+      setCreatedShowId(result.show.id)
       setShowCreated(true)
     } catch (error) {
       console.error('Error creating show:', error)
@@ -162,8 +198,53 @@ export default function CreateShowPage() {
     }
   }
 
+  const handleSaveTemplate = async () => {
+    if (!templateName.trim()) {
+      alert('Please enter a template name')
+      return
+    }
+
+    setIsSavingTemplate(true)
+    try {
+      const templateData = {
+        name: templateName,
+        description: templateDescription,
+        title: showData.title,
+        showDescription: showData.description,
+        director: showData.director,
+        organization: showData.organization,
+        location: showData.location,
+        contactEmail: showData.contactEmail,
+        contactPhone: showData.contactPhone,
+        characters: showData.characters,
+        auditionMaterials: Object.values(showData.auditionMaterials).flat()
+      }
+
+      const response = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(templateData)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save template')
+      }
+
+      setShowSaveTemplateDialog(false)
+      setTemplateName('')
+      setTemplateDescription('')
+      alert('Template saved successfully!')
+    } catch (error) {
+      console.error('Error saving template:', error)
+      alert('Failed to save template. Please try again.')
+    } finally {
+      setIsSavingTemplate(false)
+    }
+  }
+
   const copyToClipboard = async () => {
     try {
+      const publicUrl = `${window.location.origin}/shows/${createdShowId}`
       await navigator.clipboard.writeText(publicUrl)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -484,7 +565,134 @@ export default function CreateShowPage() {
           </div>
         )
 
-      case 3:
+      case 4:
+        // Review step content
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-semibold">Review Your Show</h3>
+              <p className="text-muted-foreground">
+                Review all details before publishing your show
+              </p>
+            </div>
+
+            {/* Show Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Show Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Title</Label>
+                    <p className="font-medium">{showData.title || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Director</Label>
+                    <p className="font-medium">{showData.director || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Organization</Label>
+                    <p className="font-medium">{showData.organization || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Contact Email</Label>
+                    <p className="font-medium">{showData.contactEmail || 'Not specified'}</p>
+                  </div>
+                </div>
+                {showData.description && (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Description</Label>
+                    <p className="text-sm">{showData.description}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Characters Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Characters ({showData.characters.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {showData.characters.length === 0 ? (
+                  <p className="text-muted-foreground">No characters defined</p>
+                ) : (
+                  <div className="space-y-2">
+                    {showData.characters.map((character) => (
+                      <div key={character.id} className="flex items-center justify-between p-2 border rounded">
+                        <div>
+                          <span className="font-medium">{character.name}</span>
+                          <span className="text-sm text-muted-foreground ml-2">({character.gender})</span>
+                        </div>
+                        <Badge variant="outline">{character.ageRange || 'Any age'}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Dialog open={showSaveTemplateDialog} onOpenChange={setShowSaveTemplateDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Save className="h-4 w-4" />
+                    Save as Template
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Save as Template</DialogTitle>
+                    <DialogDescription>
+                      Save this show configuration as a reusable template
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="templateName">Template Name *</Label>
+                      <Input
+                        id="templateName"
+                        value={templateName}
+                        onChange={(e) => setTemplateName(e.target.value)}
+                        placeholder="e.g., Musical Template"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="templateDescription">Description</Label>
+                      <Textarea
+                        id="templateDescription"
+                        value={templateDescription}
+                        onChange={(e) => setTemplateDescription(e.target.value)}
+                        placeholder="Brief description of this template"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" onClick={() => setShowSaveTemplateDialog(false)}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={handleSaveTemplate} 
+                        disabled={!templateName.trim() || isSavingTemplate}
+                      >
+                        {isSavingTemplate ? 'Saving...' : 'Save Template'}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+        )
+
         if (showCreated) {
           return (
             <div className="space-y-6">
@@ -508,7 +716,7 @@ export default function CreateShowPage() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <Input
-                      value={publicUrl}
+                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/shows/${createdShowId}`}
                       readOnly
                       className="font-mono text-sm"
                     />
@@ -522,7 +730,7 @@ export default function CreateShowPage() {
                   </div>
                   <div className="flex gap-2">
                     <Button asChild>
-                      <a href={publicUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={`/shows/${createdShowId}`} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         View Public Page
                       </a>
@@ -616,6 +824,230 @@ export default function CreateShowPage() {
                   <p className="text-muted-foreground">No files uploaded yet</p>
                 </CardContent>
               </Card>
+            </div>
+          </div>
+        )
+
+      case 3: // Preview step
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-semibold">Preview Your Show</h3>
+              <p className="text-muted-foreground">
+                This is how actors will see your audition page
+              </p>
+            </div>
+
+            {/* Preview Container */}
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+              <div className="text-center mb-4">
+                <p className="text-sm text-gray-600">Preview Mode</p>
+              </div>
+              
+              {/* Mock Public Show Page Preview */}
+              <div className="bg-white rounded-lg shadow-sm border max-w-4xl mx-auto">
+                {/* Header */}
+                <div className="border-b bg-background/95 p-4">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-2xl font-bold">Castable</h1>
+                    <Badge variant="outline">Free Tier</Badge>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  {/* Show Header */}
+                  <div className="text-center space-y-4">
+                    <h1 className="text-3xl font-bold">{showData.title || 'Your Show Title'}</h1>
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                      {showData.description || 'Your show description will appear here...'}
+                    </p>
+                    
+                    <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        <span>Directed by {showData.director || 'Your Name'}</span>
+                      </div>
+                      {showData.organization && (
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          <span>{showData.organization}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Status Banner */}
+                  <Card className="border-green-500 bg-green-50">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <Calendar className="h-4 w-4" />
+                        <span className="font-medium">Applications are open</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Show Details */}
+                    <div className="space-y-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Calendar className="h-5 w-5" />
+                            Important Dates
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {showData.auditionDate && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Audition Date</p>
+                              <p className="font-medium">
+                                {new Date(showData.auditionDate).toLocaleDateString('en-US', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          )}
+                          {showData.deadline && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Application Deadline</p>
+                              <p className="font-medium">
+                                {new Date(showData.deadline).toLocaleDateString('en-US', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      {showData.location && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <MapPin className="h-5 w-5" />
+                              Location
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="font-medium">{showData.location}</p>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Mail className="h-5 w-5" />
+                            Contact Information
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-primary">{showData.contactEmail || 'your-email@example.com'}</span>
+                          </div>
+                          {showData.contactPhone && (
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-primary">{showData.contactPhone}</span>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Characters */}
+                    <div className="space-y-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            Characters ({showData.characters.length})
+                          </CardTitle>
+                          <CardDescription>
+                            Roles available for audition
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          {showData.characters.length === 0 ? (
+                            <p className="text-muted-foreground">No characters defined yet.</p>
+                          ) : (
+                            <div className="space-y-4">
+                              {showData.characters.map((character) => (
+                                <div key={character.id} className="border rounded-lg p-4">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <h4 className="font-medium">{character.name}</h4>
+                                    <Badge variant="outline">{character.gender}</Badge>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground mb-2">
+                                    {character.description}
+                                  </p>
+                                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                                    {character.ageRange && (
+                                      <span>Age: {character.ageRange}</span>
+                                    )}
+                                    {character.vocalRange && (
+                                      <span>Vocal: {character.vocalRange}</span>
+                                    )}
+                                  </div>
+                                  {character.notes && (
+                                    <p className="text-xs text-muted-foreground mt-2 italic">
+                                      {character.notes}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+
+                  {/* Application Form */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Apply for This Show</CardTitle>
+                      <CardDescription>
+                        Submit your application to audition for this production
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground mb-6">
+                          Ready to audition? Fill out our simple application form to get started.
+                        </p>
+                        <div className="flex gap-4 justify-center">
+                          <Button size="lg" disabled>
+                            <Users className="h-4 w-4 mr-2" />
+                            Apply Now
+                          </Button>
+                          <Button variant="outline" disabled>
+                            <Mail className="h-4 w-4 mr-2" />
+                            Ask Director
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                This is a preview. The actual page will be live after publishing.
+              </p>
             </div>
           </div>
         )
@@ -724,6 +1156,18 @@ export default function CreateShowPage() {
           <Button onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? 'Publishing...' : 'Publish Show'}
           </Button>
+        ) : currentStep === 2 ? (
+          // Materials step - show both Preview and Next buttons
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={nextStep}>
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Preview
+            </Button>
+            <Button onClick={nextStep}>
+              Next
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         ) : (
           <Button onClick={nextStep}>
             Next

@@ -16,6 +16,7 @@ import {
   Play
 } from 'lucide-react'
 import Link from 'next/link'
+import { ShowViewTracker } from '@/components/show-view-tracker'
 
 interface PublicShowPageProps {
   params: {
@@ -98,6 +99,7 @@ export default async function PublicShowPage({ params }: PublicShowPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <ShowViewTracker showId={show.id} showTitle={show.title} />
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">

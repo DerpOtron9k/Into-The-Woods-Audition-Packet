@@ -5,14 +5,15 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './tests',
+  globalSetup: require.resolve('./tests/global-setup'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Use single worker for debugging and stability */
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -64,8 +65,14 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'cp src/middleware.test.ts src/middleware.ts && npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
+    env: {
+      NODE_ENV: 'test',
+      MOCK_AUTH: 'true',
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_bGVhZGluZy1tb2xseS01MC5jbGVyay5hY2NvdW50cy5kZXYk',
+      CLERK_SECRET_KEY: 'sk_test_vZMo57ITFK5ReDWrXzbPFBh6xD6kQqd9KlqyFZ8ImF',
+    },
   },
 })

@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Bell, Search } from 'lucide-react'
 
 export function DashboardHeader() {
@@ -21,6 +22,7 @@ export function DashboardHeader() {
           </div>
         </div>
         <div className="flex items-center gap-x-4 lg:gap-x-6">
+          <ThemeToggle />
           <Button variant="ghost" size="sm" className="relative">
             <Bell className="h-5 w-5" />
             <Badge 
