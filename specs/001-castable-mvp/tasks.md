@@ -7,7 +7,12 @@
 - [x] 1.4 Configure Amazon S3 for file storage, then test with file upload/download operations and verify encryption
 - [x] 1.5 Set up Shadcn UI and Radix UI for the component library, then **MANUAL TEST**: Verify component rendering and interactions work correctly
 - [x] 1.6 Configure analytics and monitoring (Sentry, Vercel Analytics), then **MANUAL TEST**: Verify tracking events and error reporting work correctly
-- [ ] 1.7 Create conversion-focused landing page with hero section, problem/solution narrative, social proof, interactive demo, feature showcase grid, pricing transparency, community resources, FAQ section, and conversion optimization, then **MANUAL TEST**: Verify all sections render correctly, CTAs function properly, and mobile responsiveness works across all devices
+- [x] 1.7 Create conversion-focused landing page with hero section, problem/solution narrative, social proof, interactive demo, feature showcase grid, pricing transparency, community resources, FAQ section, and conversion optimization, then **MANUAL TEST**: Verify all sections render correctly, CTAs function properly, and mobile responsiveness works across all devices
+- [x] 1.8 Fix user creation issue in API endpoints to ensure Clerk users are automatically created in database, then **MANUAL TEST**: Verify signed-in user can create a show without errors
+- [ ] 1.9 Update database schema to support visual design templates and organization role-based access, then test with database scripts for schema validation
+- [ ] 1.10 Create organizational structure with role-based access control (Admin, Director roles), then **MANUAL TEST**: Verify role permissions and access control work correctly
+- [ ] 1.11 Implement user invitation system for organizations, then **MANUAL TEST**: Verify invitation sending and acceptance workflows work correctly
+- [ ] 1.12 Add organization management dashboard for admins, then **MANUAL TEST**: Verify organization settings and user management work correctly
 
 ## Phase 2: Director Dashboard & Show Management
 - [x] 2.1 Create simple, clean dashboard layout for logged-in users, then **MANUAL TEST**: Verify responsive design and navigation work correctly
@@ -20,6 +25,7 @@
 - [x] 2.8 Implement show template saving system, then **MANUAL TEST**: Verify template creation, saving, and reuse workflows work correctly
 - [x] 2.9 Add show editing capabilities after publishing, then **MANUAL TEST**: Verify edit permissions and data updates work correctly
 - [ ] 2.10 Create show duplication feature, then **MANUAL TEST**: Verify duplication accuracy and data integrity work correctly
+- [x] 2.11a Add basic Design step (placeholder) to wizard, then **MANUAL TEST**: Verify step appears and navigation works
 - [ ] 2.11 Implement Visual Template Designer interface with drag-and-drop canvas, then **MANUAL TEST**: Verify component positioning and layout accuracy work correctly
 - [ ] 2.12 Create component library (Header, Show Info, Character Cards, Application Form, Contact Info), then **MANUAL TEST**: Verify component rendering and functionality work correctly
 - [ ] 2.13 Build layout template system (Single Column, Two Column, Grid, Hero, Card Grid, Sidebar), then **MANUAL TEST**: Verify template switching and layout consistency work correctly
@@ -92,6 +98,11 @@
 - [ ] 8.5 Launch preparation and go-live checklist, then test with deployment tools for launch readiness and rollback procedures
 - [ ] 8.6 Set up automated data purging jobs, then test with database scripts for job execution and data purging accuracy
 - [ ] 8.7 Configure backup and recovery systems, then test with backup tools for data recovery and system restoration
+ - [ ] 8.8 Add domain `castable.actor` to Vercel project and set as Primary, then **MANUAL TEST**: Verify domain appears healthy in Vercel Domains
+ - [ ] 8.9 Configure DNS at registrar (A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`), then test with DNS tools and **MANUAL TEST**: Confirm `castable.actor` resolves over HTTPS
+ - [ ] 8.10 Set `NEXT_PUBLIC_APP_URL` to `https://castable.actor` in Production env vars and redeploy, then **MANUAL TEST**: Verify generated public links and redirects use the new domain
+ - [ ] 8.11 Update Clerk Allowed Origins and Redirect URLs to include `https://castable.actor` (and `https://www.castable.actor` if used), then **MANUAL TEST**: Verify sign-in/sign-up flows complete on the custom domain
+ - [ ] 8.12 Verify key routes and SSL: `/`, `/dashboard`, `/shows/{id}/apply`, `/dashboard/shows/{id}/applicants`, then **MANUAL TEST**: Confirm pages load, auth works, and no mixed-content warnings
 
 ## Dependencies & Blockers
 - [ ] AWS S3 credentials and bucket configuration, then test with S3 tools for connectivity and permissions

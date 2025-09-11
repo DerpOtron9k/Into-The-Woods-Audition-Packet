@@ -54,11 +54,19 @@ export default function ShowsPage() {
   const fetchShows = async () => {
     try {
       const response = await fetch('/api/shows')
+      if (response.status === 401) {
+        setShows([])
+        setError('Please sign in to view your shows')
+        return
+      }
       if (!response.ok) {
-        throw new Error('Failed to fetch shows')
+        const message = `Failed to load shows (${response.status})`
+        console.error('Fetch /api/shows error:', response.status)
+        setError(message)
+        return
       }
       const data = await response.json()
-      setShows(data.shows)
+      setShows(data.shows || [])
     } catch (error) {
       console.error('Error fetching shows:', error)
       setError('Failed to load shows')

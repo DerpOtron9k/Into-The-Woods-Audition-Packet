@@ -1,7 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { prisma } from '@/lib/prisma'
 import { isMockAuthEnabled, getMockAuth } from '@/lib/mock-auth'
+
+// Ensure the authenticated Clerk user exists in our database
+async function ensureUserExists(userId: string) {
+  try {
+    // Fast path: if user already exists, return
+    const existing = await prisma.user.findUnique({ where: { id: userId } })
+    if (existing) return
+
+    let email = ''
+    try {
+      const user = await currentUser()
+      email = user?.emailAddresses?.[0]?.emailAddress || ''
+    } catch {}
+
+    if (!email) email = `${userId}@users.local`
+
+    await prisma.user.create({
+      data: { id: userId, email },
+    })
+  } catch (err) {
+    console.log('ensureUserExists error:', err)
+  }
+}
 
 // GET /api/shows - Get all shows for authenticated user
 export async function GET(request: NextRequest) {
@@ -22,6 +45,9 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
+
+    // Make sure the user exists in our DB (prevents FK errors elsewhere)
+    await ensureUserExists(userId)
 
     const shows = await prisma.show.findMany({
       where: {
@@ -70,6 +96,9 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
+
+    // Make sure the user exists in our DB before creating a show
+    await ensureUserExists(userId)
 
     console.log('Creating show...')
     const body = await request.json()

@@ -31,6 +31,7 @@ import {
   Phone
 } from 'lucide-react'
 import { trackShowCreated } from '@/lib/analytics'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import Link from 'next/link'
 
 interface Character {
@@ -66,6 +67,7 @@ const STEPS = [
   { id: 'basic', title: 'Basic Information', description: 'Show details and contact info' },
   { id: 'characters', title: 'Characters', description: 'Define roles and requirements' },
   { id: 'materials', title: 'Audition Materials', description: 'Upload scripts, music, and videos' },
+  { id: 'design', title: 'Design & Layout', description: 'Choose template and customize appearance' },
   { id: 'preview', title: 'Preview', description: 'See how your show will look to actors' },
   { id: 'review', title: 'Review & Publish', description: 'Final review before going live' },
 ]
@@ -117,6 +119,48 @@ export default function CreateShowPage() {
   const [templateDescription, setTemplateDescription] = useState('')
   const [showSaveTemplateDialog, setShowSaveTemplateDialog] = useState(false)
 
+  // Design step (preview-only) state
+  type ThemeId = 'classic' | 'modern' | 'dramatic' | 'professional'
+  interface ThemeOption {
+    id: ThemeId
+    name: string
+    description: string
+    colors: { primary: string; secondary: string; accent: string }
+    fonts: { heading: 'serif' | 'sans-serif'; body: 'serif' | 'sans-serif' }
+  }
+  const themeOptions: ThemeOption[] = [
+    {
+      id: 'classic',
+      name: 'Classic Broadway',
+      description: 'Deep reds, gold accents, serif headings',
+      colors: { primary: '#b91c1c', secondary: '#374151', accent: '#f59e0b' },
+      fonts: { heading: 'serif', body: 'sans-serif' },
+    },
+    {
+      id: 'modern',
+      name: 'Modern Minimal',
+      description: 'Clean blues, neutral grays, sans-serif',
+      colors: { primary: '#2563eb', secondary: '#6b7280', accent: '#10b981' },
+      fonts: { heading: 'sans-serif', body: 'sans-serif' },
+    },
+    {
+      id: 'dramatic',
+      name: 'Dramatic Theater',
+      description: 'Dark contrast, gold accent, bold look',
+      colors: { primary: '#000000', secondary: '#374151', accent: '#f59e0b' },
+      fonts: { heading: 'serif', body: 'sans-serif' },
+    },
+    {
+      id: 'professional',
+      name: 'Clean Professional',
+      description: 'Neutral palette, balanced typography',
+      colors: { primary: '#374151', secondary: '#6b7280', accent: '#6366f1' },
+      fonts: { heading: 'sans-serif', body: 'sans-serif' },
+    },
+  ]
+  const [selectedThemeId, setSelectedThemeId] = useState<ThemeId>('classic')
+  const selectedTheme = themeOptions.find(t => t.id === selectedThemeId) || themeOptions[0]
+
   const addCharacter = () => {
     const newCharacter: Character = {
       id: Date.now().toString(),
@@ -165,6 +209,11 @@ export default function CreateShowPage() {
     setIsSubmitting(true)
     
     try {
+      // Frontend required field validation to avoid 400s
+      if (!showData.title.trim() || !showData.director.trim() || !showData.contactEmail.trim()) {
+        alert('Please fill in Title, Director, and Contact Email before publishing.')
+        return
+      }
       const response = await fetch('/api/shows', {
         method: 'POST',
         headers: {
@@ -173,6 +222,13 @@ export default function CreateShowPage() {
         body: JSON.stringify({
           ...showData,
           auditionMaterials: [], // TODO: Handle file uploads
+          // Placeholder theme persistence (safe JSON blob)
+          customTheme: {
+            templateId: 'classic',
+            colors: { primary: '#dc2626', secondary: '#6b7280', accent: '#f59e0b' },
+            fonts: { heading: 'serif', body: 'sans-serif' },
+            spacing: { base: 4 }
+          },
         }),
       })
 
@@ -565,7 +621,81 @@ export default function CreateShowPage() {
           </div>
         )
 
-      case 4:
+      // Design & Layout
+      case 3:
+        return (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold">Design & Layout</h3>
+              <p className="text-sm text-muted-foreground">Choose a visual theme. This is preview-only for now.</p>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Theme Gallery</CardTitle>
+                <CardDescription>Select a theme to preview</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {themeOptions.map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setSelectedThemeId(opt.id)}
+                      className={`text-left p-4 border rounded-lg transition-colors ${selectedThemeId === opt.id ? 'border-primary ring-2 ring-primary/20' : 'hover:border-primary/40'}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium">{opt.name}</div>
+                          <div className="text-sm text-muted-foreground">{opt.description}</div>
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="h-6 w-6 rounded" style={{ backgroundColor: opt.colors.primary }} />
+                          <div className="h-6 w-6 rounded" style={{ backgroundColor: opt.colors.secondary }} />
+                          <div className="h-6 w-6 rounded" style={{ backgroundColor: opt.colors.accent }} />
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Live Preview</CardTitle>
+                <CardDescription>Applies the selected theme to a sample header</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-lg border p-6">
+                  <div className="text-center space-y-4">
+                    <h2
+                      className="text-2xl font-bold"
+                      style={{ color: selectedTheme.colors.primary, fontFamily: selectedTheme.fonts.heading === 'serif' ? 'serif' : 'sans-serif' }}
+                    >
+                      {showData.title || 'Your Show Title'}
+                    </h2>
+                    <p
+                      className="text-lg"
+                      style={{ color: selectedTheme.colors.secondary, fontFamily: selectedTheme.fonts.body === 'serif' ? 'serif' : 'sans-serif' }}
+                    >
+                      {showData.description || 'Show description preview...'}
+                    </p>
+                    <div className="flex justify-center gap-3">
+                      <Button style={{ backgroundColor: selectedTheme.colors.primary, color: '#fff', borderColor: selectedTheme.colors.primary }}>
+                        Apply Now
+                      </Button>
+                      <Button variant="outline" style={{ borderColor: selectedTheme.colors.accent, color: selectedTheme.colors.accent }}>
+                        Learn More
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case 5:
         // Review step content
         return (
           <div className="space-y-6">
@@ -828,7 +958,7 @@ export default function CreateShowPage() {
           </div>
         )
 
-      case 3: // Preview step
+      case 4: // Preview step
         return (
           <div className="space-y-6">
             <div className="text-center space-y-2">

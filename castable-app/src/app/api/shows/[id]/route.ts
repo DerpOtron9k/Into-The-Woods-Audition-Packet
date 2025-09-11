@@ -1,38 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 
-// GET /api/shows/[id] - Get a specific show
+// Public: fetch a single show by id with characters and materials
 export async function GET(
-  request: NextRequest,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { userId } = await auth()
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const show = await prisma.show.findFirst({
-      where: { 
-        id: params.id,
-        userId 
-      },
-      include: {
-        characters: true,
-        auditionMaterials: true,
-        _count: {
-          select: {
-            applicants: true,
-          },
-        },
-      }
+    const show = await prisma.show.findUnique({
+      where: { id: params.id },
+      include: { characters: true, auditionMaterials: true },
     })
 
-    if (!show) {
-      return NextResponse.json({ error: 'Show not found' }, { status: 404 })
-    }
+    if (!show) return NextResponse.json({ error: 'Show not found' }, { status: 404 })
+
+    // Optionally restrict access if not active
+    // if (show.status !== 'active') return NextResponse.json({ error: 'Show is not public' }, { status: 403 })
 
     return NextResponse.json({ show })
   } catch (error) {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { notFound } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { notFound, useParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -73,15 +73,14 @@ interface ApplicationData {
   additionalNotes: string
   experience: string
   availability: string
+  headshotUrl?: string
+  resumeUrl?: string
+  auditionVideoUrl?: string
 }
 
-interface PublicShowPageProps {
-  params: {
-    showId: string
-  }
-}
-
-export default function ApplyPage({ params }: PublicShowPageProps) {
+export default function ApplyPage() {
+  const routeParams = useParams() as { showId: string }
+  const showId = routeParams?.showId
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [applicationData, setApplicationData] = useState<ApplicationData>({
@@ -97,49 +96,24 @@ export default function ApplyPage({ params }: PublicShowPageProps) {
     availability: ''
   })
 
-  // Mock show data - in real app, this would be fetched from API
-  const show: Show = {
-    id: params.showId,
-    title: 'Into the Woods',
-    description: 'A musical about fairy tale characters and their intertwined stories.',
-    director: 'Jane Smith',
-    organization: 'Community Theater Group',
-    auditionDate: '2024-03-20T19:00:00Z',
-    deadline: '2024-03-15T23:59:59Z',
-    location: '123 Main St, City, State',
-    contactEmail: 'director@theater.com',
-    contactPhone: '(555) 123-4567',
-    characters: [
-      {
-        id: '1',
-        name: 'Cinderella',
-        description: 'A kind-hearted young woman who dreams of a better life',
-        gender: 'Female',
-        ageRange: '18-25',
-        vocalRange: 'Soprano',
-        notes: 'Must be able to sing and dance'
-      },
-      {
-        id: '2',
-        name: 'The Baker',
-        description: 'A determined baker on a quest to break a curse',
-        gender: 'Male',
-        ageRange: '25-35',
-        vocalRange: 'Baritone',
-        notes: 'Strong acting and singing required'
+  const [show, setShow] = useState<Show | null>(null)
+  const [isLoadingShow, setIsLoadingShow] = useState(true)
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/shows/${showId}`)
+        if (!res.ok) throw new Error('Failed to load show')
+        const data = await res.json()
+        setShow(data.show)
+      } catch (e) {
+        console.error(e)
+        setShow(null)
+      } finally {
+        setIsLoadingShow(false)
       }
-    ],
-    auditionMaterials: [
-      {
-        id: '1',
-        type: 'script',
-        fileName: 'audition-sides.pdf',
-        fileUrl: 'https://example.com/audition-sides.pdf',
-        fileSize: 1024000,
-        mimeType: 'application/pdf'
-      }
-    ]
-  }
+    })()
+  }, [showId])
 
   const STEPS = [
     { id: 'roles', title: 'Select Roles', description: 'Choose which characters you want to audition for' },
@@ -147,6 +121,16 @@ export default function ApplyPage({ params }: PublicShowPageProps) {
     { id: 'materials', title: 'Upload Materials', description: 'Headshot, resume, and audition video' },
     { id: 'review', title: 'Review & Submit', description: 'Double-check everything before submitting' },
   ]
+
+  if (isLoadingShow) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading show…</p>
+      </div>
+    )
+  }
+
+  if (!show) return notFound()
 
   const isDeadlinePassed = show.deadline ? new Date(show.deadline) < new Date() : false
   const isAuditionDatePassed = show.auditionDate ? new Date(show.auditionDate) < new Date() : false
@@ -229,7 +213,27 @@ export default function ApplyPage({ params }: PublicShowPageProps) {
     setIsSubmitting(true)
     
     try {
-      // TODO: Handle file uploads to S3
+      // Upload files to S3 via presigned URLs first
+      async function presignAndUpload(file: File | null, folder: string): Promise<string | null> {
+        if (!file) return null
+        const presignRes = await fetch('/api/uploads/presign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName: file.name, contentType: file.type, folder }),
+        })
+        if (!presignRes.ok) throw new Error('Failed to presign upload')
+        const { uploadUrl, fileUrl } = await presignRes.json()
+        const putRes = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file })
+        if (!putRes.ok) throw new Error('Failed to upload file')
+        return fileUrl as string
+      }
+
+      const [headshotUrl, resumeUrl, auditionVideoUrl] = await Promise.all([
+        presignAndUpload(applicationData.headshot, `shows/${showId}/headshots`),
+        presignAndUpload(applicationData.resume, `shows/${showId}/resumes`),
+        presignAndUpload(applicationData.auditionVideo, `shows/${showId}/videos`),
+      ])
+
       const response = await fetch('/api/applicants', {
         method: 'POST',
         headers: {
@@ -244,10 +248,9 @@ export default function ApplyPage({ params }: PublicShowPageProps) {
           experience: applicationData.experience,
           availability: applicationData.availability,
           additionalNotes: applicationData.additionalNotes,
-          // TODO: Upload files to S3 and get URLs
-          headshotUrl: null,
-          resumeUrl: null,
-          auditionVideoUrl: null
+          headshotUrl,
+          resumeUrl,
+          auditionVideoUrl,
         }),
       })
 

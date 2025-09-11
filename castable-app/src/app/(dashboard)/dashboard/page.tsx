@@ -47,6 +47,19 @@ export default async function DashboardPage() {
     })
   } catch (error) {
     console.error('Database error:', error)
+    // Soft fallback if new columns not yet present
+    try {
+      shows = await prisma.show.findMany({
+        where: { userId },
+        include: {
+          characters: true,
+          applicants: true,
+        },
+        orderBy: { createdAt: 'desc' }
+      })
+    } catch (err) {
+      console.error('Fallback database error:', err)
+    }
     // Fallback to empty array if database issues
     shows = []
   }
