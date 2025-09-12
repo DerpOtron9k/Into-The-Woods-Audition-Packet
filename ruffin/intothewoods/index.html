@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="max-age=0, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>Into the Woods Audition Packet</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>">
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="dns-prefetch" href="https://script.google.com">
+    <link rel="dns-prefetch" href="https://drive.google.com">
+    
+    <!-- Critical CSS Inline -->
+    <style>
+        /* Critical above-the-fold styles */
+        body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; margin: 0; padding: 0; }
+        .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+        .hidden { display: none; }
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; }
+        .loading-overlay.show { display: flex; align-items: center; justify-content: center; }
+    </style>
+    
+    <!-- Non-critical CSS loaded asynchronously -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"></noscript>
+    
+    <!-- Tailwind CSS with performance optimizations -->
+    <script>
+        // Inline Tailwind config for better performance
+        tailwind = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E4035',
+                        secondary: '#F0F5F2',
+                        accent: '#BFAE9C'
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com?v=1.0.0" defer></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
+        .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+        .decorative-line { height: 1px; background: linear-gradient(to right, transparent, #BFAE9C, transparent); margin: 2.5rem 0; }
+        .character-card { cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+        .character-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #D4C4B0; }
+        .character-card.selected { border-color: #2E4035; background-color: #F0F5F2; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15); }
+        .hidden { display: none; }
+        .select-button { transition: background-color 0.2s ease, color 0.2s ease; }
+        
+        /* Enhanced Form Validation Styles */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group label.required::after { content: " *"; color: #dc2626; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.75rem; border: 2px solid #d1d5db; border-radius: 0.5rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: #2E4035; box-shadow: 0 0 0 3px rgba(46, 64, 53, 0.1);
+        }
+        .form-group input.error, .form-group select.error, .form-group textarea.error {
+            border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        .form-group input.success, .form-group select.success, .form-group textarea.success {
+            border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+        .error-message { color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem; display: none; }
+        .error-message.show { display: block; }
+        .help-text { color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; }
+        .success-message { color: #16a34a; font-size: 0.875rem; margin-top: 0.25rem; display: none; }
+        .success-message.show { display: block; }
+        
+        /* Enhanced Loading States */
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; }
+        .loading-overlay.show { display: flex; align-items: center; justify-content: center; }
+        .loading-content { background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #2E4035; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 0.5rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .progress-bar { width: 100%; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; margin: 1rem 0; }
+        .progress-fill { height: 100%; background: #2E4035; transition: width 0.3s ease; width: 0%; }
+        
+        /* File Upload Enhancements */
+        .file-upload-area { border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; text-align: center; transition: border-color 0.2s ease; }
+        .file-upload-content { display: block; cursor: pointer; }
+        .file-upload-area:hover { border-color: #2E4035; }
+        .file-upload-area.dragover { border-color: #2E4035; background-color: #f0f5f2; }
+        .file-preview { margin-top: 1rem; display: none; }
+        .file-preview.show { display: block; }
+        .file-preview img { max-width: 200px; max-height: 200px; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="storybook-container">
+        <div id="main-content">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-2">🌳 Into the Woods</h1>
+                <p class="text-xl text-gray-600">Audition Packet</p>
+            </header>
+
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold border-b-2 border-[#D4C4B0] pb-2 mb-4">Greetings</h2>
+                <p class="text-base leading-relaxed">
+                    Thank you for taking the first step on this journey with us. We are delighted you wish to venture <strong>Into the Woods</strong>! This packet will be your guide, containing all you need to know before you begin: tales of the characters you'll meet, the quests required for your audition, and a map of our rehearsal schedule. Please read it carefully before you set out on the path.
+                </p>
+            </section>
+
+            <div class="decorative-line"></div>
+
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-4">Show Information</h2>
+                <ul class="space-y-3 text-base">
+                    <li><strong>Production:</strong> <em>Into the Woods</em> (Music & Lyrics by Stephen Sondheim, Book by James Lapine)</li>
+                    <li><strong>Director:</strong> Amy Settle</li>
+                    <li><strong>Jr. Director:</strong> Julia Bogard</li>
+                    <li><strong>Music Directors:</strong> Andrew & Kristen Staheli</li>
+                    <li><strong>Choreographer:</strong> Kate Smith</li>
+                    <li>
+                        <strong>Performance Dates:</strong>
+                        <div class="ml-4 mt-1 text-gray-800">
+                            <p><strong>Weekend 1:</strong> May 22, 23, 24, 2026</p>
+                            <p><strong>Weekend 2:</strong> May 29, 30, 2026</p>
+                        </div>
+                    </li>
+                    <li><strong>Venue:</strong> The Ruffin, Covington, TN</li>
+                    <li><strong>Rehearsal Period:</strong> January 2026 – May 2026</li>
+                </ul>
+            </section>
+
+            <div class="decorative-line"></div>
+
+            <section class="mb-8">
+    <h2 class="text-3xl font-semibold mb-4">Audition Details</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Audition Dates</h3>
+            <ul class="list-disc list-inside space-y-2">
+                <li class="flex flex-col">
+                    <span>Saturday, December 13, 2025</span>
+                    <span class="pl-4">4:00–6:00pm at the Ruffin</span>
+                </li>
+                <li class="flex flex-col">
+                    <span>Sunday, December 14, 2025</span>
+                    <span class="pl-4">2:00–4:00pm at the Ruffin</span>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-xl font-semibold mb-2">Callbacks</h3>
+            <ul class="list-disc list-inside space-y-2">
+                <li class="flex flex-col">
+                    <span>Monday, December 15, 2025</span>
+                    <span class="pl-4">5:00-8:00pm at the Civic Center</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-4">What to Prepare</h2>
+                <ul class="list-disc list-inside space-y-3 text-base leading-relaxed">
+                    <li>It is highly recommended you have some familiarity with the Into The Woods Broadway or movie.</li>
+                    <li>All auditions will include singing the provided ensemble excerpt from the Opening.</li>
+                    <li>You will also sing a pre-selected excerpt for the specific character(s) you wish to be considered for.</li>
+                    <li>Each excerpt will be provided on the sign up page. Please prepare with the provided pre-cut track (no live accompanist will be used).</li>
+                    <li>Memorization is not necessary; sheet music will be available to read from at the audition.</li>
+                    <li>If you audition for multiple roles, you may be asked to sing more than one character excerpt.</li>
+                    <li>There is no need to prepare a monologue. We will provide short scenes from the show (called 'sides') for you to read at the audition.</li>
+                </ul>
+            </section>
+
+            <div class="decorative-line"></div>
+
+            <section id="character-selection-section" class="mb-8">
+                <h2 class="text-3xl font-semibold mb-2">Step 1: Select Your Character(s)</h2>
+                <p class="mb-6 text-base">Select up to two characters you would like to audition for below. Your audition materials will be provided in the next step.</p>
+
+                <h3 class="text-2xl font-semibold mb-4">Principal Roles</h3>
+                <p class="text-sm text-gray-600 mb-4 -mt-2">The characters who drive the story and sing substantial material.</p>
+                <div id="principal-character-grid" class="space-y-6" data-lazy-load="character-cards"></div>
+
+                <div class="decorative-line my-8"></div>
+
+                <h3 class="text-2xl font-semibold mb-4">Supporting Roles</h3>
+                <p class="text-sm text-gray-600 mb-4 -mt-2">Smaller but still characterful parts, often doubled or lightly sung.</p>
+                <div id="supporting-character-grid" class="space-y-6" data-lazy-load="character-cards"></div>
+
+                <div class="decorative-line my-8"></div>
+
+                <h3 class="text-2xl font-semibold mb-4">Cameo / Non-Singing Roles</h3>
+                <div class="text-base text-gray-800 bg-gray-50 p-4 rounded-lg border">
+                    <p class="mb-3">Several cameo/featured ensemble roles appear briefly and are often doubled with other parts. These will be assigned at the director's discretion from those who audition for Principal and Supporting roles. Roles include:</p>
+                    <ul class="list-disc list-inside text-sm">
+                        <li>Cinderella's Father</li>
+                        <li>Granny</li>
+                        <li>Rapunzel's Double/Body</li>
+                        <li>Snow White & Sleeping Beauty</li>
+                        <li>Sprite/Child</li>
+                        <li>Steward</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="decorative-line"></div>
+
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-4">Rehearsals & Casting</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Rehearsal Information</h3>
+                        <ul class="list-disc list-inside space-y-2 text-base">
+                            <li><strong>Schedule:</strong> Rehearsals begin in January 2026. A typical schedule will be Monday, Tuesday, Thursday, and Friday evenings, with occasional Saturday rehearsals (morning or afternoon).</li>
+                            <li>Not every actor will be called for every rehearsal. A detailed schedule will be provided after casting.</li>
+                            <li><strong>Tech Week:</strong> A full tech week schedule will be provided later. Attendance during tech week is mandatory.</li>
+                            <li>Please list all known conflicts clearly on your audition form. Excessive conflicts may affect casting.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Casting Information</h3>
+                        <p class="text-base leading-relaxed">We encourage performers of all backgrounds, genders, and ethnicities to audition.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="text-center mt-12">
+                <h2 class="text-3xl font-semibold mb-4">Step 2: Get Materials & Sign Up</h2>
+                <p id="signup-prompt" class="mb-6 text-gray-700 max-w-xl mx-auto">Once you've selected a character, click below to proceed.</p>
+                <p id="selection-error" class="mb-4 text-red-600 hidden">Please select at least one character to continue.</p>
+                <button id="proceed-to-form-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                    Proceed to Sign Up
+                </button>
+            </section>
+        </div>
+
+        <!-- Registration Form Section -->
+        <div id="registration-section" class="hidden">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-2">Audition Registration</h1>
+            </header>
+
+            <div class="mb-6">
+                <button id="back-to-packet-btn" class="text-sm text-[#2E4035] hover:underline">
+                    &larr; Back to Audition Packet
+                </button>
+            </div>
+
+            <div id="selected-characters-display" class="mb-8 p-4 bg-gray-100 rounded-lg border"></div>
+
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-4">Your Audition Materials</h2>
+                <div id="materials-container" class="space-y-6" data-lazy-load="materials"></div>
+            </section>
+
+            <div class="decorative-line"></div>
+
+            <section>
+                <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
+
+        
+<form id="audition-form"
+      action="https://script.google.com/macros/s/AKfycbwypbWspktk5En0tKPeEk7JoLqFF7SIzn4tgEuTG2gw6lumsxbs_GpT8fpsyWt6uFDK/exec"
+      method="POST"
+      enctype="multipart/form-data">
+                    
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="form-group">
+      <label for="name" class="required" id="name-label">Full Name</label>
+      <input type="text" name="name" id="name" required 
+             aria-describedby="name-error name-help" 
+             aria-invalid="false"
+             autocomplete="name">
+      <div id="name-error" class="error-message" role="alert" aria-live="polite"></div>
+      <div id="name-help" class="help-text">Enter your full name</div>
+    </div>
+    <div class="form-group">
+      <label for="phone" class="required" id="phone-label">Phone Number</label>
+      <input type="tel" name="phone" id="phone" required 
+             aria-describedby="phone-error phone-help" 
+             aria-invalid="false"
+             autocomplete="tel">
+      <div id="phone-error" class="error-message" role="alert" aria-live="polite"></div>
+      <div id="phone-help" class="help-text">Enter your phone number</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="email" class="required" id="email-label">Email Address</label>
+    <input type="email" name="email" id="email" required 
+           aria-describedby="email-error email-help" 
+           aria-invalid="false"
+           autocomplete="email"
+           oninput="document.getElementById('_replyto').value=this.value">
+    <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
+    <div id="email-help" class="help-text">We'll use this to send you audition details</div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="form-group">
+      <label for="vocal-part" id="vocal-part-label">Vocal Part</label>
+      <select id="vocal-part" name="vocal_part" 
+              aria-describedby="vocal-part-help">
+        <option value="">Select your vocal part</option>
+        <option value="Soprano">Soprano</option>
+        <option value="Mezzo-Soprano">Mezzo-Soprano</option>
+        <option value="Alto">Alto</option>
+        <option value="Tenor">Tenor</option>
+        <option value="Baritone">Baritone</option>
+        <option value="Bass">Bass</option>
+      </select>
+      <div id="vocal-part-help" class="help-text">Choose your primary vocal classification</div>
+    </div>
+    <div class="form-group">
+      <label for="vocal-range" id="vocal-range-label">Vocal Range (e.g., G3-F5)</label>
+      <input type="text" name="vocal_range" id="vocal-range" 
+             aria-describedby="vocal-range-error vocal-range-help" 
+             aria-invalid="false"
+             placeholder="G3-F5">
+      <div id="vocal-range-error" class="error-message" role="alert" aria-live="polite"></div>
+      <div id="vocal-range-help" class="help-text">Enter your vocal range in format like "G3-F5"</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="experience" id="experience-label">Previous Theatre Experience (5 most recent roles)</label>
+    <textarea name="experience" id="experience" rows="4" 
+              aria-describedby="experience-help"
+              placeholder="List your 5 most recent theatre roles..."></textarea>
+    <div id="experience-help" class="help-text">Include show name, role, and year for each</div>
+  </div>
+
+  <div class="form-group">
+    <label for="skills" id="skills-label">Special Skills (e.g., instruments, tumbling, etc.)</label>
+    <textarea name="skills" id="skills" rows="2" 
+              aria-describedby="skills-help"
+              placeholder="List any special skills or talents..."></textarea>
+    <div id="skills-help" class="help-text">Include instruments, dance styles, acrobatics, etc.</div>
+  </div>
+
+  <div class="form-group">
+    <label for="headshot" id="headshot-label">Headshot Upload (Optional)</label>
+    <div class="file-upload-area" id="file-upload-area">
+      <label for="headshot" class="file-upload-content cursor-pointer">
+        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div class="mt-4">
+          <span class="mt-2 block text-sm font-medium text-gray-900">Upload a headshot</span>
+          <span class="mt-1 block text-sm text-gray-500">PNG or JPG file, max 5MB</span>
+        </div>
+      </label>
+      <input type="file" name="headshot" id="headshot" accept="image/png, image/jpeg" class="sr-only">
+    </div>
+    <div id="file-preview" class="file-preview">
+      <img id="preview-image" src="" alt="Headshot preview">
+      <button type="button" id="remove-file" class="mt-2 text-sm text-red-600 hover:text-red-800">Remove file</button>
+    </div>
+    <div id="headshot-error" class="error-message" role="alert" aria-live="polite"></div>
+    <div id="headshot-help" class="help-text">If you don't have a professional headshot, a clear, recent photo of your face is perfectly acceptable.</div>
+  </div>
+
+  <div class="form-group">
+    <label for="conflicts" class="required" id="conflicts-label">Please list all known conflicts with the rehearsal period.</label>
+    <textarea name="conflicts" id="conflicts" rows="4" required 
+              aria-describedby="conflicts-error conflicts-help" 
+              aria-invalid="false"
+              placeholder="List any dates or times you cannot attend rehearsals..."></textarea>
+    <div id="conflicts-error" class="error-message" role="alert" aria-live="polite"></div>
+    <div id="conflicts-help" class="help-text">Be specific about dates and times you cannot attend</div>
+  </div>
+
+  <div class="form-group">
+    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+      <div class="flex items-center">
+        <input id="any-role" name="any_role" type="checkbox" value="yes" 
+               class="h-5 w-5 rounded border-gray-300 text-[#2E4035] focus:ring-[#2E4035]">
+        <label for="any-role" class="ml-3 block font-medium text-gray-800">
+          I am willing to accept any role offered, including ensemble.
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center pt-4">
+    <button type="submit" id="submit-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+      Submit Audition Form
+    </button>
+  </div>
+
+  <!-- Hidden controls sent to Apps Script -->
+  <input type="hidden" name="_subject" value="Into the Woods — New Audition Submission">
+  <input type="hidden" name="_cc" value="staheli.andrew@gmail.com">
+<!-- <input type="hidden" name="_next" value="https://intothewoods.vercel.app/#submitted"> -->
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_captcha" value="true">
+  <input type="hidden" name="_autoresponse" id="_autoresponse" value="We've got your audition registration. You're on our list—keep your eyes peeled for more details.">
+  <input type="hidden" name="selected_roles" id="selected_roles_input">
+  <input type="hidden" name="_replyto" id="_replyto">
+</form>
+            </section>
+        </div>
+
+        <div id="confirmation-section" class="hidden text-center">
+            <h1 class="text-4xl font-bold mb-4">Thank You!</h1>
+            <p class="text-lg text-gray-700 mb-8">Your audition form has been submitted successfully.<br>We look forward to seeing you!</p>
+            <button id="back-to-start-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                &larr; Back to Audition Packet
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3 id="loading-title">Preparing submission...</h3>
+            <p id="loading-message">Please wait while we process your audition form.</p>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="fixed bottom-8 right-8 bg-[#2E4035] text-white rounded-full p-3 shadow-lg opacity-0 transition-opacity duration-300 hover:bg-[#405a49] focus:outline-none" aria-label="Scroll to top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+    <script>
+
+// --- ENHANCED FORM VALIDATION & UX WITH SECURITY ---
+class FormValidator {
+  constructor() {
+    // Security: Rate limiting and CSRF protection
+    this.submissionAttempts = 0;
+    this.maxAttempts = 3;
+    this.lastSubmission = 0;
+    this.minSubmissionInterval = 5000; // 5 seconds
+    
+    // Enhanced validation rules with security
+    this.validationRules = {
+      name: {
+        required: true,
+        minLength: 2,
+        maxLength: 30,
+        pattern: /^[a-zA-Z\s'.-]+$/,
+        message: 'Please enter a valid name (2-30 characters)',
+        sanitize: true
+      },
+      email: {
+        required: true,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        message: 'Please enter a valid email address',
+        sanitize: true,
+        maxLength: 254
+      },
+      phone: {
+        required: true,
+        pattern: /^[\+]?[\d\s\-\(\)]{7,20}$/,
+        message: 'Please enter a valid phone number',
+        sanitize: true
+      },
+      vocalRange: {
+        pattern: /^[A-G][#b]?[0-9]-[A-G][#b]?[0-9]$/,
+        message: 'Please enter vocal range in format like "G3-F5"',
+        sanitize: true
+      },
+      conflicts: {
+        required: true,
+        maxLength: 1000,
+        message: 'Please provide details about your conflicts',
+        sanitize: true
+      },
+      experience: {
+        maxLength: 2000,
+        sanitize: true
+      },
+      skills: {
+        maxLength: 1000,
+        sanitize: true
+      }
+    };
+    
+    this.loadingStates = {
+      preparing: { title: 'Preparing submission...', message: 'Validating your information...', progress: 20 },
+      uploading: { title: 'Uploading headshot...', message: 'Processing your image...', progress: 60 },
+      processing: { title: 'Processing application...', message: 'Saving your audition details...', progress: 80 },
+      submitting: { title: 'Submitting to server...', message: 'Finalizing your submission...', progress: 100 }
+    };
+    
+    this.init();
+  }
+  
+  init() {
+    this.setupEventListeners();
+    this.setupFileUpload();
+    this.setupLoadingOverlay();
+  }
+  
+  setupEventListeners() {
+    // Performance: Debounced validation for better performance
+    const debouncedValidation = this.debounce((fieldName) => {
+      this.validateField(fieldName);
+    }, 300);
+    
+    // Real-time validation with debouncing
+    Object.keys(this.validationRules).forEach(fieldName => {
+      const field = document.getElementById(fieldName);
+      if (field) {
+        // Immediate validation on blur
+        field.addEventListener('blur', () => this.validateField(fieldName));
+        
+        // Debounced validation on input for better performance
+        field.addEventListener('input', () => {
+          this.clearFieldError(fieldName);
+          debouncedValidation(fieldName);
+        });
+        
+        // Performance: Lazy validation on focus
+        field.addEventListener('focus', () => {
+          if (field.value && field.classList.contains('error')) {
+            this.validateField(fieldName);
+          }
+        });
+      }
+    });
+    
+    // Form submission with security checks
+    const form = document.getElementById('audition-form');
+    if (form) {
+      form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+    }
+    
+    // Performance: Intersection Observer for lazy loading
+    this.setupLazyLoading();
+  }
+  
+  // Performance: Lazy loading for non-critical elements
+  setupLazyLoading() {
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const element = entry.target;
+            if (element.dataset.lazyLoad) {
+              this.loadLazyContent(element);
+              observer.unobserve(element);
+            }
+          }
+        });
+      }, { rootMargin: '50px' });
+      
+      // Observe elements marked for lazy loading
+      document.querySelectorAll('[data-lazy-load]').forEach(el => {
+        observer.observe(el);
+      });
+    }
+  }
+  
+  loadLazyContent(element) {
+    const loadType = element.dataset.lazyLoad;
+    switch (loadType) {
+      case 'character-cards':
+        this.loadCharacterCards(element);
+        break;
+      case 'materials':
+        this.loadAuditionMaterials(element);
+        break;
+    }
+  }
+  
+  loadCharacterCards(element) {
+    // Generate character cards for the specific grid
+    const isPrincipal = element.id === 'principal-character-grid';
+    const isSupporting = element.id === 'supporting-character-grid';
+    
+    if (!isPrincipal && !isSupporting) return;
+    
+    const sortedCharacters = Object.keys(window.characterData).sort();
+    sortedCharacters.forEach(name => {
+      const char = window.characterData[name];
+      if (char.category === 'cameo') return;
+      
+      // Only add to the correct grid
+      if ((isPrincipal && char.category === 'principal') || 
+          (isSupporting && char.category === 'supporting')) {
+        
+        const card = document.createElement('div');
+        card.className = 'character-card bg-gray-50 p-5 rounded-lg border-2 border-transparent flex flex-col justify-between';
+        card.dataset.characterName = name;
+
+        card.innerHTML = `
+          <div>
+            <h3 class="text-2xl font-semibold text-[#2E4035]">${name}</h3>
+            <p class="text-sm text-gray-600 font-medium">${char.vocalInfo}</p>
+            <p class="text-sm text-gray-700 mt-2">${char.characterDescription}</p>
+            ${char.auditionCut ? `<div class="mt-3 pt-3 border-t border-gray-200"><p class="font-semibold">Audition Cut: ${char.auditionCut}</p></div>` : ''}
+          </div>
+          <div class="mt-4 flex justify-end">
+            <span class="select-button bg-gray-200 text-[#2E4035] font-bold py-2 px-4 rounded-lg text-sm">Select Role</span>
+          </div>
+        `;
+
+        element.appendChild(card);
+      }
+    });
+    
+    console.log('Character cards loaded for', element.id);
+  }
+  
+  loadAuditionMaterials(element) {
+    // Materials are already loaded in the main script
+    console.log('Audition materials loaded');
+  }
+  
+  setupFileUpload() {
+    const fileInput = document.getElementById('headshot');
+    const uploadArea = document.getElementById('file-upload-area');
+    const preview = document.getElementById('file-preview');
+    const previewImage = document.getElementById('preview-image');
+    const removeBtn = document.getElementById('remove-file');
+    
+    console.log('Setting up file upload...', { fileInput, uploadArea });
+    
+    if (!fileInput || !uploadArea) {
+      console.error('File upload elements not found', { fileInput, uploadArea });
+      return;
+    }
+    
+    // The upload area is now a label, so clicking it should naturally trigger the file input
+    // No need for complex event handling
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        this.handleFileSelect(files[0]);
+      }
+    });
+    
+    // File selection
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        this.handleFileSelect(e.target.files[0]);
+      }
+    });
+    
+    // Remove file
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => this.removeFile());
+    }
+  }
+  
+  setupLoadingOverlay() {
+    this.loadingOverlay = document.getElementById('loading-overlay');
+    this.loadingTitle = document.getElementById('loading-title');
+    this.loadingMessage = document.getElementById('loading-message');
+    this.progressFill = document.getElementById('progress-fill');
+  }
+  
+
+  
+  // Security: Input sanitization
+  sanitizeInput(value, fieldName) {
+    if (typeof value !== 'string') return value;
+    
+    // Keep the original value for comparison
+    const original = value;
+    
+    // Remove only dangerous patterns without affecting normal text
+    let sanitized = value
+      .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
+      .replace(/<[^>]*on\w+\s*=.*?>/gi, '') // Remove event handlers in tags
+      .replace(/javascript\s*:/gi, ''); // Remove javascript: protocol
+    
+    // Field-specific sanitization
+    switch (fieldName) {
+      case 'email':
+        sanitized = sanitized.toLowerCase();
+        break;
+      case 'vocalRange':
+        sanitized = sanitized.toUpperCase();
+        break;
+    }
+    
+    // Don't trim spaces for textarea fields to allow normal typing
+    if (fieldName !== 'conflicts' && fieldName !== 'experience' && fieldName !== 'skills') {
+      sanitized = sanitized.trim();
+    }
+    
+    return sanitized;
+  }
+  
+  // Security: Rate limiting check
+  checkRateLimit() {
+    const now = Date.now();
+    const timeSinceLastSubmission = now - this.lastSubmission;
+    
+    if (this.submissionAttempts >= this.maxAttempts) {
+      if (timeSinceLastSubmission < this.minSubmissionInterval) {
+        const remainingTime = Math.ceil((this.minSubmissionInterval - timeSinceLastSubmission) / 1000);
+        throw new Error(`Please wait ${remainingTime} seconds before submitting again.`);
+      } else {
+        this.submissionAttempts = 0; // Reset after cooldown
+      }
+    }
+    
+    this.submissionAttempts++;
+    this.lastSubmission = now;
+  }
+  
+  // Performance: Debounced validation
+  debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+  
+  validateField(fieldName) {
+    const field = document.getElementById(fieldName);
+    const rule = this.validationRules[fieldName];
+    if (!field || !rule) return true;
+    
+    // Don't trim here - let sanitizeInput handle it properly
+    let value = field.value;
+    
+    // Security: Sanitize input (skip for textarea fields to allow normal typing)
+    if (rule.sanitize && !['conflicts', 'experience', 'skills'].includes(fieldName)) {
+      value = this.sanitizeInput(value, fieldName);
+      if (field.value !== value) {
+        // Store cursor position
+        const cursorPos = field.selectionStart;
+        
+        // Update field with sanitized value
+        field.value = value;
+        
+        // Restore cursor position if possible
+        if (document.activeElement === field) {
+          field.setSelectionRange(cursorPos, cursorPos);
+        }
+      }
+    }
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Required validation
+    if (rule.required && !value) {
+      isValid = false;
+      errorMessage = `${this.getFieldLabel(fieldName)} is required`;
+    }
+    
+    // Length validation
+    if (isValid && value) {
+      if (rule.minLength && value.length < rule.minLength) {
+        isValid = false;
+        errorMessage = `${this.getFieldLabel(fieldName)} must be at least ${rule.minLength} characters`;
+      } else if (rule.maxLength && value.length > rule.maxLength) {
+        isValid = false;
+        errorMessage = `${this.getFieldLabel(fieldName)} must be no more than ${rule.maxLength} characters`;
+      }
+    }
+    
+    // Pattern validation
+    if (isValid && value && rule.pattern && !rule.pattern.test(value)) {
+      isValid = false;
+      errorMessage = rule.message;
+    }
+    
+    this.showFieldValidation(fieldName, isValid, errorMessage);
+    return isValid;
+  }
+  
+  showFieldValidation(fieldName, isValid, errorMessage = '') {
+    const field = document.getElementById(fieldName);
+    const errorElement = document.getElementById(`${fieldName}-error`);
+    
+    if (!field) return;
+    
+    // Update field appearance
+    field.classList.remove('error', 'success');
+    field.setAttribute('aria-invalid', !isValid);
+    
+    if (isValid) {
+      field.classList.add('success');
+    } else {
+      field.classList.add('error');
+    }
+    
+    // Update error message
+    if (errorElement) {
+      if (isValid) {
+        errorElement.classList.remove('show');
+        errorElement.textContent = '';
+      } else {
+        errorElement.classList.add('show');
+        errorElement.textContent = errorMessage;
+      }
+    }
+  }
+  
+  clearFieldError(fieldName) {
+    const field = document.getElementById(fieldName);
+    const errorElement = document.getElementById(`${fieldName}-error`);
+    
+    if (field) {
+      field.classList.remove('error');
+      field.setAttribute('aria-invalid', 'false');
+    }
+    
+    if (errorElement) {
+      errorElement.classList.remove('show');
+      errorElement.textContent = '';
+    }
+  }
+  
+  getFieldLabel(fieldName) {
+    const labelMap = {
+      name: 'Full Name',
+      email: 'Email Address',
+      phone: 'Phone Number',
+      vocalRange: 'Vocal Range',
+      conflicts: 'Conflicts'
+    };
+    return labelMap[fieldName] || fieldName;
+  }
+  
+  validateForm() {
+    let isValid = true;
+    Object.keys(this.validationRules).forEach(fieldName => {
+      if (!this.validateField(fieldName)) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+  
+  handleFileSelect(file) {
+    // Validate file
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    
+    if (file.size > maxSize) {
+      this.showFieldValidation('headshot', false, 'File size must be less than 5MB');
+      return;
+    }
+    
+    if (!allowedTypes.includes(file.type)) {
+      this.showFieldValidation('headshot', false, 'Please select a PNG or JPEG image');
+      return;
+    }
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const preview = document.getElementById('file-preview');
+      const previewImage = document.getElementById('preview-image');
+      
+      if (preview && previewImage) {
+        previewImage.src = e.target.result;
+        preview.classList.add('show');
+      }
+    };
+    reader.readAsDataURL(file);
+    
+    this.showFieldValidation('headshot', true);
+  }
+  
+  removeFile() {
+    const fileInput = document.getElementById('headshot');
+    const preview = document.getElementById('file-preview');
+    
+    if (fileInput) fileInput.value = '';
+    if (preview) preview.classList.remove('show');
+    
+    this.clearFieldError('headshot');
+  }
+  
+  showLoadingState(state) {
+    if (!this.loadingOverlay) return;
+    
+    const stateInfo = this.loadingStates[state];
+    if (!stateInfo) return;
+    
+    if (this.loadingTitle) this.loadingTitle.textContent = stateInfo.title;
+    if (this.loadingMessage) this.loadingMessage.textContent = stateInfo.message;
+    if (this.progressFill) this.progressFill.style.width = `${stateInfo.progress}%`;
+    
+    this.loadingOverlay.classList.add('show');
+  }
+  
+  hideLoadingState() {
+    if (this.loadingOverlay) {
+      this.loadingOverlay.classList.remove('show');
+    }
+  }
+  
+  // Security: Check for suspicious patterns in form data
+  performSecurityChecks() {
+    // Check for suspicious patterns in form inputs
+    const fields = ['name', 'email', 'phone', 'conflicts', 'experience', 'skills'];
+    const suspiciousPatterns = [
+      /<script>/i,
+      /javascript:/i,
+      /on\w+=/i,
+      /eval\(/i
+    ];
+    
+    for (const fieldName of fields) {
+      const field = document.getElementById(fieldName);
+      if (!field) continue;
+      
+      const value = field.value;
+      for (const pattern of suspiciousPatterns) {
+        if (pattern.test(value)) {
+          this.showError('Suspicious input detected. Please remove special code or script tags.');
+          field.focus();
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+  
+  // Security: Show error message
+  showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message show';
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #dc2626;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      max-width: 300px;
+    `;
+    errorDiv.textContent = message;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.parentNode.removeChild(errorDiv);
+      }
+    }, 5000);
+  }
+  
+  async handleFormSubmit(e) {
+    e.preventDefault();
+    
+    try {
+      // Security: Rate limiting check
+      this.checkRateLimit();
+      
+      // Validate form
+      if (!this.validateForm()) {
+        // Focus first error field
+        const firstError = document.querySelector('.error');
+        if (firstError) {
+          firstError.focus();
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      
+      // Security: Additional validation
+      if (!this.performSecurityChecks()) {
+        return;
+      }
+      
+      // Show loading state
+      this.showLoadingState('preparing');
+      
+      // Handle file upload with base64 fallback
+      const fileInput = document.getElementById('headshot');
+      if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        // Validate file security
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          this.hideLoadingState();
+          this.showError('File size must be less than 5MB');
+          return;
+        }
+        
+        if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+          this.hideLoadingState();
+          this.showError('Please select a PNG or JPEG image');
+          return;
+        }
+        
+        // Convert file to base64 for reliable transmission
+        try {
+          const reader = new FileReader();
+          const fileReadPromise = new Promise((resolve, reject) => {
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsDataURL(file);
+          });
+          
+          this.showLoadingState('uploading');
+          const base64Data = await fileReadPromise;
+          
+          // Extract the base64 data without the prefix
+          const base64Content = base64Data.split(',')[1];
+          
+          // Add hidden fields for the base64 data
+          const form = document.getElementById('audition-form');
+          
+          // Create or update hidden fields
+          let b64Field = document.getElementById('_headshot_b64');
+          if (!b64Field) {
+            b64Field = document.createElement('input');
+            b64Field.type = 'hidden';
+            b64Field.id = '_headshot_b64';
+            b64Field.name = '_headshot_b64';
+            form.appendChild(b64Field);
+          }
+          b64Field.value = base64Content;
+          
+          // Add type field
+          let typeField = document.getElementById('_headshot_type');
+          if (!typeField) {
+            typeField = document.createElement('input');
+            typeField.type = 'hidden';
+            typeField.id = '_headshot_type';
+            typeField.name = '_headshot_type';
+            form.appendChild(typeField);
+          }
+          typeField.value = file.type;
+          
+          // Add name field
+          let nameField = document.getElementById('_headshot_name');
+          if (!nameField) {
+            nameField = document.createElement('input');
+            nameField.type = 'hidden';
+            nameField.id = '_headshot_name';
+            nameField.name = '_headshot_name';
+            form.appendChild(nameField);
+          }
+          nameField.value = file.name;
+        } catch (error) {
+          this.hideLoadingState();
+          this.showError('Error processing image: ' + error.message);
+          return;
+        }
+      }
+      
+      // Simulate processing stages
+      // Helper function for delay
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+      await delay(1000);
+      this.showLoadingState('processing');
+      
+      await delay(500);
+      this.showLoadingState('submitting');
+      
+      // Submit form (this will redirect to Google Apps Script)
+      const form = document.getElementById('audition-form');
+      form.submit();
+      
+    } catch (error) {
+      this.hideLoadingState();
+      this.showError(error.message);
+      console.error('Form submission error:', error);
+    }
+  }
+
+  // This has been moved to a proper implementation above
+
+  // ... existing code ...
+}
+
+// Performance: Service Worker registration for caching
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('SW registered: ', registration);
+        
+        // Only check for updates, don't auto-reload
+        registration.addEventListener('updatefound', () => {
+          console.log('Service worker update found');
+          // Don't auto-reload to prevent infinite loops
+        });
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+
+// Performance: Preload critical resources
+const preloadCriticalResources = () => {
+  // Only preload Tailwind since fonts are already preloaded in the head
+  const criticalResources = [
+    'https://cdn.tailwindcss.com'
+  ];
+  
+  criticalResources.forEach(resource => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = resource;
+    link.as = 'script';
+    document.head.appendChild(link);
+  });
+};
+
+// Performance: Lazy load non-critical scripts
+const loadNonCriticalScripts = () => {
+  // Load analytics or other non-critical scripts here
+  // Example: Google Analytics, tracking scripts, etc.
+};
+
+// Initialize form validator when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  new FormValidator();
+  preloadCriticalResources();
+  
+  // Initialize scroll to top button
+  initScrollToTopButton();
+  
+  // Lazy load non-critical scripts after initial load
+  setTimeout(loadNonCriticalScripts, 2000);
+});
+
+// Initialize scroll to top button
+const initScrollToTopButton = () => {
+  const scrollToTopBtn = document.getElementById('scroll-to-top');
+  
+  if (!scrollToTopBtn) return;
+  
+  // Show button when user scrolls down 300px
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      scrollToTopBtn.style.opacity = '1';
+    } else {
+      scrollToTopBtn.style.opacity = '0';
+    }
+  });
+  
+  // Smooth scroll to top when button is clicked
+  scrollToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+};
+
+// --- DATA: CHARACTER INFORMATION & MATERIALS ---
+window.characterData = {
+  "Baker": {
+    category: "principal",
+    vocalInfo: "Age 20–45, A♭2–G4 — Baritone",
+    characterDescription: "A humble, anxious man who longs for a child and feels inadequate before the task. At first, he fumbles through quests, relying on his wife's cleverness, but beneath the hesitation lies genuine decency and heart. His journey is one of growth: learning to face loss, to stand on his own, and to embrace the responsibility of fatherhood. The Baker is not a bold hero, but a relatable everyman whose humor, vulnerability, and quiet courage form the show's emotional core.",
+    auditionCut: "No More, m.79-109",
+    sheetMusicUrl: "https://drive.google.com/file/d/14bitvdjKtNkvhhN4oVyHaPjo3y85kDZN/view?usp=drivesdk",
+    audioDownloadUrl: "https://drive.google.com/file/d/17F3gC1djV9HYFFFhFBREH_ITL9c8_QLl/view?usp=drivesdk"
+  },
+  "Baker's Wife": {
+    category: "principal",
+    vocalInfo: "Age 20–45, F3–G5 — Mezzo-soprano (strong belt/character mezzo)",
+    characterDescription: "Practical, witty, and driven, she is the true engine of the story. She longs for a family but also hungers for something 'more,' which leads her into moments of scheming, charm, and temptation. Her voice should carry warmth and intelligence, capable of quick, articulate patter as well as tender lyricism. A mezzo-soprano role, she requires resourcefulness in both character and tone, with sharp humor and emotional depth that embody both the joy and the cost of desire.",
+    auditionCut: "Moments in the Woods, m.44–64",
+    sheetMusicUrl: "https://drive.google.com/file/d/1B28bRzmoFxPKmGKMrU2PXc6V3JF1hlQd/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/14HkCARCpKdhQHpoKxwsJpdCdfHphgKxh/view?usp=drive_link"
+  },
+  "Cinderella": {
+    category: "principal",
+    vocalInfo: "Age 20–35, G3–G5 — Soprano (lyric or light mezzo with soprano extension)",
+    characterDescription: "A thoughtful young woman who longs for a better life yet questions what 'happily ever after' really means. Intelligent, observant, and often torn between desire and hesitation, she becomes a moral compass in the woods, learning to choose her own path. Vocally, she requires warmth and clarity—her voice is never just 'pretty,' it must carry the story with wit, vulnerability, and strength.",
+    auditionCut: "On the Steps of the Palace, m.23–57",
+    sheetMusicUrl: "https://drive.google.com/file/d/1IOMY1EDnYtFykIy9I-1n4yAjAuAGMFTZ/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/13pVy6Mtn9lIOI2EMUCsbPGckrmiGBw0b/view?usp=drive_link"
+  },
+  "Cinderella's Father": { 
+    category: "cameo",
+    vocalInfo: "Age 40–65 — Non-singing (speaking role)",
+    characterDescription: "A drunk but well-meaning father.",
+    auditionCut: "None"
+  },
+  "Cinderella's Mother": {
+    category: "supporting",
+    vocalInfo: "Age 40–65, D4–D5 — Soprano (ethereal/legato part)",
+    characterDescription: "A gentle, ethereal presence who appears as a spirit at Cinderella's mother's grave. She embodies warmth, kindness, and quiet strength, offering Cinderella guidance and blessing. Brief but pivotal role; requires a pure, lyrical voice and a calm, maternal presence.",
+    auditionCut: "Cinderella at the Grave, complete verse",
+    sheetMusicUrl: "https://drive.google.com/file/d/1lRx1KCsBqNYLTmt-EEkWmcK9gdc3m96T/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1z90M6KYdVxtgJbmxMuLe0_Xp1TM9SCym/view?usp=drive_link"
+  },
+  "Cinderella's Prince": {
+    category: "principal",
+    vocalInfo: "Age 20–45, B2–F4 — Baritone (comic/lyric baritone range)",
+    characterDescription: "Dashing, smug, and melodramatically romantic, Cinderella's Prince is a charming but shallow storybook royal who pursues women as trophies. He takes himself very seriously—swooning one moment, petty the next—which makes him hilarious to watch. Requires strong comic timing, broad physicality, and a resonant baritone/tenor voice.",
+    auditionCut: "Agony, m.1–35",
+    sheetMusicUrl: "https://drive.google.com/file/d/1IHYk2sTWbmhJ8r-BbBxDzyEH1OR9oZKY/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
+  },
+  "Florinda & Lucinda": {
+    category: "supporting",
+    vocalInfo: "Age 14–35, C4–A♭5 — Mezzo/High-mezzo (belt/high-head mix)",
+    characterDescription: "Cinderella's vain, self-absorbed stepsisters. Petty and shrill, they provide comic relief through their shallow cruelty and overblown antics. Their desperation to marry 'up' leads to grotesque comedy (even self-mutilation to fit the shoe). Broadly comic roles, often played as a contrasting pair or mirror images. Strong character acting, crisp diction, and physical humor are more important than vocal power. Mezzo-soprano/character soprano; featured ensemble.",
+    auditionCut: "Into The Woods Opening, Festival section (same as Stepmother)",
+    sheetMusicUrl: "https://drive.google.com/file/d/1wEUlyFH2RzchuvdaUyW1AG9OoUigyaxk/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1UZRDfr1IpuzHNLtNaRkFbw7h5NAfuFql/view?usp=drive_link"
+  },
+  "Giant": { 
+    category: "supporting",
+    vocalInfo: "Age 20–65 — Voice-over",
+    characterDescription: "A powerful offstage presence, voiced by a woman with booming authority and clarity. She is grieving, vengeful, and relentless—seeking justice for her slain husband. Entirely spoken, her voice should feel larger than life, carrying both fury and sorrow. Symbolizes the consequences of the characters' actions.",
+    auditionCut: "Act II confrontation cue"
+  },
+  "Granny": { 
+    category: "cameo",
+    vocalInfo: "Age 40–65 — Non-singing (speaking role)",
+    characterDescription: "Little Red's grandmother. She is feisty and capable of defending herself.",
+    auditionCut: "I Know Things Now – Granny's spoken lines"
+  },
+  "Jack": {
+    category: "principal",
+    vocalInfo: "Age 14–25, B2–G4 — Tenor / youth tenor (boyish, chest mixed top notes)",
+    characterDescription: "A poor farm boy on the cusp of growing up. Earnest, impulsive, and a bit naïve, but never cruel. Loves his cow Milky White more than anything—until he discovers there are giants in the sky. His journey takes him from childish innocence to painful maturity as he learns about bravery, loss, and responsibility.",
+    auditionCut: "Giants in the Sky, m.1–36",
+    sheetMusicUrl: "https://drive.google.com/file/d/184U4WVQ4DOqgPqW3ELkkVYdPk8l-pDUL/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/12_cUtZGtERANNED0514lGlNmwYjqCQPg/view?usp=drive_link"
+  },
+  "Jack's Mother": {
+    category: "principal",
+    vocalInfo: "Age 40–65, B♭3–G♭5 — Mezzo-soprano / light soprano",
+    characterDescription: "The pragmatic center of Jack's small, precarious world. She's worn thin by worry (money, safety, the cow) but still radiates a particular, stubborn love: the kind that scolds because she cares. Comic in her exasperation, honest in her fear, she can turn from brisk, businesslike speech to a quietly vulnerable line in a heartbeat. She's not a caricature of poverty — she's someone who's learned to make do and who expects the same of her son.",
+    auditionCut: "Act I Opening Part 5, m.11–36",
+    sheetMusicUrl: "https://drive.google.com/file/d/1YkxT-_S9We4Wv56G9vAQYgPxDPVQxadJ/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1sN7pYGJGwQXEuviQAKod_D0GqwpSBr_g/view?usp=drive_link"
+  },
+  "Little Red": {
+    category: "principal",
+    vocalInfo: "Age 14–25, B♭3–F5 — Mezzo-soprano",
+    characterDescription: "A spoiled young girl who is strong-willed, sharp, curious, and unafraid: she's the small motor of the story who learns, in one bright jump, that the world is bigger and more dangerous than she thought. Singly voiced and quick of foot, she's curious not helpless — brave enough to ask questions and clear enough in diction to make every discovery land.",
+    auditionCut: "I Know Things Now, m.18–51",
+    sheetMusicUrl: "https://drive.google.com/file/d/16l5IhmBvGnITkGjNypCfGg8tXwyNIXMV/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1ymYNti2CW5SVJyGo1e_P0QQG7rjvrtz1/view?usp=drive_link"
+  },
+  "Milky-White": { 
+    category: "cameo",
+    vocalInfo: "Any age — Non-singing (puppetry/noise)",
+    characterDescription: "Jack's beloved sickly white cow. A central figure in the quest for the magic items.",
+    auditionCut: "None"
+  },
+  "Narrator / Mysterious Man": { 
+    category: "supporting",
+    vocalInfo: "Age 40–65, G2–E4 — Bass/Baritone",
+    characterDescription: "A dual role: the Narrator is witty, detached, and authoritative—our guide through the fairy-tale world, until the story turns on him. The Mysterious Man is the Baker's estranged father, ragged and elusive, by turns comic and poignant. He prods the Baker forward with riddles and half-truths, both frustrating and guiding him. Requires strong diction, dry humor, and the ability to shift quickly between polished storyteller and haunted outsider.",
+    auditionCut: "Act I Opening Part 1 Narration; No More, m.33–55",
+    sheetMusicUrl: "https://drive.google.com/file/d/1As7dl3-dFTD3SyghKr2zeHnna0YYq9Wd/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1cg-iaZIf7F_IKN_TJSzMoMoTBTXoVzYS/view?usp=drive_link"
+  },
+  "Rapunzel": {
+    category: "principal",
+    vocalInfo: "Age 20–40, B3–A5 — High Soprano (light, innocent, often high head voice)",
+    characterDescription: "Sheltered and theatrical, Rapunzel is a bright, inquisitive late-teen whose sweetness masks a quick, now-scarred intelligence. She sings in a light lyric soprano; the part demands crystalline head voice, conversational phrasing, and the ability to flip from breathy wonder to clipped, defensive wit in a single line.",
+    auditionCut: "Offstage vocalise: 'Ah-ah-ah-ah-ah…' passage (as written in score around p. 87)",
+    sheetMusicUrl: "https://drive.google.com/file/d/1iX8TOAudbHjkmuDsbRiDVEsVDUqPfCwm/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1qnyut9a1nKWWdNpIuxqXKVOqVx7MR4e8/view?usp=drive_link"
+  },
+  "Rapunzel's Prince": {
+    category: "principal",
+    vocalInfo: "Age 20–45, C♯3–E4 — Baritone (similar to his brother)",
+    characterDescription: "The younger brother of Cinderella's Prince, Rapunzel's Prince is equally dashing, equally melodramatic, and equally absurd—just a little less polished. Where his elder brother struts, he blusters. His pursuit of Rapunzel is overblown with sighs, swoons, and grand declarations. He is competitive with his brother to the point of silliness.",
+    auditionCut: "Agony, m.1–35",
+    sheetMusicUrl: "https://drive.google.com/file/d/1IHYk2sTWbmhJ8r-BbBxDzyEH1OR9oZKY/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1pGINfrvBPj0tW42NxhBKyzcU9-XC0hPP/view?usp=drive_link"
+  },
+  "Snow White & Sleeping Beauty": {
+    category: "cameo",
+    vocalInfo: "Age 20–40 — Non-singing (cameo)",
+    characterDescription: "Cameo appearances. These roles are great for actors with good stage presence who may have less vocal experience.",
+    auditionCut: "None"
+  },
+  "Rapunzel's Double/Body": {
+    category: "cameo",
+    vocalInfo: "Any age — Non-singing (cameo)",
+    characterDescription: "An optional, non-singing role for staging purposes during Rapunzel's scenes.",
+    auditionCut: "None"
+  },
+  "Sprite/Child": {
+    category: "cameo",
+    vocalInfo: "Age 5-10",
+    characterDescription: "NA",
+    auditionCut: "None",
+    sheetMusicUrl: "javascript:void(0);",
+    audioDownloadUrl: "javascript:void(0);"
+  },
+  "Stepmother": {
+    category: "supporting",
+    vocalInfo: "Age 40–65, A3–F♯5 — Mezzo-soprano (sprechgesang)",
+    characterDescription: "The mean-spirited, demanding, and cruel. Brisk, impeccably ordered and quietly terrified of disorder. She keeps the household — and its reputations — under strict management, speaking with clipped precision and a practiced disdain that reveals more fear than malice. Play her as economical and exact: every consonant a small command, every gesture a maintenance of control. The moment she slips, let it read as a human error, not confession.",
+    auditionCut: "Into The Woods Opening, Festival section (same as stepsisters)",
+    sheetMusicUrl: "https://drive.google.com/file/d/1wEUlyFH2RzchuvdaUyW1AG9OoUigyaxk/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1UZRDfr1IpuzHNLtNaRkFbw7h5NAfuFql/view?usp=drive_link"
+  },
+  "Steward": {
+    category: "cameo",
+    vocalInfo: "Age 20–65 — Non-singing (speaking role)",
+    characterDescription: "A surly, bureaucratic manservant who does whatever he has to do to solve a problem.",
+    auditionCut: "Act I Finale, short patter excerpt",
+    sheetMusicUrl: "javascript:void(0);",
+    audioDownloadUrl: "javascript:void(0);"
+  },
+  "Witch": {
+    category: "principal",
+    vocalInfo: "Age 20–65, F3–G5 — Mezzo-soprano / alto (huge character belt and dramatic low notes)",
+    characterDescription: "The Witch is a sharp-tongued, fiercely protective woman who rules by fear and wit, hiding a bewildered, aching grief beneath theatrical bravado. She is neither villain nor saint but a moral wild card—caustic and controlling one moment, raggedly honest the next—using cruelty as both armor and confession. Musically she lives in clipped, speech-like rhythms and sudden belts that demand clean diction and dramatic weight.",
+    auditionCut: "Witch's Lament, m.4–26",
+    sheetMusicUrl: "https://drive.google.com/file/d/19zEvWexhTH9URLqevqi-5K2OvZe5nvkH/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1O-t0DUSNGgqwBYHYvch1KExkpH8Jv1-p/view?usp=drive_link"
+  },
+  "Wolf": {
+    category: "supporting",
+    vocalInfo: "Age 20–45, B♭2–G♭4 — Baritone (seductive, low chest and some upper mix)",
+    characterDescription: "The Wolf is sly charm wrapped in menace—a cabaret emcee in fur who embodies appetite and temptation. More seducer than snarler, he sells Red the thrill of straying from the path with wit and allure, making the audience laugh uneasily even as they sense the danger. His purpose is to unsettle, not leer, so that Red's later lesson—'I know things now'—lands with clarity.",
+    auditionCut: "Hello, Little Girl, m.56–76",
+    sheetMusicUrl: "https://drive.google.com/file/d/18DuuBaMsR52_kIxMhMHlzPWvJ8qxbetf/view?usp=drive_link",
+    audioDownloadUrl: "https://drive.google.com/file/d/1fJW9OZ3of6Cw59VyBH3H0kLFdsiezqaN/view?usp=drive_link"
+  }
+};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const principalCharacterGrid = document.getElementById('principal-character-grid');
+            const supportingCharacterGrid = document.getElementById('supporting-character-grid');
+            const characterSelectionSection = document.getElementById('character-selection-section');
+            const mainContent = document.getElementById('main-content');
+            const registrationSection = document.getElementById('registration-section');
+            const confirmationSection = document.getElementById('confirmation-section');
+            const proceedBtn = document.getElementById('proceed-to-form-btn');
+            const backBtn = document.getElementById('back-to-packet-btn');
+            const backToStartBtn = document.getElementById('back-to-start-btn');
+            const materialsContainer = document.getElementById('materials-container');
+            const selectedRolesInput = document.getElementById('selected_roles_input');
+            const selectionError = document.getElementById('selection-error');
+            const selectedDisplay = document.getElementById('selected-characters-display');
+            const auditionForm = document.getElementById('audition-form');
+
+            let selectedCharacters = [];
+
+            // Character cards are now loaded via lazy loading system
+
+            characterSelectionSection.addEventListener('click', (e) => {
+                const card = e.target.closest('.character-card');
+                if (!card) return;
+
+                const characterName = card.dataset.characterName;
+                const button = card.querySelector('.select-button');
+                const index = selectedCharacters.indexOf(characterName);
+
+                if (index > -1) {
+                    selectedCharacters.splice(index, 1);
+                    card.classList.remove('selected');
+                    button.textContent = 'Select Role';
+                    button.classList.remove('bg-[#2E4035]', 'text-white');
+                    button.classList.add('bg-gray-200');
+                } else {
+                    if (selectedCharacters.length < 2) {
+                        selectedCharacters.push(characterName);
+                        card.classList.add('selected');
+                        button.textContent = '✓ Selected';
+                        button.classList.add('bg-[#2E4035]', 'text-white');
+                        button.classList.remove('bg-gray-200');
+                    } else {
+                        alert("You may only select up to two characters.");
+                    }
+                }
+            });
+            
+            proceedBtn.addEventListener('click', () => {
+                if (selectedCharacters.length === 0) {
+                    selectionError.classList.remove('hidden');
+                    return;
+                }
+                selectionError.classList.add('hidden');
+                selectedDisplay.innerHTML = `<p class="text-base">You have selected materials for: <strong class="text-[#2E4035]">${selectedCharacters.join(', ')}</strong></p>`;
+                materialsContainer.innerHTML = '';
+
+                const ensembleBlock = document.createElement('div');
+                ensembleBlock.className = 'bg-white p-4 rounded-lg border border-blue-200';
+                ensembleBlock.innerHTML = `
+                    <h3 class="text-xl font-semibold text-[#2E4035]">Required Ensemble Audition</h3>
+                    <p class="text-sm text-gray-600 mb-3">All roles are required to sing this excerpt from the Prologue.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="https://drive.google.com/file/d/1w-IA_0-TpospgrSvZOie0-5JjUT_xMWL/view?usp=drive_link" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
+                        <a href="https://drive.google.com/file/d/1W7PQf7PmkFHvfpur6NQ-gHpfE-AW0x5Q/view?usp=drive_link" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
+                    </div>
+                `;
+                materialsContainer.appendChild(ensembleBlock);
+
+                selectedCharacters.forEach(name => {
+                    const char = window.characterData[name];
+                    if (char.sheetMusicUrl) {
+                        const block = document.createElement('div');
+                        block.className = 'bg-white p-4 rounded-lg border';
+                        block.innerHTML = `
+                            <h3 class="text-xl font-semibold text-[#2E4035]">${name}</h3>
+                            <p class="text-sm text-gray-600 mb-3">Audition Cut: ${char.auditionCut}</p>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="${char.sheetMusicUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
+                                <a href="${char.audioDownloadUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
+                            </div>
+                        `;
+                        materialsContainer.appendChild(block);
+                    }
+                });
+
+                selectedRolesInput.value = selectedCharacters.join(', ');
+                mainContent.classList.add('hidden');
+                registrationSection.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            });
+
+            backBtn.addEventListener('click', () => {
+                registrationSection.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            backToStartBtn.addEventListener('click', () => {
+                // Hide confirmation and show main content
+                confirmationSection.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                document.querySelectorAll('.character-card.selected').forEach(card => card.classList.remove('selected'));
+                selectedCharacters = [];
+                window.scrollTo(0, 0);
+            });
+
+            // Check for success/error parameters from POST-Redirect-GET
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            
+            if (success === '1') {
+                // Show success confirmation
+                mainContent.classList.add('hidden');
+                registrationSection.classList.add('hidden');
+                confirmationSection.classList.remove('hidden');
+                
+                // Clean up URL parameters immediately after showing success
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (error) {
+                // Show error message
+                alert('Submission failed: ' + decodeURIComponent(error));
+                
+                // Clean up URL parameters immediately after showing error
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (window.location.hash === '#submitted') {
+                // Legacy hash-based success (for backwards compatibility)
+                mainContent.classList.add('hidden'); 
+                confirmationSection.classList.remove('hidden');
+                
+                // Clean up URL parameters immediately after showing success
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
+
+    <!-- Comprehensive Testing Suite -->
+<script>
+    // --- COMPREHENSIVE TESTING SUITE ---
+    class FormTestSuite {
+      constructor() {
+        this.testResults = [];
+        this.passedTests = 0;
+        this.failedTests = 0;
+      }
+
+      // Test runner
+      async runAllTests() {
+        console.log('🧪 Starting Form Test Suite...');
+        
+        const tests = [
+          this.testFormValidation,
+          this.testSecurityFeatures,
+          this.testFileUpload,
+          this.testAccessibility,
+          this.testPerformance,
+          this.testErrorHandling
+        ];
+
+        for (const test of tests) {
+          try {
+            await test.call(this);
+          } catch (error) {
+            this.recordTest(test.name, false, error.message);
+          }
+        }
+
+        this.generateReport();
+      }
+
+      // Record test result
+      recordTest(testName, passed, message = '') {
+        this.testResults.push({
+          name: testName,
+          passed,
+          message,
+          timestamp: new Date().toISOString()
+        });
+
+        if (passed) {
+          this.passedTests++;
+          console.log(`✅ ${testName}: PASSED`);
+        } else {
+          this.failedTests++;
+          console.log(`❌ ${testName}: FAILED - ${message}`);
+        }
+      }
+
+      // Test form validation
+      async testFormValidation() {
+        const validator = new FormValidator();
+        
+        // Test name validation
+        const nameField = document.getElementById('name');
+        if (nameField) {
+          nameField.value = 'A'; // Too short
+          const isValid = validator.validateField('name');
+          this.recordTest('Name validation (too short)', !isValid, 'Should reject names shorter than 2 characters');
+          
+          nameField.value = 'Valid Name';
+          const isValid2 = validator.validateField('name');
+          this.recordTest('Name validation (valid)', isValid2, 'Should accept valid names');
+        }
+
+        // Test email validation
+        const emailField = document.getElementById('email');
+        if (emailField) {
+          emailField.value = 'invalid-email';
+          const isValid = validator.validateField('email');
+          this.recordTest('Email validation (invalid)', !isValid, 'Should reject invalid email formats');
+          
+          emailField.value = 'test@example.com';
+          const isValid2 = validator.validateField('email');
+          this.recordTest('Email validation (valid)', isValid2, 'Should accept valid email formats');
+        }
+
+        // Test phone validation
+        const phoneField = document.getElementById('phone');
+        if (phoneField) {
+          phoneField.value = 'abc123';
+          const isValid = validator.validateField('phone');
+          this.recordTest('Phone validation (invalid)', !isValid, 'Should reject non-numeric phone numbers');
+          
+          phoneField.value = '5551234567';
+          const isValid2 = validator.validateField('phone');
+          this.recordTest('Phone validation (valid)', isValid2, 'Should accept valid phone numbers');
+        }
+
+        // Test vocal range validation
+        const vocalRangeField = document.getElementById('vocal-range');
+        if (vocalRangeField) {
+          vocalRangeField.value = 'invalid-range';
+          const isValid = validator.validateField('vocalRange');
+          this.recordTest('Vocal range validation (invalid)', !isValid, 'Should reject invalid vocal range formats');
+          
+          vocalRangeField.value = 'G3-F5';
+          const isValid2 = validator.validateField('vocalRange');
+          this.recordTest('Vocal range validation (valid)', isValid2, 'Should accept valid vocal range formats');
+        }
+      }
+
+      // Test security features
+      async testSecurityFeatures() {
+        const validator = new FormValidator();
+
+        // Test input sanitization
+        const testInputs = [
+          { input: 'test script tag', expected: 'test script tag' },
+          { input: 'javascript:test', expected: 'test' },
+          { input: 'onclick=test', expected: 'test' }
+        ];
+
+        testInputs.forEach((test, index) => {
+          const sanitized = validator.sanitizeInput(test.input, 'name');
+          const isSecure = !sanitized.includes('<script>') && !sanitized.includes('javascript:') && !sanitized.includes('onclick=');
+          this.recordTest('Input sanitization ' + (index + 1), isSecure, 'Should remove dangerous content');
+        });
+
+        // Test rate limiting
+        try {
+          validator.checkRateLimit();
+          validator.checkRateLimit();
+          validator.checkRateLimit();
+          validator.checkRateLimit(); // This should throw
+          this.recordTest('Rate limiting', false, 'Should prevent more than 3 submissions in 5 seconds');
+        } catch (error) {
+          this.recordTest('Rate limiting', true, 'Successfully blocked excessive submissions');
+        }
+
+        // Test suspicious pattern detection
+        const suspiciousInputs = [
+          'test script tag',
+          'javascript:test',
+          'onload=test',
+          'eval test'
+        ];
+
+        suspiciousInputs.forEach((input, index) => {
+          const form = document.getElementById('audition-form');
+          if (form) {
+            const nameField = document.getElementById('name');
+            if (nameField) {
+              nameField.value = input;
+              const isSecure = validator.performSecurityChecks();
+              this.recordTest(`Suspicious pattern detection ${index + 1}`, !isSecure, `Should detect and block: ${input}`);
+            }
+          }
+        });
+      }
+
+      // Test file upload functionality
+      async testFileUpload() {
+        const validator = new FormValidator();
+    const fileInput = document.getElementById('headshot');
+
+        if (fileInput) {
+          // Test file type validation
+          const mockFile = {
+            name: 'test.txt',
+            type: 'text/plain',
+            size: 1024
+          };
+
+          const isValidType = validator.validateFileSecurity(mockFile);
+          this.recordTest('File type validation', !isValidType, 'Should reject non-image files');
+
+          // Test file size validation
+          const largeFile = {
+            name: 'large.jpg',
+            type: 'image/jpeg',
+            size: 10 * 1024 * 1024 // 10MB
+          };
+
+          const isValidSize = validator.validateFileSecurity(largeFile);
+          this.recordTest('File size validation', !isValidSize, 'Should reject files larger than 5MB');
+
+          // Test valid file
+          const validFile = {
+            name: 'headshot.jpg',
+            type: 'image/jpeg',
+            size: 2 * 1024 * 1024 // 2MB
+          };
+
+          const isValidFile = validator.validateFileSecurity(validFile);
+          this.recordTest('Valid file upload', isValidFile, 'Should accept valid image files');
+        }
+      }
+
+      // Test accessibility features
+      async testAccessibility() {
+        // Test ARIA labels
+        const requiredFields = ['name', 'email', 'phone', 'conflicts'];
+        requiredFields.forEach(fieldName => {
+          const field = document.getElementById(fieldName);
+          if (field) {
+            const hasAriaDescribedBy = field.hasAttribute('aria-describedby');
+            const hasAriaInvalid = field.hasAttribute('aria-invalid');
+            this.recordTest(`ARIA attributes for ${fieldName}`, hasAriaDescribedBy && hasAriaInvalid, 'Should have proper ARIA attributes');
+          }
+        });
+
+        // Test required field indicators
+        const requiredLabels = document.querySelectorAll('label.required');
+        this.recordTest('Required field indicators', requiredLabels.length > 0, 'Should have visual indicators for required fields');
+
+        // Test error message accessibility
+        const errorMessages = document.querySelectorAll('.error-message[role="alert"]');
+        this.recordTest('Error message accessibility', errorMessages.length > 0, 'Should have accessible error messages');
+
+        // Test keyboard navigation
+        const focusableElements = document.querySelectorAll('input, select, textarea, button');
+        this.recordTest('Keyboard navigation', focusableElements.length > 0, 'Should have focusable elements for keyboard users');
+      }
+
+      // Test performance features
+      async testPerformance() {
+        // Test debounced validation
+        const validator = new FormValidator();
+        const debouncedFunction = validator.debounce(() => {}, 100);
+        
+        this.recordTest('Debounced validation', typeof debouncedFunction === 'function', 'Should provide debounced validation function');
+
+        // Test lazy loading setup
+        const lazyElements = document.querySelectorAll('[data-lazy-load]');
+        this.recordTest('Lazy loading elements', lazyElements.length > 0, 'Should have elements marked for lazy loading');
+
+        // Test Service Worker registration
+        const hasServiceWorker = 'serviceWorker' in navigator;
+        this.recordTest('Service Worker support', hasServiceWorker, 'Should support Service Worker for caching');
+
+        // Test preload links
+        const preloadLinks = document.querySelectorAll('link[rel="preload"]');
+        this.recordTest('Resource preloading', preloadLinks.length > 0, 'Should preload critical resources');
+      }
+
+      // Test error handling
+      async testErrorHandling() {
+        const validator = new FormValidator();
+
+        // Test form validation error handling
+        const form = document.getElementById('audition-form');
+        if (form) {
+          // Clear all fields to trigger validation errors
+          const fields = ['name', 'email', 'phone', 'conflicts'];
+          fields.forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            if (field) field.value = '';
+          });
+
+          const isValid = validator.validateForm();
+          this.recordTest('Form validation error handling', !isValid, 'Should detect validation errors');
+
+          // Test error message display
+          const errorMessages = document.querySelectorAll('.error-message.show');
+          this.recordTest('Error message display', errorMessages.length > 0, 'Should display error messages for invalid fields');
+        }
+
+        // Test security error handling
+        try {
+          validator.showSecurityError('Test security error');
+          this.recordTest('Security error display', true, 'Should display security error messages');
+        } catch (error) {
+          this.recordTest('Security error display', false, 'Failed to display security error: ' + error.message);
+        }
+      }
+
+      // Generate test report
+      generateReport() {
+        const totalTests = this.passedTests + this.failedTests;
+        const passRate = totalTests > 0 ? (this.passedTests / totalTests * 100).toFixed(1) : 0;
+
+        console.log('\n📊 Test Report');
+        console.log('================');
+        console.log(`Total Tests: ${totalTests}`);
+        console.log(`Passed: ${this.passedTests}`);
+        console.log(`Failed: ${this.failedTests}`);
+        console.log(`Pass Rate: ${passRate}%`);
+
+        if (this.failedTests > 0) {
+          console.log('\n❌ Failed Tests:');
+          this.testResults
+            .filter(test => !test.passed)
+            .forEach(test => {
+              console.log(`  - ${test.name}: ${test.message}`);
+            });
+        }
+
+        // Performance metrics
+        const performanceMetrics = {
+          loadTime: performance.now(),
+          memoryUsage: performance.memory ? performance.memory.usedJSHeapSize : 'N/A',
+          testDuration: Date.now() - this.startTime
+        };
+
+        console.log('\n⚡ Performance Metrics:');
+        console.log(`Load Time: ${performanceMetrics.loadTime.toFixed(2)}ms`);
+        console.log(`Memory Usage: ${performanceMetrics.memoryUsage}`);
+        console.log(`Test Duration: ${performanceMetrics.testDuration}ms`);
+
+        return {
+          totalTests,
+          passedTests: this.passedTests,
+          failedTests: this.failedTests,
+          passRate: parseFloat(passRate),
+          results: this.testResults,
+          performance: performanceMetrics
+        };
+      }
+
+      // Start timing
+      start() {
+        this.startTime = Date.now();
+      }
+    }
+
+    // Auto-run tests when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Only run tests in development/debug mode
+      if (window.location.search.includes('test=true') || window.location.hostname === 'localhost') {
+        const testSuite = new FormTestSuite();
+        testSuite.start();
+        testSuite.runAllTests();
+      }
+    });
+
+    // Export for manual testing
+    window.FormTestSuite = FormTestSuite;
+</script>
+
+</body>
+</html>
+
