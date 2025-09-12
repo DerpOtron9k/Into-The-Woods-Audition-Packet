@@ -43,8 +43,19 @@ model Show {
   characters      Character[]
   applicants      Applicant[]
   auditionMaterials AuditionMaterial[]
+  events          ShowEvent[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  
+  // New fields for rich audition packet
+  greetingMessage   String?
+  auditionPrepRequirements String?
+  rehearsalInfo     String?
+  castingInfo       String?
+  musicDirector     String?
+  choreographer     String?
+  venue             String?
+  rehearsalPeriod   String?
 }
 
 model Character {
@@ -53,12 +64,17 @@ model Character {
   description String?
   gender      String  @default("Any") // Male, Female, Any
   ageRange    String?
-  vocalRange  String?
   notes       String?
   showId      String
   show        Show    @relation(fields: [showId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // New fields for detailed character info
+  category      String? // e.g., "Principal", "Supporting", "Cameo"
+  vocalInfo     String? // Replaces vocalRange for more descriptive text
+  auditionCut   String? // e.g., "No More, m.79-109"
+  auditionMaterials AuditionMaterial[]
 }
 
 model AuditionMaterial {
@@ -72,6 +88,10 @@ model AuditionMaterial {
   show        Show     @relation(fields: [showId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // New field to link to a specific character
+  characterId String?
+  character   Character? @relation(fields: [characterId], references: [id])
 }
 
 model Applicant {
@@ -82,10 +102,38 @@ model Applicant {
   headshotUrl     String?
   resumeUrl       String?
   auditionFileUrl String?
+  selectedRoles   String[]  @default([])
+  experience      String?
+  availability    String?
+  additionalNotes String?
   showId          String
   show            Show      @relation(fields: [showId], references: [id])
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+enum ShowEventType {
+  AUDITION
+  CALLBACK
+  PERFORMANCE
+  REHEARSAL
+  INFO
+}
+
+model ShowEvent {
+  id        String        @id @default(cuid())
+  showId    String
+  show      Show          @relation(fields: [showId], references: [id], onDelete: Cascade)
+  type      ShowEventType
+  startAt   DateTime
+  endAt     DateTime?
+  timezone  String?
+  location  String?
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([showId, type, startAt])
 }
 
 model ShowTemplate {

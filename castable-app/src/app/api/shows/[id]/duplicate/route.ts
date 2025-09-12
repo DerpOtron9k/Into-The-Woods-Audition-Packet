@@ -3,14 +3,14 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from '@/lib/prisma'
 
 // POST /api/shows/[id]/duplicate - Duplicate an existing show
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = params
+    const { id } = await params
 
     // Get the original show
     const originalShow = await prisma.show.findFirst({

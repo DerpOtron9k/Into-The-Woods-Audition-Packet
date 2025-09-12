@@ -3,6 +3,8 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import crypto from 'node:crypto'
 
+export const runtime = 'nodejs'
+
 function isAllowedContentType(contentType: string): boolean {
   if (!contentType) return false
   if (contentType.startsWith('image/')) return true
@@ -22,11 +24,20 @@ export async function POST(request: NextRequest) {
   try {
     const { fileName, contentType, folder } = await request.json()
 
-    const bucket = process.env.S3_BUCKET
-    const region = process.env.AWS_REGION
+    const bucket = process.env.S3_BUCKET || process.env.AWS_S3_BUCKET || process.env.S3_BUCKET_NAME
+    const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
 
-    if (!bucket || !region)
-      return NextResponse.json({ error: 'S3 not configured' }, { status: 500 })
+    if (!bucket || !region) {
+      const missing: string[] = []
+      if (!bucket) missing.push('S3_BUCKET')
+      if (!region) missing.push('AWS_REGION')
+      return NextResponse.json({ error: 'S3 not configured', missing }, { status: 500 })
+    }
+
+    if (!accessKeyId || !secretAccessKey)
+      return NextResponse.json({ error: 'AWS credentials not configured' }, { status: 500 })
 
     if (!fileName || !contentType)
       return NextResponse.json({ error: 'Missing fileName or contentType' }, { status: 400 })
@@ -34,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (!isAllowedContentType(contentType))
       return NextResponse.json({ error: 'Unsupported content type' }, { status: 400 })
 
-    const s3 = new S3Client({ region })
+    const s3 = new S3Client({ region, credentials: { accessKeyId, secretAccessKey } })
 
     const safeName = sanitizeFileName(fileName)
     const uniqueId = crypto.randomUUID()
@@ -53,7 +64,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ uploadUrl, fileUrl, key })
   } catch (error) {
     console.error('Presign error:', error)
-    return NextResponse.json({ error: 'Failed to create presigned URL' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Failed to create presigned URL'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 

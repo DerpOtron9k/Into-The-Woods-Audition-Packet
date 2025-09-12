@@ -7,9 +7,10 @@ const prisma = new PrismaClient()
 // GET /api/templates/[id] - Get a specific template
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { userId } = auth()
     
     if (!userId) {
@@ -18,7 +19,7 @@ export async function GET(
 
     const template = await prisma.showTemplate.findFirst({
       where: { 
-        id: params.id,
+        id,
         userId 
       },
       include: {
@@ -41,9 +42,10 @@ export async function GET(
 // PUT /api/templates/[id] - Update a template
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { userId } = auth()
     
     if (!userId) {
@@ -68,7 +70,7 @@ export async function PUT(
     // Check if template exists and belongs to user
     const existingTemplate = await prisma.showTemplate.findFirst({
       where: { 
-        id: params.id,
+        id,
         userId 
       }
     })
@@ -79,7 +81,7 @@ export async function PUT(
 
     // Update template
     const template = await prisma.showTemplate.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name,
         description,
@@ -130,9 +132,10 @@ export async function PUT(
 // DELETE /api/templates/[id] - Delete a template
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { userId } = auth()
     
     if (!userId) {
@@ -142,7 +145,7 @@ export async function DELETE(
     // Check if template exists and belongs to user
     const existingTemplate = await prisma.showTemplate.findFirst({
       where: { 
-        id: params.id,
+        id,
         userId 
       }
     })
@@ -153,7 +156,7 @@ export async function DELETE(
 
     // Delete template (cascade will delete characters and materials)
     await prisma.showTemplate.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Template deleted successfully' })

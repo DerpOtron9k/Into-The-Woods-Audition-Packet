@@ -1,0 +1,11 @@
+var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/shows/route.js")
+R.c("server/chunks/2b5a9_762ccefa._.js")
+R.c("server/chunks/2b5a9_next_1d1f828b._.js")
+R.c("server/chunks/2b5a9_@opentelemetry_api_build_esm_0c9a74f2._.js")
+R.c("server/chunks/2b5a9_@clerk_backend_dist_ae19b15b._.js")
+R.c("server/chunks/2b5a9_@clerk_nextjs_dist_esm_b84ec0cc._.js")
+R.c("server/chunks/2b5a9_b5273d89._.js")
+R.c("server/chunks/[root-of-the-server]__b76abc62._.js")
+R.m("[project]/castable-app/.next-internal/server/app/api/shows/route/actions.js [app-rsc] (server actions loader, ecmascript)")
+R.m("[project]/castable-app/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/castable-app/src/app/api/shows/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/castable-app/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/castable-app/src/app/api/shows/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

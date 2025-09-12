@@ -39,8 +39,22 @@ interface Character {
   name: string
   description: string
   gender: 'Male' | 'Female' | 'Any'
+  genderNotes?: string
   ageRange: string
-  vocalRange?: string
+  notes?: string
+
+  // New fields from schema
+  category?: string
+  vocalInfo?: string
+  auditionCut?: string
+}
+
+interface ShowEvent {
+  id: string
+  type: 'AUDITION' | 'CALLBACK' | 'PERFORMANCE' | 'REHEARSAL' | 'INFO'
+  startAt: string
+  endAt?: string
+  location?: string
   notes?: string
 }
 
@@ -49,22 +63,33 @@ interface ShowData {
   description: string
   director: string
   organization: string
-  auditionDate: string
   deadline: string
   location: string
   contactEmail: string
   contactPhone: string
   characters: Character[]
+  events: ShowEvent[]
   auditionMaterials: {
     script?: File
     music?: File
     video?: File
     other?: File[]
   }
+
+  // New fields from schema
+  greetingMessage?: string
+  auditionPrepRequirements?: string
+  rehearsalInfo?: string
+  castingInfo?: string
+  musicDirector?: string
+  choreographer?: string
+  venue?: string
+  rehearsalPeriod?: string
 }
 
 const STEPS = [
   { id: 'basic', title: 'Basic Information', description: 'Show details and contact info' },
+  { id: 'events', title: 'Audition & Events', description: 'Schedule auditions, callbacks, and other events' },
   { id: 'characters', title: 'Characters', description: 'Define roles and requirements' },
   { id: 'materials', title: 'Audition Materials', description: 'Upload scripts, music, and videos' },
   { id: 'design', title: 'Design & Layout', description: 'Choose template and customize appearance' },
@@ -79,13 +104,23 @@ export default function CreateShowPage() {
     description: '',
     director: '',
     organization: '',
-    auditionDate: '',
     deadline: '',
     location: '',
     contactEmail: '',
     contactPhone: '',
     characters: [],
-    auditionMaterials: {}
+    events: [],
+    auditionMaterials: {},
+
+    // Initialize new fields
+    greetingMessage: '',
+    auditionPrepRequirements: '',
+    rehearsalInfo: '',
+    castingInfo: '',
+    musicDirector: '',
+    choreographer: '',
+    venue: '',
+    rehearsalPeriod: '',
   })
   const [isLoadingFromTemplate, setIsLoadingFromTemplate] = useState(false)
 
@@ -167,9 +202,12 @@ export default function CreateShowPage() {
       name: '',
       description: '',
       gender: 'Any',
+      genderNotes: '',
       ageRange: '',
-      vocalRange: '',
-      notes: ''
+      notes: '',
+      category: 'Principal',
+      vocalInfo: '',
+      auditionCut: '',
     }
     setShowData(prev => ({
       ...prev,
@@ -190,6 +228,37 @@ export default function CreateShowPage() {
     setShowData(prev => ({
       ...prev,
       characters: prev.characters.filter(char => char.id !== id)
+    }))
+  }
+
+  const addEvent = (type: 'AUDITION' | 'CALLBACK' | 'PERFORMANCE') => {
+    const newEvent: ShowEvent = {
+      id: Date.now().toString(),
+      type,
+      startAt: '',
+      endAt: '',
+      location: '',
+      notes: ''
+    }
+    setShowData(prev => ({
+      ...prev,
+      events: [...prev.events, newEvent]
+    }))
+  }
+
+  const updateEvent = (id: string, field: keyof ShowEvent, value: string) => {
+    setShowData(prev => ({
+      ...prev,
+      events: prev.events.map(event => 
+        event.id === id ? { ...event, [field]: value } : event
+      )
+    }))
+  }
+
+  const removeEvent = (id: string) => {
+    setShowData(prev => ({
+      ...prev,
+      events: prev.events.filter(event => event.id !== id)
     }))
   }
 
@@ -222,13 +291,6 @@ export default function CreateShowPage() {
         body: JSON.stringify({
           ...showData,
           auditionMaterials: [], // TODO: Handle file uploads
-          // Placeholder theme persistence (safe JSON blob)
-          customTheme: {
-            templateId: 'classic',
-            colors: { primary: '#dc2626', secondary: '#6b7280', accent: '#f59e0b' },
-            fonts: { heading: 'serif', body: 'sans-serif' },
-            spacing: { base: 4 }
-          },
         }),
       })
 
@@ -333,6 +395,24 @@ export default function CreateShowPage() {
                   placeholder="Your name"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="musicDirector">Music Director</Label>
+                <Input
+                  id="musicDirector"
+                  value={showData.musicDirector}
+                  onChange={(e) => setShowData(prev => ({ ...prev, musicDirector: e.target.value }))}
+                  placeholder="Music Director's name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="choreographer">Choreographer</Label>
+                <Input
+                  id="choreographer"
+                  value={showData.choreographer}
+                  onChange={(e) => setShowData(prev => ({ ...prev, choreographer: e.target.value }))}
+                  placeholder="Choreographer's name"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -343,6 +423,47 @@ export default function CreateShowPage() {
                 onChange={(e) => setShowData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe the show, its themes, and what you're looking for in actors..."
                 rows={4}
+              />
+            </div>
+            <Separator />
+            <div className="space-y-2">
+              <Label htmlFor="greetingMessage">Greeting Message</Label>
+              <Textarea
+                id="greetingMessage"
+                value={showData.greetingMessage}
+                onChange={(e) => setShowData(prev => ({ ...prev, greetingMessage: e.target.value }))}
+                placeholder="A welcome message for your potential auditioners..."
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="auditionPrepRequirements">What to Prepare</Label>
+              <Textarea
+                id="auditionPrepRequirements"
+                value={showData.auditionPrepRequirements}
+                onChange={(e) => setShowData(prev => ({ ...prev, auditionPrepRequirements: e.target.value }))}
+                placeholder="Describe what actors should prepare for the audition (e.g., songs, monologues, sides)..."
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="rehearsalInfo">Rehearsal Information</Label>
+              <Textarea
+                id="rehearsalInfo"
+                value={showData.rehearsalInfo}
+                onChange={(e) => setShowData(prev => ({ ...prev, rehearsalInfo: e.target.value }))}
+                placeholder="Details about the rehearsal schedule, location, and expectations..."
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="castingInfo">Casting Information</Label>
+              <Textarea
+                id="castingInfo"
+                value={showData.castingInfo}
+                onChange={(e) => setShowData(prev => ({ ...prev, castingInfo: e.target.value }))}
+                placeholder="Information about your casting philosophy (e.g., inclusive casting)..."
+                rows={2}
               />
             </div>
 
@@ -357,6 +478,24 @@ export default function CreateShowPage() {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="venue">Venue</Label>
+                <Input
+                  id="venue"
+                  value={showData.venue}
+                  onChange={(e) => setShowData(prev => ({ ...prev, venue: e.target.value }))}
+                  placeholder="e.g., The Grand Theatre"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rehearsalPeriod">Rehearsal Period</Label>
+                <Input
+                  id="rehearsalPeriod"
+                  value={showData.rehearsalPeriod}
+                  onChange={(e) => setShowData(prev => ({ ...prev, rehearsalPeriod: e.target.value }))}
+                  placeholder="e.g., January 2025 – May 2025"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="location">Audition Location</Label>
                 <Input
                   id="location"
@@ -368,15 +507,6 @@ export default function CreateShowPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="auditionDate">Audition Date</Label>
-                <Input
-                  id="auditionDate"
-                  type="datetime-local"
-                  value={showData.auditionDate}
-                  onChange={(e) => setShowData(prev => ({ ...prev, auditionDate: e.target.value }))}
-                />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="deadline">Application Deadline</Label>
                 <Input
@@ -413,6 +543,247 @@ export default function CreateShowPage() {
         )
 
       case 1:
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">Audition & Event Scheduling</h3>
+                <p className="text-sm text-muted-foreground">
+                  Schedule your audition dates, callbacks, and other important events
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Audition Dates</span>
+                    <Button onClick={() => addEvent('AUDITION')} size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Audition
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Schedule one or more audition sessions
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {showData.events.filter(e => e.type === 'AUDITION').length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      No audition dates scheduled yet
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {showData.events.filter(e => e.type === 'AUDITION').map((event) => (
+                        <div key={event.id} className="border rounded-lg p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Audition Session</h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeEvent(event.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="grid gap-3">
+                            <div className="space-y-2">
+                              <Label>Start Date & Time *</Label>
+                              <Input
+                                type="datetime-local"
+                                value={event.startAt}
+                                onChange={(e) => updateEvent(event.id, 'startAt', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>End Date & Time (optional)</Label>
+                              <Input
+                                type="datetime-local"
+                                value={event.endAt || ''}
+                                onChange={(e) => updateEvent(event.id, 'endAt', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Location (optional)</Label>
+                              <Input
+                                value={event.location || ''}
+                                onChange={(e) => updateEvent(event.id, 'location', e.target.value)}
+                                placeholder="Specific audition location"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Notes (optional)</Label>
+                              <Textarea
+                                value={event.notes || ''}
+                                onChange={(e) => updateEvent(event.id, 'notes', e.target.value)}
+                                placeholder="Any special instructions for this audition..."
+                                rows={2}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Callback Dates</span>
+                    <Button onClick={() => addEvent('CALLBACK')} size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Callback
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Schedule callback sessions (optional)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {showData.events.filter(e => e.type === 'CALLBACK').length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      No callback dates scheduled yet
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {showData.events.filter(e => e.type === 'CALLBACK').map((event) => (
+                        <div key={event.id} className="border rounded-lg p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Callback Session</h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeEvent(event.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="grid gap-3">
+                            <div className="space-y-2">
+                              <Label>Start Date & Time *</Label>
+                              <Input
+                                type="datetime-local"
+                                value={event.startAt}
+                                onChange={(e) => updateEvent(event.id, 'startAt', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>End Date & Time (optional)</Label>
+                              <Input
+                                type="datetime-local"
+                                value={event.endAt || ''}
+                                onChange={(e) => updateEvent(event.id, 'endAt', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Location (optional)</Label>
+                              <Input
+                                value={event.location || ''}
+                                onChange={(e) => updateEvent(event.id, 'location', e.target.value)}
+                                placeholder="Specific callback location"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Notes (optional)</Label>
+                              <Textarea
+                                value={event.notes || ''}
+                                onChange={(e) => updateEvent(event.id, 'notes', e.target.value)}
+                                placeholder="Any special instructions for this callback..."
+                                rows={2}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Performance Dates</span>
+                    <Button onClick={() => addEvent('PERFORMANCE')} size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Performance
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Schedule performance dates (optional)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {showData.events.filter(e => e.type === 'PERFORMANCE').length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      No performance dates scheduled yet
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {showData.events.filter(e => e.type === 'PERFORMANCE').map((event) => (
+                        <div key={event.id} className="border rounded-lg p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Performance</h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeEvent(event.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="grid gap-3">
+                            <div className="space-y-2">
+                              <Label>Start Date & Time *</Label>
+                              <Input
+                                type="datetime-local"
+                                value={event.startAt}
+                                onChange={(e) => updateEvent(event.id, 'startAt', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>End Date & Time (optional)</Label>
+                              <Input
+                                type="datetime-local"
+                                value={event.endAt || ''}
+                                onChange={(e) => updateEvent(event.id, 'endAt', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Location (optional)</Label>
+                              <Input
+                                value={event.location || ''}
+                                onChange={(e) => updateEvent(event.id, 'location', e.target.value)}
+                                placeholder="Performance venue"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Notes (optional)</Label>
+                              <Textarea
+                                value={event.notes || ''}
+                                onChange={(e) => updateEvent(event.id, 'notes', e.target.value)}
+                                placeholder="Show details, ticket info, etc..."
+                                rows={2}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )
+
+      case 2:
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -472,6 +843,47 @@ export default function CreateShowPage() {
                           />
                         </div>
                         <div className="space-y-2">
+                          <Label>Role Category</Label>
+                          <Select
+                            value={character.category}
+                            onValueChange={(value) => updateCharacter(character.id, 'category', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select role category" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-80">
+                              <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-b">
+                                Main Character Types
+                              </div>
+                              <SelectItem value="Protagonist">Protagonist - Central character whose journey the audience follows</SelectItem>
+                              <SelectItem value="Antagonist">Antagonist - Primary opponent creating conflict</SelectItem>
+                              <SelectItem value="Principal">Principal - Major role with significant dialogue and stage presence</SelectItem>
+                              <SelectItem value="Ingénue">Ingénue - Young, naive, innocent female character</SelectItem>
+                              <SelectItem value="Juvenile">Juvenile - Young romantic male lead</SelectItem>
+                              <SelectItem value="Character actor">Character actor - Distinctive/eccentric supporting roles</SelectItem>
+                              
+                              <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-b border-t mt-2">
+                                Supporting Character Types
+                              </div>
+                              <SelectItem value="Deuteragonist">Deuteragonist - Second most important character</SelectItem>
+                              <SelectItem value="Supporting role">Supporting role - Important non-principal role</SelectItem>
+                              <SelectItem value="Confidant">Confidant - Character protagonist confides in</SelectItem>
+                              <SelectItem value="Foil">Foil - Character contrasting with protagonist</SelectItem>
+                              
+                              <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-b border-t mt-2">
+                                Other Cast Roles
+                              </div>
+                              <SelectItem value="Cameo">Cameo - Very brief appearance, often uncredited</SelectItem>
+                              <SelectItem value="Ensemble">Ensemble - Background performers (singing/dancing)</SelectItem>
+                              <SelectItem value="Chorus">Chorus - Group commenting through song/dance</SelectItem>
+                              <SelectItem value="Swing">Swing - Offstage ready for multiple ensemble roles</SelectItem>
+                              <SelectItem value="Understudy">Understudy - Prepared to perform principal role</SelectItem>
+                              <SelectItem value="Walk-on">Walk-on - Very small, non-speaking role</SelectItem>
+                              <SelectItem value="Bit part">Bit part - Small speaking role (under 5 lines)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
                           <Label>Gender</Label>
                           <Select
                             value={character.gender}
@@ -486,6 +898,17 @@ export default function CreateShowPage() {
                               <SelectItem value="Any">Any</SelectItem>
                             </SelectContent>
                           </Select>
+                          {character.gender === 'Any' && (
+                            <div className="mt-2">
+                              <Label className="text-sm text-muted-foreground">Gender Specification</Label>
+                              <Input
+                                value={character.genderNotes || ''}
+                                onChange={(e) => updateCharacter(character.id, 'genderNotes', e.target.value)}
+                                placeholder="Please specify"
+                                className="mt-1"
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -509,13 +932,22 @@ export default function CreateShowPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Vocal Range (if applicable)</Label>
+                          <Label>Vocal Information</Label>
                           <Input
-                            value={character.vocalRange || ''}
-                            onChange={(e) => updateCharacter(character.id, 'vocalRange', e.target.value)}
-                            placeholder="e.g., Soprano, Tenor, Baritone"
+                            value={character.vocalInfo || ''}
+                            onChange={(e) => updateCharacter(character.id, 'vocalInfo', e.target.value)}
+                            placeholder="e.g., Soprano (G3-A5), Baritone"
                           />
                         </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Audition Cut</Label>
+                        <Input
+                          value={character.auditionCut || ''}
+                          onChange={(e) => updateCharacter(character.id, 'auditionCut', e.target.value)}
+                          placeholder="e.g., 'No More', m. 79-109"
+                        />
                       </div>
 
                       <div className="space-y-2">
@@ -535,7 +967,7 @@ export default function CreateShowPage() {
           </div>
         )
 
-      case 2:
+      case 3:
         return (
           <div className="space-y-6">
             <div>
@@ -622,7 +1054,7 @@ export default function CreateShowPage() {
         )
 
       // Design & Layout
-      case 3:
+      case 4:
         return (
           <div className="space-y-6">
             <div>
@@ -695,7 +1127,7 @@ export default function CreateShowPage() {
           </div>
         )
 
-      case 5:
+      case 6:
         // Review step content
         return (
           <div className="space-y-6">
@@ -860,7 +1292,7 @@ export default function CreateShowPage() {
                   </div>
                   <div className="flex gap-2">
                     <Button asChild>
-                      <a href={`/shows/${createdShowId}`} target="_blank" rel="noopener noreferrer">
+                      <a href={`/shows/${createdShowId}/apply`} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         View Public Page
                       </a>
@@ -958,7 +1390,7 @@ export default function CreateShowPage() {
           </div>
         )
 
-      case 4: // Preview step
+      case 5: // Preview step
         return (
           <div className="space-y-6">
             <div className="text-center space-y-2">
@@ -1027,21 +1459,78 @@ export default function CreateShowPage() {
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                          {showData.auditionDate && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Audition Date</p>
+                          {showData.events.filter(e => e.type === 'AUDITION').map((event, index) => (
+                            <div key={event.id}>
+                              <p className="text-sm text-muted-foreground">
+                                {index === 0 ? 'Audition Dates' : ''}
+                              </p>
                               <p className="font-medium">
-                                {new Date(showData.auditionDate).toLocaleDateString('en-US', {
+                                {event.startAt ? new Date(event.startAt).toLocaleDateString('en-US', {
                                   weekday: 'long',
                                   year: 'numeric',
                                   month: 'long',
                                   day: 'numeric',
                                   hour: '2-digit',
                                   minute: '2-digit'
-                                })}
+                                }) : 'Date not set'}
+                                {event.endAt && ` - ${new Date(event.endAt).toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}`}
                               </p>
+                              {event.location && (
+                                <p className="text-sm text-muted-foreground">{event.location}</p>
+                              )}
                             </div>
-                          )}
+                          ))}
+                          {showData.events.filter(e => e.type === 'CALLBACK').map((event, index) => (
+                            <div key={event.id}>
+                              <p className="text-sm text-muted-foreground">
+                                {index === 0 ? 'Callback Dates' : ''}
+                              </p>
+                              <p className="font-medium">
+                                {event.startAt ? new Date(event.startAt).toLocaleDateString('en-US', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                }) : 'Date not set'}
+                                {event.endAt && ` - ${new Date(event.endAt).toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}`}
+                              </p>
+                              {event.location && (
+                                <p className="text-sm text-muted-foreground">{event.location}</p>
+                              )}
+                            </div>
+                          ))}
+                          {showData.events.filter(e => e.type === 'PERFORMANCE').map((event, index) => (
+                            <div key={event.id}>
+                              <p className="text-sm text-muted-foreground">
+                                {index === 0 ? 'Performance Dates' : ''}
+                              </p>
+                              <p className="font-medium">
+                                {event.startAt ? new Date(event.startAt).toLocaleDateString('en-US', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                }) : 'Date not set'}
+                                {event.endAt && ` - ${new Date(event.endAt).toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}`}
+                              </p>
+                              {event.location && (
+                                <p className="text-sm text-muted-foreground">{event.location}</p>
+                              )}
+                            </div>
+                          ))}
                           {showData.deadline && (
                             <div>
                               <p className="text-sm text-muted-foreground">Application Deadline</p>
@@ -1126,8 +1615,8 @@ export default function CreateShowPage() {
                                     {character.ageRange && (
                                       <span>Age: {character.ageRange}</span>
                                     )}
-                                    {character.vocalRange && (
-                                      <span>Vocal: {character.vocalRange}</span>
+                                    {character.vocalInfo && (
+                                      <span>Vocal: {character.vocalInfo}</span>
                                     )}
                                   </div>
                                   {character.notes && (
@@ -1241,11 +1730,16 @@ export default function CreateShowPage() {
             <Progress value={((currentStep + 1) / STEPS.length) * 100} />
             <div className="flex justify-between">
               {STEPS.map((step, index) => (
-                <div key={step.id} className="flex flex-col items-center space-y-1">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                <button
+                  key={step.id}
+                  type="button"
+                  onClick={() => setCurrentStep(index)}
+                  className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+                >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
                     index <= currentStep 
                       ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground'
+                      : 'bg-muted text-muted-foreground group-hover:bg-muted-foreground/20'
                   }`}>
                     {index + 1}
                   </div>
@@ -1253,7 +1747,7 @@ export default function CreateShowPage() {
                     <p className="text-xs font-medium">{step.title}</p>
                     <p className="text-xs text-muted-foreground">{step.description}</p>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -1286,7 +1780,7 @@ export default function CreateShowPage() {
           <Button onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? 'Publishing...' : 'Publish Show'}
           </Button>
-        ) : currentStep === 2 ? (
+        ) : currentStep === 3 ? (
           // Materials step - show both Preview and Next buttons
           <div className="flex gap-2">
             <Button variant="outline" onClick={nextStep}>

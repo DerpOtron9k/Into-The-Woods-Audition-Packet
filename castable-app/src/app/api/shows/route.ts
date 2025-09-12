@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
         _count: {
           select: {
             applicants: true,
+            characters: true,
           },
         },
       },
@@ -116,6 +117,16 @@ export async function POST(request: NextRequest) {
       contactPhone,
       characters,
       auditionMaterials,
+      events,
+      // New fields from schema
+      greetingMessage,
+      auditionPrepRequirements,
+      rehearsalInfo,
+      castingInfo,
+      musicDirector,
+      choreographer,
+      venue,
+      rehearsalPeriod,
     } = body
 
     // Validate required fields
@@ -142,14 +153,24 @@ export async function POST(request: NextRequest) {
         contactPhone,
         status: 'active', // Set to active so it's publicly visible
         userId: userId,
+        greetingMessage,
+        auditionPrepRequirements,
+        rehearsalInfo,
+        castingInfo,
+        musicDirector,
+        choreographer,
+        venue,
+        rehearsalPeriod,
         characters: {
           create: characters?.map((char: any) => ({
             name: char.name,
             description: char.description,
             gender: char.gender || 'Any',
             ageRange: char.ageRange,
-            vocalRange: char.vocalRange,
             notes: char.notes,
+            category: char.category,
+            vocalInfo: char.vocalInfo,
+            auditionCut: char.auditionCut,
           })) || [],
         },
         auditionMaterials: {
@@ -161,6 +182,26 @@ export async function POST(request: NextRequest) {
             mimeType: material.mimeType,
           })) || [],
         },
+        // @ts-ignore - events relation exists in schema and runtime
+        events: (
+          events?.map((e: any) => ({
+            type: e.type,
+            startAt: new Date(e.startAt),
+            endAt: e.endAt ? new Date(e.endAt) : null,
+            timezone: e.timezone || null,
+            location: e.location || null,
+            notes: e.notes || null,
+          })) || []
+        ).length
+          ? { create: events.map((e: any) => ({
+              type: e.type,
+              startAt: new Date(e.startAt),
+              endAt: e.endAt ? new Date(e.endAt) : null,
+              timezone: e.timezone || null,
+              location: e.location || null,
+              notes: e.notes || null,
+            })) }
+          : undefined,
       },
       include: {
         characters: true,
@@ -168,6 +209,7 @@ export async function POST(request: NextRequest) {
         _count: {
           select: {
             applicants: true,
+            characters: true,
           },
         },
       },
@@ -224,6 +266,16 @@ export async function PUT(request: NextRequest) {
       contactPhone,
       characters,
       auditionMaterials,
+      events,
+      // New fields from schema
+      greetingMessage,
+      auditionPrepRequirements,
+      rehearsalInfo,
+      castingInfo,
+      musicDirector,
+      choreographer,
+      venue,
+      rehearsalPeriod,
     } = body
 
     // Validate required fields
@@ -262,6 +314,14 @@ export async function PUT(request: NextRequest) {
         location,
         contactEmail,
         contactPhone,
+        greetingMessage,
+        auditionPrepRequirements,
+        rehearsalInfo,
+        castingInfo,
+        musicDirector,
+        choreographer,
+        venue,
+        rehearsalPeriod,
         // Update characters
         characters: {
           deleteMany: {}, // Delete existing characters
@@ -270,8 +330,10 @@ export async function PUT(request: NextRequest) {
             description: char.description,
             gender: char.gender || 'Any',
             ageRange: char.ageRange,
-            vocalRange: char.vocalRange,
             notes: char.notes,
+            category: char.category,
+            vocalInfo: char.vocalInfo,
+            auditionCut: char.auditionCut,
           })) || [],
         },
         // Update audition materials
@@ -285,6 +347,23 @@ export async function PUT(request: NextRequest) {
             mimeType: material.mimeType,
           })) || [],
         },
+        // Update events
+        // @ts-ignore - events relation exists in schema and runtime
+        events: (
+          events?.map((e: any) => e) || []
+        ).length
+          ? {
+              deleteMany: {},
+              create: events.map((e: any) => ({
+                type: e.type,
+                startAt: new Date(e.startAt),
+                endAt: e.endAt ? new Date(e.endAt) : null,
+                timezone: e.timezone || null,
+                location: e.location || null,
+                notes: e.notes || null,
+              })),
+            }
+          : undefined,
       },
       include: {
         characters: true,
@@ -292,6 +371,7 @@ export async function PUT(request: NextRequest) {
         _count: {
           select: {
             applicants: true,
+            characters: true,
           },
         },
       },
@@ -373,14 +453,24 @@ export async function PATCH(request: NextRequest) {
         contactPhone: originalShow.contactPhone,
         status: 'draft', // Set to draft so it's not immediately public
         userId: userId,
+        greetingMessage: originalShow.greetingMessage,
+        auditionPrepRequirements: originalShow.auditionPrepRequirements,
+        rehearsalInfo: originalShow.rehearsalInfo,
+        castingInfo: originalShow.castingInfo,
+        musicDirector: originalShow.musicDirector,
+        choreographer: originalShow.choreographer,
+        venue: originalShow.venue,
+        rehearsalPeriod: originalShow.rehearsalPeriod,
         characters: {
           create: originalShow.characters.map((char) => ({
             name: char.name,
             description: char.description,
             gender: char.gender,
             ageRange: char.ageRange,
-            vocalRange: char.vocalRange,
             notes: char.notes,
+            category: char.category,
+            vocalInfo: char.vocalInfo,
+            auditionCut: char.auditionCut,
           })),
         },
         auditionMaterials: {
@@ -417,5 +507,32 @@ export async function PATCH(request: NextRequest) {
       },
       { status: 500 }
     )
+  }
+}
+
+// DELETE /api/shows - Delete a show by id (owner only)
+export async function DELETE(request: NextRequest) {
+  try {
+    let userId: string | null = null
+    if (isMockAuthEnabled()) {
+      const mockAuth = getMockAuth()
+      userId = mockAuth.userId
+    } else {
+      const authResult = await auth()
+      userId = authResult.userId
+    }
+
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { id } = await request.json()
+    if (!id) return NextResponse.json({ error: 'Missing required field: id' }, { status: 400 })
+
+    const result = await prisma.show.deleteMany({ where: { id, userId } })
+    if (result.count === 0) return NextResponse.json({ error: 'Show not found or access denied' }, { status: 404 })
+
+    return NextResponse.json({ deleted: result.count })
+  } catch (error) {
+    console.error('Error deleting show:', error)
+    return NextResponse.json({ error: 'Failed to delete show' }, { status: 500 })
   }
 }

@@ -1,0 +1,13 @@
+{
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/dashboard/shows/[id]/edit/page": "app/(dashboard)/dashboard/shows/[id]/edit/page.js",
+  "/(dashboard)/dashboard/shows/create/page": "app/(dashboard)/dashboard/shows/create/page.js",
+  "/(dashboard)/dashboard/shows/page": "app/(dashboard)/dashboard/shows/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/shows/[id]/route": "app/api/shows/[id]/route.js",
+  "/api/shows/route": "app/api/shows/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/shows/[showId]/apply/page": "app/shows/[showId]/apply/page.js",
+  "/shows/[showId]/page": "app/shows/[showId]/page.js"
+}

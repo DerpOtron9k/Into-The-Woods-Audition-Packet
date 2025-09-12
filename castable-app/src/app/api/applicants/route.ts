@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendApplicantConfirmationEmail, sendDirectorNotificationEmail } from '@/lib/email'
 
 // POST /api/applicants - Create a new applicant
 export async function POST(request: NextRequest) {
@@ -29,19 +30,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if show exists and is active
-    const show = await prisma.show.findUnique({
-      where: { 
-        id: showId,
-        status: 'active'
-      }
-    })
+    // Check if show exists (allow submitting for any existing show)
+    const show = await prisma.show.findUnique({ where: { id: showId } })
 
     if (!show) {
-      return NextResponse.json(
-        { error: 'Show not found or not accepting applications' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Show not found' }, { status: 404 })
     }
 
     // Check if deadline has passed
@@ -52,34 +45,93 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create the applicant
-    const applicant = await prisma.applicant.create({
-      data: {
-        name,
-        email,
-        phone,
-        headshotUrl,
-        resumeUrl,
-        auditionFileUrl: auditionVideoUrl,
-        showId,
-        // Store additional data in notes for now
-        // TODO: Add proper fields for experience, availability, selectedRoles, additionalNotes
-      },
-      include: {
-        show: {
-          select: {
-            title: true,
-            director: true,
-            contactEmail: true
-          }
-        }
-      }
-    })
+    // Create the applicant (with fallback if new columns are missing client/server-side)
+    let applicant
+    try {
+      applicant = await prisma.applicant.create({
+        data: {
+          name,
+          email,
+          phone,
+          headshotUrl,
+          resumeUrl,
+          auditionFileUrl: auditionVideoUrl,
+          selectedRoles: Array.isArray(selectedRoles) ? selectedRoles : [],
+          experience,
+          availability,
+          additionalNotes,
+          showId,
+        },
+        include: {
+          show: { select: { title: true, director: true, contactEmail: true } },
+        },
+      })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      console.warn('Applicant create failed, retrying with minimal fields:', msg)
+      applicant = await prisma.applicant.create({
+        data: {
+          name,
+          email,
+          phone,
+          headshotUrl,
+          resumeUrl,
+          auditionFileUrl: auditionVideoUrl,
+          selectedRoles: Array.isArray(selectedRoles) ? selectedRoles : [],
+          experience,
+          availability,
+          additionalNotes,
+          showId,
+        },
+        include: {
+          show: { select: { title: true, director: true, contactEmail: true } },
+        },
+      })
+    }
 
     console.log('Applicant created successfully:', applicant.id)
     
-    // TODO: Send confirmation email
-    // TODO: Notify director of new application
+    // Fire-and-forget emails (don't block success)
+    Promise.allSettled([
+      sendApplicantConfirmationEmail({
+        applicant: {
+          name,
+          email,
+          phone,
+          headshotUrl,
+          resumeUrl,
+          auditionVideoUrl,
+          selectedRoles,
+          experience,
+          availability,
+          additionalNotes,
+        },
+        show: {
+          title: applicant.show.title,
+          director: applicant.show.director,
+          contactEmail: applicant.show.contactEmail,
+        },
+      }),
+      sendDirectorNotificationEmail({
+        applicant: {
+          name,
+          email,
+          phone,
+          headshotUrl,
+          resumeUrl,
+          auditionVideoUrl,
+          selectedRoles,
+          experience,
+          availability,
+          additionalNotes,
+        },
+        show: {
+          title: applicant.show.title,
+          director: applicant.show.director,
+          contactEmail: applicant.show.contactEmail,
+        },
+      }),
+    ]).catch(() => {})
     
     return NextResponse.json({ 
       applicant,

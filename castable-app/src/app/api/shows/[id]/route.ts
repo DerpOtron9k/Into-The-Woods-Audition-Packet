@@ -4,12 +4,17 @@ import { prisma } from '@/lib/prisma'
 // Public: fetch a single show by id with characters and materials
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const show = await prisma.show.findUnique({
-      where: { id: params.id },
-      include: { characters: true, auditionMaterials: true },
+      where: { id },
+      include: {
+        characters: true,
+        auditionMaterials: true,
+        events: { orderBy: { startAt: 'asc' } },
+      },
     })
 
     if (!show) return NextResponse.json({ error: 'Show not found' }, { status: 404 })

@@ -60,6 +60,15 @@ interface Show {
     fileSize?: number
     mimeType?: string
   }>
+  events?: Array<{
+    id: string
+    type: 'AUDITION' | 'CALLBACK' | 'PERFORMANCE' | 'REHEARSAL' | 'INFO'
+    startAt: string
+    endAt?: string
+    timezone?: string
+    location?: string
+    notes?: string
+  }>
 }
 
 interface ApplicationData {
@@ -221,7 +230,12 @@ export default function ApplyPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ fileName: file.name, contentType: file.type, folder }),
         })
-        if (!presignRes.ok) throw new Error('Failed to presign upload')
+        if (!presignRes.ok) {
+          let err: any = null
+          try { err = await presignRes.json() } catch {}
+          console.error('Presign error response:', err)
+          throw new Error('Failed to presign upload')
+        }
         const { uploadUrl, fileUrl } = await presignRes.json()
         const putRes = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file })
         if (!putRes.ok) throw new Error('Failed to upload file')
@@ -691,6 +705,37 @@ export default function ApplyPage() {
               )}
             </div>
           </div>
+
+          {/* Schedule */}
+          {Array.isArray(show.events) && show.events.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Calendar className="h-5 w-5" /> Schedule</CardTitle>
+                <CardDescription>Auditions, callbacks, and performance dates</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-6 md:grid-cols-3">
+                {(['AUDITION','CALLBACK','PERFORMANCE'] as const).map(kind => {
+                  const list = show.events!.filter(e => e.type === kind).sort((a,b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime())
+                  if (list.length === 0) return null
+                  const heading = kind === 'AUDITION' ? 'Auditions' : kind === 'CALLBACK' ? 'Callbacks' : 'Performances'
+                  return (
+                    <div key={kind}>
+                      <h4 className="font-medium mb-2">{heading}</h4>
+                      <div className="space-y-2 text-sm">
+                        {list.map(ev => (
+                          <div key={ev.id} className="p-2 border rounded">
+                            <div className="font-medium">{new Date(ev.startAt).toLocaleString()}</div>
+                            {ev.location && <div className="text-muted-foreground">{ev.location}</div>}
+                            {ev.notes && <div className="text-muted-foreground">{ev.notes}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Progress */}
           <Card>

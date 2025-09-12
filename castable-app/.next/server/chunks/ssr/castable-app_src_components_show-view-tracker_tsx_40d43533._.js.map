@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/GitHub/Into-The-Woods-Audition-Packet/castable-app/src/components/show-view-tracker.tsx"],"sourcesContent":["'use client'\r\n\r\nimport { useEffect } from 'react'\r\nimport { trackShowViewed } from '@/lib/analytics'\r\n\r\ninterface ShowViewTrackerProps {\r\n  showId: string\r\n  showTitle: string\r\n}\r\n\r\nexport function ShowViewTracker({ showId, showTitle }: ShowViewTrackerProps) {\r\n  useEffect(() => {\r\n    // Track show view\r\n    trackShowViewed(showId, showTitle)\r\n  }, [showId, showTitle])\r\n\r\n  return null\r\n}\r\n\r\n\r\n"],"names":[],"mappings":";;;;AAEA;AACA;AAHA;;;AAUO,SAAS,gBAAgB,EAAE,MAAM,EAAE,SAAS,EAAwB;IACzE,IAAA,qOAAS,EAAC;QACR,kBAAkB;QAClB,IAAA,6JAAe,EAAC,QAAQ;IAC1B,GAAG;QAAC;QAAQ;KAAU;IAEtB,OAAO;AACT","debugId":null}}]
+}

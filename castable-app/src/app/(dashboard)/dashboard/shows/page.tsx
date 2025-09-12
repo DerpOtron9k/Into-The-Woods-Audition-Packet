@@ -293,7 +293,7 @@ export default function ShowsPage() {
                         </Link>
                       </Button>
                       <Button asChild variant="outline" size="sm">
-                        <Link href={`/shows/${show.id}`}>
+                        <Link href={`/shows/${show.id}/apply`}>
                           <Eye className="mr-2 h-4 w-4" />
                           View Public Page
                         </Link>

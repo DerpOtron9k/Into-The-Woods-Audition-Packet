@@ -34,8 +34,12 @@ interface Character {
   description: string
   gender: string
   ageRange: string
-  vocalRange: string
   notes: string
+
+  // New fields from schema
+  category?: string
+  vocalInfo?: string
+  auditionCut?: string
 }
 
 interface AuditionMaterial {
@@ -59,6 +63,16 @@ interface ShowData {
   contactPhone: string
   characters: Character[]
   auditionMaterials: Record<string, AuditionMaterial | File>
+
+  // New fields from schema
+  greetingMessage?: string
+  auditionPrepRequirements?: string
+  rehearsalInfo?: string
+  castingInfo?: string
+  musicDirector?: string
+  choreographer?: string
+  venue?: string
+  rehearsalPeriod?: string
 }
 
 const STEPS = [
@@ -112,8 +126,10 @@ export default function EditShowPage() {
       description: '',
       gender: 'Any',
       ageRange: '',
-      vocalRange: '',
       notes: '',
+      category: 'Supporting',
+      vocalInfo: '',
+      auditionCut: '',
     }
     setShowData(prev => prev ? {
       ...prev,
@@ -209,6 +225,24 @@ export default function EditShowPage() {
                   placeholder="Your name"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="musicDirector">Music Director</Label>
+                <Input
+                  id="musicDirector"
+                  value={showData.musicDirector}
+                  onChange={(e) => setShowData(prev => prev ? { ...prev, musicDirector: e.target.value } : null)}
+                  placeholder="Music Director's name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="choreographer">Choreographer</Label>
+                <Input
+                  id="choreographer"
+                  value={showData.choreographer}
+                  onChange={(e) => setShowData(prev => prev ? { ...prev, choreographer: e.target.value } : null)}
+                  placeholder="Choreographer's name"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -221,6 +255,47 @@ export default function EditShowPage() {
                 rows={4}
               />
             </div>
+            <Separator />
+            <div className="space-y-2">
+              <Label htmlFor="greetingMessage">Greeting Message</Label>
+              <Textarea
+                id="greetingMessage"
+                value={showData.greetingMessage}
+                onChange={(e) => setShowData(prev => prev ? { ...prev, greetingMessage: e.target.value } : null)}
+                placeholder="A welcome message for your potential auditioners..."
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="auditionPrepRequirements">What to Prepare</Label>
+              <Textarea
+                id="auditionPrepRequirements"
+                value={showData.auditionPrepRequirements}
+                onChange={(e) => setShowData(prev => prev ? { ...prev, auditionPrepRequirements: e.target.value } : null)}
+                placeholder="Describe what actors should prepare for the audition (e.g., songs, monologues, sides)..."
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="rehearsalInfo">Rehearsal Information</Label>
+              <Textarea
+                id="rehearsalInfo"
+                value={showData.rehearsalInfo}
+                onChange={(e) => setShowData(prev => prev ? { ...prev, rehearsalInfo: e.target.value } : null)}
+                placeholder="Details about the rehearsal schedule, location, and expectations..."
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="castingInfo">Casting Information</Label>
+              <Textarea
+                id="castingInfo"
+                value={showData.castingInfo}
+                onChange={(e) => setShowData(prev => prev ? { ...prev, castingInfo: e.target.value } : null)}
+                placeholder="Information about your casting philosophy (e.g., inclusive casting)..."
+                rows={2}
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -230,6 +305,24 @@ export default function EditShowPage() {
                   value={showData.organization}
                   onChange={(e) => setShowData(prev => prev ? { ...prev, organization: e.target.value } : null)}
                   placeholder="Community Theater Group"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="venue">Venue</Label>
+                <Input
+                  id="venue"
+                  value={showData.venue}
+                  onChange={(e) => setShowData(prev => prev ? { ...prev, venue: e.target.value } : null)}
+                  placeholder="e.g., The Grand Theatre"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rehearsalPeriod">Rehearsal Period</Label>
+                <Input
+                  id="rehearsalPeriod"
+                  value={showData.rehearsalPeriod}
+                  onChange={(e) => setShowData(prev => prev ? { ...prev, rehearsalPeriod: e.target.value } : null)}
+                  placeholder="e.g., January 2025 – May 2025"
                 />
               </div>
               <div className="space-y-2">
@@ -340,6 +433,23 @@ export default function EditShowPage() {
                           />
                         </div>
                         <div className="space-y-2">
+                          <Label>Category</Label>
+                          <Select
+                            value={character.category}
+                            onValueChange={(value) => updateCharacter(character.id, 'category', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Principal">Principal</SelectItem>
+                              <SelectItem value="Supporting">Supporting</SelectItem>
+                              <SelectItem value="Cameo">Cameo</SelectItem>
+                              <SelectItem value="Ensemble">Ensemble</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
                           <Label>Gender</Label>
                           <Select
                             value={character.gender}
@@ -377,13 +487,22 @@ export default function EditShowPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Vocal Range</Label>
+                          <Label>Vocal Information</Label>
                           <Input
-                            value={character.vocalRange}
-                            onChange={(e) => updateCharacter(character.id, 'vocalRange', e.target.value)}
-                            placeholder="e.g., Soprano, Tenor, Baritone"
+                            value={character.vocalInfo}
+                            onChange={(e) => updateCharacter(character.id, 'vocalInfo', e.target.value)}
+                            placeholder="e.g., Soprano (G3-A5), Baritone"
                           />
                         </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Audition Cut</Label>
+                        <Input
+                          value={character.auditionCut}
+                          onChange={(e) => updateCharacter(character.id, 'auditionCut', e.target.value)}
+                          placeholder="e.g., 'No More', m. 79-109"
+                        />
                       </div>
 
                       <div className="space-y-2">
@@ -689,8 +808,8 @@ export default function EditShowPage() {
                                     {character.ageRange && (
                                       <span>Age: {character.ageRange}</span>
                                     )}
-                                    {character.vocalRange && (
-                                      <span>Vocal: {character.vocalRange}</span>
+                                    {character.vocalInfo && (
+                                      <span>Vocal: {character.vocalInfo}</span>
                                     )}
                                   </div>
                                   {character.notes && (
@@ -990,4 +1109,5 @@ export default function EditShowPage() {
     </div>
   )
 }
+
 
