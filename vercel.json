@@ -10,6 +10,16 @@
       "use": "@vercel/static"
     }
   ],
+  "rewrites": [
+    {
+      "source": "/ruffin/intothewoods",
+      "destination": "/ruffin/intothewoods/"
+    },
+    {
+      "source": "/ruffin/intothewoods/",
+      "destination": "/ruffin/intothewoods/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
