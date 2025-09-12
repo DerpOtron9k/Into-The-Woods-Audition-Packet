@@ -1,0 +1,14 @@
+{
+  "name": "into-the-woods-audition-packet",
+  "version": "1.0.0",
+  "description": "Audition packet for Into the Woods production",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["theatre", "audition", "into-the-woods", "musical"],
+  "author": "Into the Woods Production Team",
+  "license": "MIT"
+}
