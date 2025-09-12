@@ -8,15 +8,11 @@
   ],
   "routes": [
     {
-      "src": "/intothewoods",
+      "src": "/ruffin/intothewoods",
       "dest": "/index.html"
     },
     {
-      "src": "/intothewoods/(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/",
+      "src": "/ruffin/intothewoods/(.*)",
       "dest": "/index.html"
     }
   ],
