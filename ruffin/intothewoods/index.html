@@ -138,9 +138,8 @@
         .step-indicator.completed + .step-line { 
             background: #16a34a; 
         }
-        /* Step 4 width/overflow hardening - CSS Containment approach */
+        /* Step 4 width/overflow hardening - Simplified approach */
         #step-4 { 
-          contain: layout style size;
           overflow-x: hidden; 
           max-width: 100%;
           box-sizing: border-box;
@@ -152,27 +151,24 @@
         }
         #step-4 form { 
           width: 100%; 
-          contain: layout;
           overflow-x: hidden; 
         }
         #step-4 .grid { 
-          contain: layout;
           width: 100%; 
           margin-left: 0; 
           margin-right: 0;
         }
         #step-4 .form-group { 
           width: 100%;
-          contain: layout;
         }
         #step-4 input, #step-4 select, #step-4 textarea { 
-          width: 100% !important;
-          max-width: 100% !important;
-          box-sizing: border-box !important;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
         #step-4 img, #step-4 svg { 
-          max-width: 100% !important; 
-          height: auto !important; 
+          max-width: 100%; 
+          height: auto; 
         }
         #step-4 .file-upload-area { 
           width: 100%;
@@ -203,19 +199,14 @@
           
           /* Force single column layout on mobile */
           #step-4 .grid {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 1.5rem !important;
+            display: block !important;
             width: 100% !important;
             margin: 0 !important;
           }
           
-          /* Tailwind grid override */
-          #step-4 .grid-cols-1,
-          #step-4 .md\\:grid-cols-2 {
-            grid-template-columns: none !important;
-            display: flex !important;
-            flex-direction: column !important;
+          /* Override Tailwind grid columns */
+          #step-4 .grid {
+            grid-template-columns: 1fr !important;
           }
           
           /* Form elements */
