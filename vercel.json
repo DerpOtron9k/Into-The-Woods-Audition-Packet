@@ -8,6 +8,10 @@
     {
       "src": "ruffin/intothewoods/index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "ruffin/intothewoods/ITWTitle.png",
+      "use": "@vercel/static"
     }
   ],
   "rewrites": [
@@ -18,6 +22,10 @@
     {
       "source": "/ruffin/intothewoods/",
       "destination": "/ruffin/intothewoods/index.html"
+    },
+    {
+      "source": "/ruffin/intothewoods/ITWTitle.png",
+      "destination": "/ruffin/intothewoods/ITWTitle.png"
     }
   ],
   "headers": [
