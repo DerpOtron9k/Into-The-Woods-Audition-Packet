@@ -487,7 +487,6 @@ function sendEmailNotification_(data, headshotBlob) {
       subject: 'We received your audition form - Into the Woods',
       name: 'Into the Woods — Casting Team',
       body: autoBody,
-      replyTo: REPLY_TO_EMAIL,
       emailType: 'autoresponse'
     });
     
