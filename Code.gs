@@ -486,7 +486,8 @@ function sendEmailNotification_(data, headshotBlob) {
       to: submitter,
       subject: 'We received your audition form - Into the Woods',
       name: 'Into the Woods — Casting Team',
-      body: autoBody,
+      body: autoBody.replace(/<[^>]*>/g, ''), // Strip HTML for plain text version
+      htmlBody: autoBody, // Send HTML version
       emailType: 'autoresponse'
     });
     
