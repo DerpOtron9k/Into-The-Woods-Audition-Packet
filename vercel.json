@@ -12,6 +12,10 @@
     {
       "src": "ruffin/intothewoods/ITWTitle.png",
       "use": "@vercel/static"
+    },
+    {
+      "src": "ITWTitle.png",
+      "use": "@vercel/static"
     }
   ],
   "rewrites": [
@@ -26,6 +30,10 @@
     {
       "source": "/ruffin/intothewoods/ITWTitle.png",
       "destination": "/ruffin/intothewoods/ITWTitle.png"
+    },
+    {
+      "source": "/ITWTitle.png",
+      "destination": "/ITWTitle.png"
     }
   ],
   "headers": [
