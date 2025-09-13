@@ -1254,13 +1254,17 @@ const loadNonCriticalScripts = () => {
   // Example: Google Analytics, tracking scripts, etc.
 };
 
-// Initialize form validator when DOM is ready
+// Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize form validator
   new FormValidator();
   preloadCriticalResources();
   
   // Initialize scroll to top button
   initScrollToTopButton();
+  
+  // Initialize wizard functionality
+  initializeWizard();
   
   // Lazy load non-critical scripts after initial load
   setTimeout(loadNonCriticalScripts, 2000);
@@ -1466,7 +1470,8 @@ window.characterData = {
   }
 };
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Initialize wizard functionality
+        function initializeWizard() {
             // Wizard elements
             const wizardSteps = document.querySelectorAll('.wizard-step');
             const stepIndicators = document.querySelectorAll('.step-indicator');
@@ -1767,7 +1772,7 @@ window.characterData = {
                 // Clean up URL parameters immediately after showing success
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
-        });
+        }
     </script>
 
     <!-- Comprehensive Testing Suite -->
