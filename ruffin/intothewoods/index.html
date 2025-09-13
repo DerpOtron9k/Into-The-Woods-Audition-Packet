@@ -137,6 +137,15 @@
         .step-indicator.completed + .step-line { 
             background: #16a34a; 
         }
+        /* Mobile overflow hardening for Step 4 */
+        @media (max-width: 640px) {
+          #step-4 { overflow-x: hidden; }
+          #step-4 form { width: 100%; max-width: 100%; overflow-x: hidden; }
+          #step-4 .grid { margin-left: 0; margin-right: 0; }
+          #step-4 .form-group { min-width: 0; }
+          #step-4 input, #step-4 select, #step-4 textarea { max-width: 100%; box-sizing: border-box; }
+          #step-4 .file-upload-area { max-width: 100%; overflow: hidden; }
+        }
     </style>
 </head>
 <body class="antialiased">
