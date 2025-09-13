@@ -30,6 +30,9 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 // Allowed image types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+// Reply-to email for autoresponse emails
+const REPLY_TO_EMAIL = 'noreply@castable.actor';
 /*****************************************/
 
 /** Web-app entry: FORM POST → sheet append → email → HTML redirect */
@@ -484,6 +487,7 @@ function sendEmailNotification_(data, headshotBlob) {
       subject: 'We received your audition form - Into the Woods',
       name: 'Into the Woods — Casting Team',
       body: autoBody,
+      replyTo: REPLY_TO_EMAIL,
       emailType: 'autoresponse'
     });
     
