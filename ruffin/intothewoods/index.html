@@ -46,9 +46,9 @@
     </script>
     <script src="https://cdn.tailwindcss.com?v=1.0.0" defer></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; }
+        body { font-family: 'Inter', sans-serif; background-color: #FBF9F5; color: #40312C; overflow-x: hidden; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
-        .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+        .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); overflow-x: hidden; }
         .decorative-line { height: 1px; background: linear-gradient(to right, transparent, #BFAE9C, transparent); margin: 2.5rem 0; }
         .character-card { cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
         .character-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #D4C4B0; }
@@ -57,12 +57,15 @@
         .select-button { transition: background-color 0.2s ease, color 0.2s ease; }
         
         /* Enhanced Form Validation Styles */
-        .form-group { margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; width: 100%; box-sizing: border-box; }
+        form { width: 100%; max-width: 100%; overflow-x: hidden; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .form-group label.required::after { content: " *"; color: #dc2626; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 0.75rem; border: 2px solid #d1d5db; border-radius: 0.5rem;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+            max-width: 100%;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none; border-color: #2E4035; box-shadow: 0 0 0 3px rgba(46, 64, 53, 0.1);
@@ -72,6 +75,9 @@
         }
         .form-group input.success, .form-group select.success, .form-group textarea.success {
             border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+        input[type="checkbox"]:disabled {
+            opacity: 0.6; cursor: not-allowed;
         }
         .error-message { color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem; display: none; }
         .error-message.show { display: block; }
@@ -96,13 +102,77 @@
         .file-preview { margin-top: 1rem; display: none; }
         .file-preview.show { display: block; }
         .file-preview img { max-width: 200px; max-height: 200px; border-radius: 0.5rem; }
+        
+        /* Wizard Styles */
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        .wizard-progress { padding: 2rem 0; }
+        .step-indicator { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s ease; }
+        .step-indicator:hover { transform: scale(1.05); }
+        .step-circle { 
+            width: 40px; height: 40px; border-radius: 50%; 
+            background: #e5e7eb; color: #6b7280; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .step-indicator.active .step-circle { 
+            background: #2E4035; color: white; 
+        }
+        .step-indicator.completed .step-circle { 
+            background: #16a34a; color: white; 
+        }
+        .step-label { 
+            margin-top: 0.5rem; font-size: 0.875rem; 
+            color: #6b7280; font-weight: 500;
+        }
+        .step-indicator.active .step-label { 
+            color: #2E4035; font-weight: 600; 
+        }
+        .step-line { 
+            width: 60px; height: 2px; 
+            background: #e5e7eb; margin: 0 1rem;
+            transition: background 0.3s ease;
+        }
+        .step-indicator.completed + .step-line { 
+            background: #16a34a; 
+        }
     </style>
 </head>
 <body class="antialiased">
     <div class="storybook-container">
-        <div id="main-content">
+        <!-- Progress Indicator -->
+        <div class="wizard-progress mb-8">
+            <div class="flex justify-center items-center space-x-4">
+                <div class="step-indicator active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Welcome</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Characters</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Materials</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Register</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Welcome & Information -->
+        <div id="step-1" class="wizard-step active">
             <header class="text-center mb-10">
-                <h1 class="text-4xl md:text-5xl font-bold mb-2">🌳 Into the Woods</h1>
+                <img src="ITWTitle.png" 
+                     alt="Into The Woods" 
+                     class="mx-auto mb-2 max-w-full h-auto" 
+                     style="width: min(650px, 90vw); height: auto; max-height: 150px;">
                 <p class="text-xl text-gray-600">Audition Packet</p>
             </header>
 
@@ -164,6 +234,9 @@
         </div>
     </div>
 </section>
+
+            <div class="decorative-line"></div>
+
             <section class="mb-8">
                 <h2 class="text-3xl font-semibold mb-4">What to Prepare</h2>
                 <ul class="list-disc list-inside space-y-3 text-base leading-relaxed">
@@ -179,8 +252,42 @@
 
             <div class="decorative-line"></div>
 
-            <section id="character-selection-section" class="mb-8">
-                <h2 class="text-3xl font-semibold mb-2">Step 1: Select Your Character(s)</h2>
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-4">Rehearsals & Casting</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Rehearsal Information</h3>
+                        <ul class="list-disc list-inside space-y-2 text-base">
+                            <li><strong>Schedule:</strong> Rehearsals begin in January 2026. A typical schedule will be Monday, Tuesday, Thursday, and Friday evenings, with occasional Saturday rehearsals (morning or afternoon).</li>
+                            <li>Not every actor will be called for every rehearsal. A detailed schedule will be provided after casting.</li>
+                            <li><strong>Tech Week:</strong> A full tech week schedule will be provided later. Attendance during tech week is mandatory.</li>
+                            <li>Please list all known conflicts clearly on your audition form. Excessive conflicts may affect casting.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Casting Information</h3>
+                        <p class="text-base leading-relaxed">We encourage performers of all backgrounds, genders, and ethnicities to audition.</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="text-center mt-12">
+                <button id="next-to-step-2" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                    Continue to Character Selection →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Character Selection -->
+        <div id="step-2" class="wizard-step">
+            <div class="mb-6">
+                <button id="back-to-step-1" class="text-sm text-[#2E4035] hover:underline">
+                    ← Back to Welcome
+                </button>
+            </div>
+
+            <section class="mb-8">
+                <h2 class="text-3xl font-semibold mb-2">Select Your Character(s)</h2>
                 <p class="mb-6 text-base">Select up to two characters you would like to audition for below. Your audition materials will be provided in the next step.</p>
 
                 <h3 class="text-2xl font-semibold mb-4">Principal Roles</h3>
@@ -207,48 +314,38 @@
                         <li>Steward</li>
                     </ul>
                 </div>
-            </section>
 
-            <div class="decorative-line"></div>
+                <div class="decorative-line my-8"></div>
 
-            <section class="mb-8">
-                <h2 class="text-3xl font-semibold mb-4">Rehearsals & Casting</h2>
-                <div class="space-y-6">
+                <h3 class="text-2xl font-semibold mb-4">General Audition</h3>
+                <div class="character-card bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg border-2 border-transparent flex flex-col justify-between" data-character-name="Any">
                     <div>
-                        <h3 class="text-xl font-semibold mb-2">Rehearsal Information</h3>
-                        <ul class="list-disc list-inside space-y-2 text-base">
-                            <li><strong>Schedule:</strong> Rehearsals begin in January 2026. A typical schedule will be Monday, Tuesday, Thursday, and Friday evenings, with occasional Saturday rehearsals (morning or afternoon).</li>
-                            <li>Not every actor will be called for every rehearsal. A detailed schedule will be provided after casting.</li>
-                            <li><strong>Tech Week:</strong> A full tech week schedule will be provided later. Attendance during tech week is mandatory.</li>
-                            <li>Please list all known conflicts clearly on your audition form. Excessive conflicts may affect casting.</li>
-                        </ul>
+                        <h4 class="text-2xl font-semibold text-[#2E4035]">Any Available Role</h4>
+                        <p class="text-sm text-gray-600 font-medium">Open to any casting</p>
+                        <p class="text-sm text-gray-700 mt-2">If you're open to any role in the production, select this option. You'll audition with the ensemble material and can be considered for any available part based on your performance and the director's vision.</p>
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <p class="font-semibold text-green-700">Audition: Ensemble material only</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-semibold mb-2">Casting Information</h3>
-                        <p class="text-base leading-relaxed">We encourage performers of all backgrounds, genders, and ethnicities to audition.</p>
+                    <div class="mt-4 flex justify-end">
+                        <span class="select-button bg-gray-200 text-[#2E4035] font-bold py-2 px-4 rounded-lg text-sm">Select Any Role</span>
                     </div>
                 </div>
             </section>
 
-            <section class="text-center mt-12">
-                <h2 class="text-3xl font-semibold mb-4">Step 2: Get Materials & Sign Up</h2>
-                <p id="signup-prompt" class="mb-6 text-gray-700 max-w-xl mx-auto">Once you've selected a character, click below to proceed.</p>
+            <div class="text-center mt-12">
                 <p id="selection-error" class="mb-4 text-red-600 hidden">Please select at least one character to continue.</p>
-                <button id="proceed-to-form-btn" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
-                    Proceed to Sign Up
+                <button id="next-to-step-3" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                    Continue to Materials →
                 </button>
-            </section>
+            </div>
         </div>
 
-        <!-- Registration Form Section -->
-        <div id="registration-section" class="hidden">
-            <header class="text-center mb-10">
-                <h1 class="text-4xl md:text-5xl font-bold mb-2">Audition Registration</h1>
-            </header>
-
+        <!-- Step 3: Materials -->
+        <div id="step-3" class="wizard-step">
             <div class="mb-6">
-                <button id="back-to-packet-btn" class="text-sm text-[#2E4035] hover:underline">
-                    &larr; Back to Audition Packet
+                <button id="back-to-step-2" class="text-sm text-[#2E4035] hover:underline">
+                    ← Back to Character Selection
                 </button>
             </div>
 
@@ -259,7 +356,20 @@
                 <div id="materials-container" class="space-y-6" data-lazy-load="materials"></div>
             </section>
 
-            <div class="decorative-line"></div>
+            <div class="text-center mt-12">
+                <button id="next-to-step-4" class="inline-block bg-[#2E4035] text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#405a49] transition-colors duration-300 shadow-md">
+                    Continue to Registration →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Registration Form -->
+        <div id="step-4" class="wizard-step">
+            <div class="mb-6">
+                <button id="back-to-step-3" class="text-sm text-[#2E4035] hover:underline">
+                    ← Back to Materials
+                </button>
+            </div>
 
             <section>
                 <h2 class="text-3xl font-semibold mb-4">Audition Form</h2>
@@ -407,6 +517,7 @@
             </section>
         </div>
 
+        <!-- Confirmation Section -->
         <div id="confirmation-section" class="hidden text-center">
             <h1 class="text-4xl font-bold mb-4">Thank You!</h1>
             <p class="text-lg text-gray-700 mb-8">Your audition form has been submitted successfully.<br>We look forward to seeing you!</p>
@@ -1356,61 +1467,168 @@ window.characterData = {
 };
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Wizard elements
+            const wizardSteps = document.querySelectorAll('.wizard-step');
+            const stepIndicators = document.querySelectorAll('.step-indicator');
+            const progressLines = document.querySelectorAll('.step-line');
+            
+            // Character selection elements
             const principalCharacterGrid = document.getElementById('principal-character-grid');
             const supportingCharacterGrid = document.getElementById('supporting-character-grid');
-            const characterSelectionSection = document.getElementById('character-selection-section');
-            const mainContent = document.getElementById('main-content');
-            const registrationSection = document.getElementById('registration-section');
-            const confirmationSection = document.getElementById('confirmation-section');
-            const proceedBtn = document.getElementById('proceed-to-form-btn');
-            const backBtn = document.getElementById('back-to-packet-btn');
-            const backToStartBtn = document.getElementById('back-to-start-btn');
             const materialsContainer = document.getElementById('materials-container');
             const selectedRolesInput = document.getElementById('selected_roles_input');
             const selectionError = document.getElementById('selection-error');
             const selectedDisplay = document.getElementById('selected-characters-display');
+            const confirmationSection = document.getElementById('confirmation-section');
             const auditionForm = document.getElementById('audition-form');
 
             let selectedCharacters = [];
+            let currentStep = 1;
 
-            // Character cards are now loaded via lazy loading system
-
-            characterSelectionSection.addEventListener('click', (e) => {
-                const card = e.target.closest('.character-card');
-                if (!card) return;
-
-                const characterName = card.dataset.characterName;
-                const button = card.querySelector('.select-button');
-                const index = selectedCharacters.indexOf(characterName);
-
-                if (index > -1) {
-                    selectedCharacters.splice(index, 1);
-                    card.classList.remove('selected');
-                    button.textContent = 'Select Role';
-                    button.classList.remove('bg-[#2E4035]', 'text-white');
-                    button.classList.add('bg-gray-200');
-                } else {
-                    if (selectedCharacters.length < 2) {
-                        selectedCharacters.push(characterName);
-                        card.classList.add('selected');
-                        button.textContent = '✓ Selected';
-                        button.classList.add('bg-[#2E4035]', 'text-white');
-                        button.classList.remove('bg-gray-200');
-                    } else {
-                        alert("You may only select up to two characters.");
-                    }
+            // Wizard Navigation Functions
+            function showStep(stepNumber) {
+                // Hide all steps
+                wizardSteps.forEach(step => step.classList.remove('active'));
+                
+                // Show current step
+                const targetStep = document.getElementById(`step-${stepNumber}`);
+                if (targetStep) {
+                    targetStep.classList.add('active');
                 }
-            });
-            
-            proceedBtn.addEventListener('click', () => {
+                
+                // Update progress indicators
+                stepIndicators.forEach((indicator, index) => {
+                    const stepNum = index + 1;
+                    indicator.classList.remove('active', 'completed');
+                    
+                    if (stepNum === stepNumber) {
+                        indicator.classList.add('active');
+                    } else if (stepNum < stepNumber) {
+                        indicator.classList.add('completed');
+                    }
+                });
+                
+                currentStep = stepNumber;
+                window.scrollTo(0, 0);
+            }
+
+            function nextStep() {
+                if (currentStep < 4) {
+                    showStep(currentStep + 1);
+                }
+            }
+
+            function prevStep() {
+                if (currentStep > 1) {
+                    showStep(currentStep - 1);
+                }
+            }
+
+            // Wizard Navigation Event Listeners
+            document.getElementById('next-to-step-2').addEventListener('click', nextStep);
+            document.getElementById('next-to-step-3').addEventListener('click', () => {
                 if (selectedCharacters.length === 0) {
                     selectionError.classList.remove('hidden');
                     return;
                 }
                 selectionError.classList.add('hidden');
+                loadMaterials();
+                nextStep();
+            });
+            document.getElementById('next-to-step-4').addEventListener('click', nextStep);
+            
+            document.getElementById('back-to-step-1').addEventListener('click', prevStep);
+            document.getElementById('back-to-step-2').addEventListener('click', prevStep);
+            document.getElementById('back-to-step-3').addEventListener('click', prevStep);
+
+            // Clickable step indicators
+            stepIndicators.forEach((indicator, index) => {
+                const stepNum = index + 1;
+                indicator.style.cursor = 'pointer';
+                indicator.addEventListener('click', () => {
+                    // Allow navigation to any step, but validate when going forward
+                    if (stepNum > currentStep) {
+                        // Validate current step before allowing forward navigation
+                        if (currentStep === 2 && selectedCharacters.length === 0) {
+                            selectionError.classList.remove('hidden');
+                            return;
+                        }
+                        if (currentStep === 2) {
+                            loadMaterials();
+                        }
+                    }
+                    showStep(stepNum);
+                });
+            });
+
+            // Touch/Swipe Navigation for Mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+            const minSwipeDistance = 50;
+            const maxVerticalSwipe = 100; // Prevent accidental swipes during scrolling
+
+            function handleSwipe() {
+                const swipeDistance = touchEndX - touchStartX;
+                const verticalDistance = Math.abs(touchEndY - touchStartY);
+                
+                // Only trigger horizontal swipe if vertical movement is minimal
+                if (Math.abs(swipeDistance) > minSwipeDistance && verticalDistance < maxVerticalSwipe) {
+                    if (swipeDistance > 0) {
+                        // Swipe right - go to previous step
+                        prevStep();
+                    } else {
+                        // Swipe left - go to next step
+                        if (currentStep === 2 && selectedCharacters.length === 0) {
+                            selectionError.classList.remove('hidden');
+                            return;
+                        }
+                        if (currentStep === 2) {
+                            loadMaterials();
+                        }
+                        nextStep();
+                    }
+                }
+            }
+
+            // Add touch event listeners to the main container
+            const mainContainer = document.querySelector('.storybook-container');
+            if (mainContainer) {
+                mainContainer.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    touchStartY = e.changedTouches[0].screenY;
+                });
+
+                mainContainer.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    touchEndY = e.changedTouches[0].screenY;
+                    handleSwipe();
+                });
+            }
+
+            // Keyboard navigation (optional enhancement)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    prevStep();
+                } else if (e.key === 'ArrowRight') {
+                    if (currentStep === 2 && selectedCharacters.length === 0) {
+                        selectionError.classList.remove('hidden');
+                        return;
+                    }
+                    if (currentStep === 2) {
+                        loadMaterials();
+                    }
+                    nextStep();
+                }
+            });
+
+            // Materials loading function
+            function loadMaterials() {
                 selectedDisplay.innerHTML = `<p class="text-base">You have selected materials for: <strong class="text-[#2E4035]">${selectedCharacters.join(', ')}</strong></p>`;
                 materialsContainer.innerHTML = '';
 
+                // Add ensemble materials
                 const ensembleBlock = document.createElement('div');
                 ensembleBlock.className = 'bg-white p-4 rounded-lg border border-blue-200';
                 ensembleBlock.innerHTML = `
@@ -1423,42 +1641,104 @@ window.characterData = {
                 `;
                 materialsContainer.appendChild(ensembleBlock);
 
+                // Add character-specific materials
                 selectedCharacters.forEach(name => {
-                    const char = window.characterData[name];
-                    if (char.sheetMusicUrl) {
+                    if (name === 'Any') {
+                        // Special handling for "Any" selection
                         const block = document.createElement('div');
-                        block.className = 'bg-white p-4 rounded-lg border';
+                        block.className = 'bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border-2 border-green-200';
                         block.innerHTML = `
-                            <h3 class="text-xl font-semibold text-[#2E4035]">${name}</h3>
-                            <p class="text-sm text-gray-600 mb-3">Audition Cut: ${char.auditionCut}</p>
-                            <div class="flex flex-wrap gap-4">
-                                <a href="${char.sheetMusicUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
-                                <a href="${char.audioDownloadUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
+                            <h3 class="text-xl font-semibold text-[#2E4035]">Any Available Role</h3>
+                            <p class="text-sm text-gray-600 mb-3">You'll be considered for any available role based on your audition performance.</p>
+                            <div class="mt-3 p-3 bg-white rounded border">
+                                <p class="text-sm font-medium text-green-700">✓ Ensemble audition materials provided above</p>
+                                <p class="text-xs text-gray-500 mt-1">${selectedCharacters.filter(n => n !== 'Any').length > 0 ? 'Plus character-specific materials below' : 'No additional character-specific materials needed'}</p>
                             </div>
                         `;
                         materialsContainer.appendChild(block);
+                    } else {
+                        const char = window.characterData[name];
+                        if (char && char.sheetMusicUrl) {
+                            const block = document.createElement('div');
+                            block.className = 'bg-white p-4 rounded-lg border';
+                            block.innerHTML = `
+                                <h3 class="text-xl font-semibold text-[#2E4035]">${name}</h3>
+                                <p class="text-sm text-gray-600 mb-3">Audition Cut: ${char.auditionCut}</p>
+                                <div class="flex flex-wrap gap-4">
+                                    <a href="${char.sheetMusicUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Sheet Music Excerpt (PDF)</a>
+                                    <a href="${char.audioDownloadUrl}" target="_blank" class="inline-block bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Download Audio Excerpt (MP3)</a>
+                                </div>
+                            `;
+                            materialsContainer.appendChild(block);
+                        }
                     }
                 });
 
                 selectedRolesInput.value = selectedCharacters.join(', ');
-                mainContent.classList.add('hidden');
-                registrationSection.classList.remove('hidden');
-                window.scrollTo(0, 0);
+            }
+
+            // Character selection event listener
+            document.getElementById('step-2').addEventListener('click', (e) => {
+                const card = e.target.closest('.character-card');
+                if (!card) return;
+
+                const characterName = card.dataset.characterName;
+                const button = card.querySelector('.select-button');
+                const index = selectedCharacters.indexOf(characterName);
+
+                if (index > -1) {
+                    selectedCharacters.splice(index, 1);
+                    card.classList.remove('selected');
+                    button.textContent = button.textContent.includes('Any Role') ? 'Select Any Role' : 'Select Role';
+                    button.classList.remove('bg-[#2E4035]', 'text-white');
+                    button.classList.add('bg-gray-200');
+                    
+                    // If "Any" is being deselected, uncheck and enable the checkbox
+                    if (characterName === 'Any') {
+                        const anyRoleCheckbox = document.getElementById('any-role');
+                        if (anyRoleCheckbox) {
+                            anyRoleCheckbox.checked = false;
+                            anyRoleCheckbox.disabled = false;
+                        }
+                    }
+                } else {
+                    // Special handling for "Any" selection
+                    if (characterName === 'Any') {
+                        selectedCharacters.push('Any');
+                        card.classList.add('selected');
+                        button.textContent = '✓ Selected';
+                        button.classList.add('bg-[#2E4035]', 'text-white');
+                        button.classList.remove('bg-gray-200');
+                        
+                        // Auto-check and disable the "any role" checkbox
+                        const anyRoleCheckbox = document.getElementById('any-role');
+                        if (anyRoleCheckbox) {
+                            anyRoleCheckbox.checked = true;
+                            anyRoleCheckbox.disabled = true;
+                        }
+                    } else {
+                        // Count non-"Any" characters
+                        const nonAnyCharacters = selectedCharacters.filter(name => name !== 'Any');
+                        
+                        if (nonAnyCharacters.length < 2) {
+                            selectedCharacters.push(characterName);
+                            card.classList.add('selected');
+                            button.textContent = '✓ Selected';
+                            button.classList.add('bg-[#2E4035]', 'text-white');
+                            button.classList.remove('bg-gray-200');
+                        } else {
+                            alert("You may only select up to two specific characters.");
+                        }
+                    }
+                }
             });
 
-            backBtn.addEventListener('click', () => {
-                registrationSection.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-                document.getElementById('character-selection-section').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            backToStartBtn.addEventListener('click', () => {
-                // Hide confirmation and show main content
+            // Back to start button (from confirmation)
+            document.getElementById('back-to-start-btn').addEventListener('click', () => {
                 confirmationSection.classList.add('hidden');
-                mainContent.classList.remove('hidden');
                 document.querySelectorAll('.character-card.selected').forEach(card => card.classList.remove('selected'));
                 selectedCharacters = [];
-                window.scrollTo(0, 0);
+                showStep(1);
             });
 
             // Check for success/error parameters from POST-Redirect-GET
@@ -1468,9 +1748,8 @@ window.characterData = {
             
             if (success === '1') {
                 // Show success confirmation
-                mainContent.classList.add('hidden');
-                registrationSection.classList.add('hidden');
                 confirmationSection.classList.remove('hidden');
+                document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
                 
                 // Clean up URL parameters immediately after showing success
                 window.history.replaceState({}, document.title, window.location.pathname);
@@ -1482,8 +1761,8 @@ window.characterData = {
                 window.history.replaceState({}, document.title, window.location.pathname);
             } else if (window.location.hash === '#submitted') {
                 // Legacy hash-based success (for backwards compatibility)
-                mainContent.classList.add('hidden'); 
                 confirmationSection.classList.remove('hidden');
+                document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
                 
                 // Clean up URL parameters immediately after showing success
                 window.history.replaceState({}, document.title, window.location.pathname);
