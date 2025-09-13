@@ -150,12 +150,21 @@
         #file-preview img { max-width: 100%; height: auto; }
         /* Mobile overflow hardening for Step 4 */
         @media (max-width: 640px) {
+          html, body { overflow-x: hidden !important; }
+          .storybook-container { padding-left: 1rem !important; padding-right: 1rem !important; }
           #step-4 { overflow-x: hidden; }
           #step-4 form { width: 100%; max-width: 100%; overflow-x: hidden; }
-          #step-4 .grid { margin-left: 0; margin-right: 0; }
+          #step-4 .grid { 
+            display: block !important; 
+            grid-template-columns: none !important; 
+            margin-left: 0; margin-right: 0; 
+            width: 100% !important; 
+          }
           #step-4 .form-group { min-width: 0; }
           #step-4 input, #step-4 select, #step-4 textarea { max-width: 100%; box-sizing: border-box; }
           #step-4 .file-upload-area { max-width: 100%; overflow: hidden; }
+          #step-4 h2, #step-4 h3 { word-break: break-word; }
+          #step-4 .text-3xl { font-size: 1.5rem !important; }
         }
     </style>
 </head>
