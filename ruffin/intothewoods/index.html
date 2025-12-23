@@ -52,11 +52,13 @@
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #2E4035; }
         .storybook-container { max-width: 800px; margin: 2rem auto; padding: 2rem 3rem; background-color: #FFFFFF; border: 1px solid #EAE0D5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); overflow-x: hidden; }
         .decorative-line { height: 1px; background: linear-gradient(to right, transparent, #BFAE9C, transparent); margin: 2.5rem 0; }
-        .character-card { cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+        .character-card { position: relative; cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
         .character-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #D4C4B0; }
         .character-card.selected { border-color: #2E4035; background-color: #F0F5F2; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15); }
         .character-card.disabled { cursor: not-allowed; opacity: 0.5; filter: grayscale(0.6); }
         .character-card.disabled:hover { transform: none; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-color: transparent; }
+        .character-card .availability-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.78); border-radius: 12px; pointer-events: none; text-align: center; }
+        .character-card .availability-overlay span { display: inline-block; background: #2E4035; color: #fff; padding: 0.35rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
         .hidden { display: none; }
         .select-button { transition: background-color 0.2s ease, color 0.2s ease; }
         
@@ -483,6 +485,11 @@
                                 <h4 class="text-lg font-bold mb-2">Conflicts</h4>
                                 <p class="text-gray-600 text-sm">List all known conflicts on your audition form. Excessive conflicts may affect casting. Notify the directors of any new conflicts.</p>
                             </div>
+                            <div class="bg-white p-4 rounded-lg shadow md:col-span-2">
+                                <i class="fa-solid fa-hourglass-half text-3xl text-teal-500 mb-3"></i>
+                                <h4 class="text-lg font-bold mb-2">Time & Breaks</h4>
+                                <p class="text-gray-600 text-sm">We will be diligent about using everyone&#39;s time efficiently. Holidays and planned days off will be built into the rehearsal calendar; those dates are not set yet, but we will publish them as soon as they are confirmed.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -779,9 +786,26 @@ const ALLOWED_AUDITION_ROLES = new Set([
   'Baker',
   'Narrator / Mysterious Man',
   'Florinda & Lucinda',
-  'Lucinda',
-  'Any'
+  'Lucinda'
 ]);
+
+const markCardUnavailable = (card, message) => {
+  if (!card || card.classList.contains('disabled')) return;
+  card.classList.add('disabled');
+  card.dataset.disabled = 'true';
+  const button = card.querySelector('.select-button');
+  if (button) {
+    button.textContent = 'Unavailable';
+    button.classList.remove('bg-gray-200');
+    button.classList.add('bg-gray-100', 'text-gray-400');
+  }
+  if (!card.querySelector('.availability-overlay')) {
+    const overlay = document.createElement('div');
+    overlay.className = 'availability-overlay';
+    overlay.innerHTML = `<span>${message}</span>`;
+    card.appendChild(overlay);
+  }
+};
 
 class FormValidator {
   constructor() {
@@ -956,14 +980,7 @@ class FormValidator {
         `;
 
         if (!ALLOWED_AUDITION_ROLES.has(name)) {
-          card.classList.add('disabled');
-          card.dataset.disabled = 'true';
-          const button = card.querySelector('.select-button');
-          if (button) {
-            button.textContent = 'Unavailable';
-            button.classList.remove('bg-gray-200');
-            button.classList.add('bg-gray-100', 'text-gray-400');
-          }
+          markCardUnavailable(card, 'Role cast');
         }
 
         element.appendChild(card);
@@ -1832,14 +1849,7 @@ window.characterData = {
             let currentStep = 1;
 
             if (anyRoleCard && !ALLOWED_AUDITION_ROLES.has('Any')) {
-                anyRoleCard.classList.add('disabled');
-                anyRoleCard.dataset.disabled = 'true';
-                const anyButton = anyRoleCard.querySelector('.select-button');
-                if (anyButton) {
-                    anyButton.textContent = 'Unavailable';
-                    anyButton.classList.remove('bg-gray-200');
-                    anyButton.classList.add('bg-gray-100', 'text-gray-400');
-                }
+                markCardUnavailable(anyRoleCard, 'Role cast');
             }
 
             // Wizard Navigation Functions
