@@ -55,6 +55,8 @@
         .character-card { cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
         .character-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #D4C4B0; }
         .character-card.selected { border-color: #2E4035; background-color: #F0F5F2; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(46, 64, 53, 0.15); }
+        .character-card.disabled { cursor: not-allowed; opacity: 0.5; filter: grayscale(0.6); }
+        .character-card.disabled:hover { transform: none; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-color: transparent; }
         .hidden { display: none; }
         .select-button { transition: background-color 0.2s ease, color 0.2s ease; }
         
@@ -773,6 +775,14 @@
     <script>
 
 // --- ENHANCED FORM VALIDATION & UX WITH SECURITY ---
+const ALLOWED_AUDITION_ROLES = new Set([
+  'Baker',
+  'Narrator / Mysterious Man',
+  'Florinda & Lucinda',
+  'Lucinda',
+  'Any'
+]);
+
 class FormValidator {
   constructor() {
     // Security: Rate limiting and CSRF protection
@@ -944,6 +954,17 @@ class FormValidator {
             <span class="select-button bg-gray-200 text-[#2E4035] font-bold py-2 px-4 rounded-lg text-sm">Select Role</span>
           </div>
         `;
+
+        if (!ALLOWED_AUDITION_ROLES.has(name)) {
+          card.classList.add('disabled');
+          card.dataset.disabled = 'true';
+          const button = card.querySelector('.select-button');
+          if (button) {
+            button.textContent = 'Unavailable';
+            button.classList.remove('bg-gray-200');
+            button.classList.add('bg-gray-100', 'text-gray-400');
+          }
+        }
 
         element.appendChild(card);
       }
@@ -1805,9 +1826,21 @@ window.characterData = {
             const selectedDisplay = document.getElementById('selected-characters-display');
             const confirmationSection = document.getElementById('confirmation-section');
             const auditionForm = document.getElementById('audition-form');
+            const anyRoleCard = document.querySelector('[data-character-name="Any"]');
 
             let selectedCharacters = [];
             let currentStep = 1;
+
+            if (anyRoleCard && !ALLOWED_AUDITION_ROLES.has('Any')) {
+                anyRoleCard.classList.add('disabled');
+                anyRoleCard.dataset.disabled = 'true';
+                const anyButton = anyRoleCard.querySelector('.select-button');
+                if (anyButton) {
+                    anyButton.textContent = 'Unavailable';
+                    anyButton.classList.remove('bg-gray-200');
+                    anyButton.classList.add('bg-gray-100', 'text-gray-400');
+                }
+            }
 
             // Wizard Navigation Functions
             function showStep(stepNumber) {
@@ -2005,6 +2038,7 @@ window.characterData = {
             document.getElementById('step-2').addEventListener('click', (e) => {
                 const card = e.target.closest('.character-card');
                 if (!card) return;
+                if (card.classList.contains('disabled')) return;
 
                 const characterName = card.dataset.characterName;
                 const button = card.querySelector('.select-button');
