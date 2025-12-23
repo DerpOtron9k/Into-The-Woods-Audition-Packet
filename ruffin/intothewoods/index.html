@@ -954,7 +954,13 @@ class FormValidator {
     
     if (!isPrincipal && !isSupporting) return;
     
-    const sortedCharacters = Object.keys(window.characterData).sort();
+    const sortedCharacters = Object.keys(window.characterData)
+      .sort((a, b) => {
+        const aAllowed = ALLOWED_AUDITION_ROLES.has(a);
+        const bAllowed = ALLOWED_AUDITION_ROLES.has(b);
+        if (aAllowed !== bAllowed) return aAllowed ? -1 : 1;
+        return a.localeCompare(b);
+      });
     sortedCharacters.forEach(name => {
       const char = window.characterData[name];
       if (char.category === 'cameo') return;
